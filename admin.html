@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Inn — Admin</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--black:#070605;--black2:#120e0a;--black3:#1a140e;--gold:#cda44c;--gold-light:#f1d98a;--cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.18);--green:#2e8b46;--red:#a8132d;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--cream);padding:0;min-height:100vh;}
+h1,h2,h3{font-family:'Playfair Display',serif;}
+.gold-text{background:linear-gradient(100deg,var(--gold-light),var(--gold) 60%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ic-wrap svg{width:100%;height:100%;}
+.wrap{max-width:1100px;margin:0 auto;padding:40px 5vw 120px;}
+#loginBox{max-width:380px;margin:14vh auto;text-align:center;background:var(--black2);border:1px solid var(--line);border-radius:14px;padding:44px 36px;}
+#loginBox .ic-wrap{width:40px;height:40px;color:var(--gold);margin:0 auto 18px;}
+#loginBox h2{margin-bottom:8px;}
+#loginBox p{color:var(--muted);font-size:.85rem;margin-bottom:22px;}
+input,textarea,select{width:100%;padding:12px 14px;background:#1a1410;border:1px solid var(--line);border-radius:6px;color:var(--cream);font-family:inherit;font-size:.92rem;margin-bottom:4px;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:5px;font-weight:600;cursor:pointer;border:none;font-size:.85rem;letter-spacing:.3px;}
+.btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#1a1305;}
+.btn-outline{background:transparent;border:1px solid var(--line);color:var(--gold-light);}
+.btn-green{background:linear-gradient(135deg,#3aa959,var(--green));color:#fff;}
+.btn-red{background:linear-gradient(135deg,#c9233f,var(--red));color:#fff;}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(7,6,5,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:18px 5vw;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.topbar .left{display:flex;align-items:center;gap:12px;}
+.topbar img{height:36px;width:36px;border-radius:50%;}
+.maint-banner{background:linear-gradient(90deg,#3a0d16,#1a0608);border:1px solid var(--red);border-radius:10px;padding:18px 22px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.maint-banner.off{border-color:var(--green);background:linear-gradient(90deg,#0e2a16,#06180a);}
+.block{background:var(--black2);border:1px solid var(--line);border-radius:12px;padding:26px;margin-bottom:24px;}
+.block h3{color:var(--gold-light);margin-bottom:16px;font-size:1.15rem;display:flex;align-items:center;justify-content:space-between;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:.74rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.item-row{border:1px dashed var(--line);padding:18px;border-radius:8px;margin-bottom:14px;position:relative;}
+.item-row .item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.item-top span{color:var(--gold-light);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.save-bar{position:fixed;bottom:0;left:0;width:100%;background:rgba(7,6,5,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:16px 5vw;display:flex;justify-content:flex-end;gap:12px;z-index:60;}
+.note{font-size:.78rem;color:var(--muted);margin-top:8px;}
+.icon-select{display:flex;gap:8px;align-items:center;}
+.icon-select select{flex:1;}
+@media(max-width:700px){.row2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+  <div class="ic-wrap" id="lockIcon"></div>
+  <h2>Admin Access</h2>
+  <p>This panel is kept on a separate page for security. Sign in to edit Golden Inn's website content.</p>
+  <input type="password" id="adminPass" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()">
+  <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:10px;" onclick="adminLogin()">Sign In</button>
+  <p class="note">Default password: <b>golden123</b> — change ADMIN_PASSWORD in this file's script before going live.</p>
+</div>
+
+<div id="panel" style="display:none;">
+  <div class="topbar">
+    <div class="left">
+      <img src="assets/logo.png" alt="Golden Inn">
+      <div><h3 class="gold-text" style="font-size:1.1rem;">Golden Inn Admin</h3></div>
+      <div id="syncBadge" style="font-size:.72rem;padding:5px 12px;border-radius:20px;border:1px solid var(--line);color:var(--muted);">Connecting…</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a href="index.html?preview=1" target="_blank" class="btn btn-outline">Preview Live Site</a>
+      <button class="btn btn-outline" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="maint-banner" id="maintBanner">
+      <div>
+        <h3 style="font-size:1.05rem;margin-bottom:6px;" id="maintTitle"></h3>
+        <p class="note" id="maintSub" style="margin-top:0;"></p>
+      </div>
+      <button class="btn" id="maintToggleBtn" onclick="toggleMaintenance()"></button>
+    </div>
+    <div class="block">
+      <h3>Maintenance Message</h3>
+      <div class="field"><label>Message shown to visitors while in maintenance mode</label><textarea id="f_maintMsg"></textarea></div>
+    </div>
+
+    <div class="block">
+      <h3>Hero Section</h3>
+      <div class="field"><label>Eyebrow Text</label><input id="f_heroEyebrow"></div>
+      <div class="field"><label>Hero Title</label><input id="f_heroTitle"></div>
+      <div class="field"><label>Hero Subtitle</label><textarea id="f_heroSub"></textarea></div>
+    </div>
+
+    <div class="block"><h3>Hero Slider Images <span class="note" style="margin:0;">add image URL / path, or remove a slide</span></h3><div id="adminSlides"></div><button class="btn btn-green" onclick="addSlide()">+ Add Slide</button></div>
+
+    <div class="block"><h3>Rooms</h3><div id="adminRooms"></div><button class="btn btn-green" onclick="addCard('rooms')">+ Add Room</button></div>
+
+    <div class="block"><h3>Party Hall</h3><div id="adminHall"></div><button class="btn btn-green" onclick="addCard('hall')">+ Add Hall Package</button></div>
+
+    <div class="block"><h3>Amenities</h3><div id="adminAmen"></div><button class="btn btn-green" onclick="addAmen()">+ Add Amenity</button></div>
+
+    <div class="block"><h3>Explore Bangalore — Places</h3><div id="adminPlaces"></div><button class="btn btn-green" onclick="addCard('places')">+ Add Place</button></div>
+
+    <div class="block">
+      <h3>Location & Transport</h3>
+      <div class="field"><label>Hotel Address</label><textarea id="f_address"></textarea></div>
+      <div id="adminTransport"></div>
+      <button class="btn btn-green" onclick="addTransport()">+ Add Transport Option</button>
+    </div>
+
+    <div class="block">
+      <h3>Contact Details</h3>
+      <div class="row2">
+        <div class="field"><label>Primary Phone</label><input id="f_phone1"></div>
+        <div class="field"><label>Secondary Phone</label><input id="f_phone2"></div>
+        <div class="field"><label>Email</label><input id="f_email"></div>
+        <div class="field"><label>Website</label><input id="f_website"></div>
+      </div>
+    </div>
+
+    <div class="block"><h3>Social Media Handles</h3><div id="adminSocial"></div><button class="btn btn-green" onclick="addSocial()">+ Add Social Handle</button></div>
+
+    <div class="block">
+      <h3>Media Library <span class="note" style="margin:0;">uploaded to Firebase Storage — paste any URL into an image field above</span></h3>
+
+      <!-- Drop zone -->
+      <div id="dropZone" style="border:2px dashed var(--line);border-radius:10px;padding:36px;text-align:center;cursor:pointer;margin-bottom:18px;transition:.25s;" onclick="document.getElementById('mediaUpload').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor=''" ondrop="event.preventDefault();this.style.borderColor='';handleMediaFiles(event.dataTransfer.files)">
+        <div style="width:36px;height:36px;color:var(--gold);margin:0 auto 12px;" id="uploadIcon"></div>
+        <p style="color:var(--muted);font-size:.9rem;">Drag & drop images or videos here, or <span style="color:var(--gold-light);text-decoration:underline;">click to browse</span></p>
+        <p class="note" style="margin-top:6px;">Supports JPG, PNG, WebP, MP4, MOV — files go directly to Firebase Storage</p>
+        <input type="file" id="mediaUpload" accept="image/*,video/*" multiple style="display:none" onchange="handleMediaFiles(this.files)">
+      </div>
+
+      <!-- Upload progress -->
+      <div id="uploadProgress" style="display:none;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:6px;">
+          <span id="uploadLabel">Uploading…</span><span id="uploadPct">0%</span>
+        </div>
+        <div style="background:var(--black3);border-radius:4px;height:6px;">
+          <div id="uploadBar" style="height:6px;border-radius:4px;background:linear-gradient(90deg,var(--gold-light),var(--gold));width:0%;transition:.2s;"></div>
+        </div>
+      </div>
+
+      <!-- Media grid -->
+      <div id="mediaGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin:16px 0;"></div>
+
+      <!-- Footer bar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line);padding-top:16px;">
+        <p class="note" id="mediaUsageNote" style="margin:0;"></p>
+        <button class="btn btn-red" onclick="runCleanUnusedMedia()">Delete Unused Media</button>
+      </div>
+      <p class="note" style="margin-top:8px;">Files are stored on <b>Cloudinary</b> (free · 25GB). "Delete Unused" removes records from the catalogue — to also free Cloudinary storage, delete the files from your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gold-light);">Cloudinary Media Library</a>.</p>
+    </div>
+
+    <div class="block" style="border-color:var(--red);">
+      <h3 style="color:#ff8a8a;">Danger Zone</h3>
+      <p class="note" style="margin-bottom:14px;">This permanently clears all saved edits from local storage and restores the original default content.</p>
+      <button class="btn btn-red" onclick="resetAllData()">Reset All Data (Clear Storage)</button>
+    </div>
+
+  </div>
+
+  <div class="save-bar">
+    <button class="btn btn-outline" onclick="populateAdmin()">Discard Changes</button>
+    <button class="btn btn-gold" onclick="saveAdmin()">Save All Changes</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="site-data.js"></script>
+<script>
+const ADMIN_PASSWORD = "golden123";
+let DATA = loadData();
+document.getElementById('lockIcon').innerHTML = ICONS.lock;
+document.getElementById('uploadIcon').innerHTML = ICONS.upload;
+
+function adminLogin(){
+  if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('panel').style.display='block';
+    setSyncBadge('loading');
+    loadFromFirestore().then(fresh => {
+      if(fresh){ DATA = fresh; setSyncBadge('synced'); }
+      else { setSyncBadge('offline'); }
+      populateAdmin();
+    }).catch(()=>{ setSyncBadge('offline'); populateAdmin(); });
+  } else { alert('Incorrect password.'); }
+}
+function setSyncBadge(state){
+  const el = document.getElementById('syncBadge');
+  const states = {
+    loading:{ text:'Syncing with Firebase…', color:'var(--muted)',  border:'var(--line)' },
+    synced: { text:'Firebase — Live',        color:'#4caf7d',       border:'#4caf7d'     },
+    saving: { text:'Saving to Firebase…',   color:'var(--gold)',   border:'var(--gold)' },
+    saved:  { text:'Saved — Live for all',  color:'#4caf7d',       border:'#4caf7d'     },
+    offline:{ text:'Offline (cache only)',  color:'#e07b39',       border:'#e07b39'     },
+    error:  { text:'Save failed — retry',   color:'#e05252',       border:'#e05252'     },
+  };
+  const s = states[state]||states.offline;
+  el.textContent = s.text; el.style.color = s.color; el.style.borderColor = s.border;
+}
+function logout(){ document.getElementById('panel').style.display='none'; document.getElementById('loginBox').style.display='block'; document.getElementById('adminPass').value=''; }
+
+const ICON_OPTIONS = Object.keys(ICONS);
+function iconSelect(id,current,onchange){
+  return `<select id="${id}" onchange="${onchange}">${ICON_OPTIONS.map(k=>`<option value="${k}" ${k===current?'selected':''}>${k}</option>`).join('')}</select>`;
+}
+
+function toggleMaintenance(){
+  DATA.maintenance = !DATA.maintenance;
+  setSyncBadge('saving');
+  saveToFirestore(DATA).then(()=>{ setSyncBadge('saved'); setTimeout(()=>setSyncBadge('synced'),3000); }).catch(()=>{ saveData(DATA); setSyncBadge('error'); });
+  renderMaintBanner();
+}
+function renderMaintBanner(){
+  const banner = document.getElementById('maintBanner');
+  const btn = document.getElementById('maintToggleBtn');
+  if(DATA.maintenance){
+    banner.classList.remove('off');
+    document.getElementById('maintTitle').textContent = 'Maintenance Mode: ON';
+    document.getElementById('maintSub').textContent = 'Visitors currently see a "back soon" screen instead of the live site.';
+    btn.className = 'btn btn-green'; btn.textContent = 'Turn Off — Go Live';
+  } else {
+    banner.classList.add('off');
+    document.getElementById('maintTitle').textContent = 'Maintenance Mode: OFF';
+    document.getElementById('maintSub').textContent = 'The live site is visible to all visitors. Turn this on before making big changes.';
+    btn.className = 'btn btn-red'; btn.textContent = 'Turn On — Show Maintenance Screen';
+  }
+}
+
+function populateAdmin(){
+  DATA = loadData();
+  renderMaintBanner();
+  renderMediaLibrary();
+  document.getElementById('f_maintMsg').value = DATA.maintenanceMsg;
+  document.getElementById('f_heroEyebrow').value = DATA.heroEyebrow;
+  document.getElementById('f_heroTitle').value = DATA.heroTitle;
+  document.getElementById('f_heroSub').value = DATA.heroSub;
+  document.getElementById('f_address').value = DATA.address;
+  document.getElementById('f_phone1').value = DATA.phone1;
+  document.getElementById('f_phone2').value = DATA.phone2;
+  document.getElementById('f_email').value = DATA.email;
+  document.getElementById('f_website').value = DATA.website;
+
+  document.getElementById('adminSlides').innerHTML = DATA.slides.map((s,i)=>`
+    <div class="item-row"><div class="item-top"><span>Slide ${i+1}</span><button class="btn btn-red" onclick="removeItem('slides',${i})">Remove</button></div>
+    <div class="field"><label>Image URL / Path</label><input value="${s}" onchange="DATA.slides[${i}]=this.value"></div></div>`).join('');
+
+  document.getElementById('adminRooms').innerHTML = DATA.rooms.map((r,i)=>cardAdminRow('rooms',r,i)).join('');
+  document.getElementById('adminHall').innerHTML = DATA.hall.map((r,i)=>cardAdminRow('hall',r,i)).join('');
+
+  document.getElementById('adminPlaces').innerHTML = DATA.places.map((p,i)=>`
+    <div class="item-row"><div class="item-top"><span>${p.title||'Place '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('places',${i})">Remove</button></div>
+      <div class="row2">
+        <div class="field"><label>Image URL</label><input value="${p.img}" onchange="DATA.places[${i}].img=this.value"></div>
+        <div class="field"><label>Title (used to auto-fetch distance)</label><input value="${p.title}" id="place_title_${i}" onchange="onPlaceTitleChange(${i},this.value)"></div>
+        <div class="field"><label>Distance <span id="place_status_${i}" class="note" style="margin:0;"></span></label><input value="${p.dist}" id="place_dist_${i}" onchange="DATA.places[${i}].dist=this.value"></div>
+        <div class="field"><label>Description</label><textarea onchange="DATA.places[${i}].desc=this.value">${p.desc}</textarea></div>
+      </div></div>`).join('');
+
+  document.getElementById('adminAmen').innerHTML = DATA.amenities.map((a,i)=>`
+    <div class="item-row"><div class="item-top"><span>${a.title||'Amenity '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('amenities',${i})">Remove</button></div>
+      <div class="row2">
+        <div class="field"><label>Icon</label><div class="icon-select">${iconSelect('am_ic_'+i,a.iconKey,`DATA.amenities[${i}].iconKey=this.value`)}</div></div>
+        <div class="field"><label>Title</label><input value="${a.title}" onchange="DATA.amenities[${i}].title=this.value"></div>
+      </div></div>`).join('');
+
+  document.getElementById('adminTransport').innerHTML = DATA.transport.map((t,i)=>`
+    <div class="item-row"><div class="item-top"><span>Option ${i+1}</span><button class="btn btn-red" onclick="removeItem('transport',${i})">Remove</button></div>
+      <div class="row2">
+        <div class="field"><label>Icon</label><div class="icon-select">${iconSelect('tr_ic_'+i,t.iconKey,`DATA.transport[${i}].iconKey=this.value`)}</div></div>
+        <div class="field"><label>Text</label><textarea onchange="DATA.transport[${i}].text=this.value">${t.text}</textarea></div>
+      </div></div>`).join('');
+
+  document.getElementById('adminSocial').innerHTML = DATA.social.map((s,i)=>`
+    <div class="item-row"><div class="item-top"><span>${s.label||'Social '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('social',${i})">Remove</button></div>
+      <div class="row2">
+        <div class="field"><label>Platform Icon</label><div class="icon-select">${iconSelect('so_ic_'+i,s.iconKey,`DATA.social[${i}].iconKey=this.value`)}</div></div>
+        <div class="field"><label>Label</label><input value="${s.label}" onchange="DATA.social[${i}].label=this.value"></div>
+        <div class="field" style="grid-column:1/-1;"><label>Profile URL</label><input value="${s.url}" onchange="DATA.social[${i}].url=this.value"></div>
+      </div></div>`).join('');
+}
+
+function cardAdminRow(section,c,i){
+  return `
+  <div class="item-row"><div class="item-top"><span>${c.title||'Card '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('${section}',${i})">Remove</button></div>
+    <div class="row2">
+      <div class="field"><label>Image URL</label><input value="${c.img}" onchange="DATA.${section}[${i}].img=this.value"></div>
+      <div class="field"><label>Icon</label><div class="icon-select">${iconSelect(section+'_ic_'+i,c.icon,`DATA.${section}[${i}].icon=this.value`)}</div></div>
+      <div class="field"><label>Title</label><input value="${c.title}" onchange="DATA.${section}[${i}].title=this.value"></div>
+      <div class="field"><label>Price</label><input value="${c.price}" onchange="DATA.${section}[${i}].price=this.value"></div>
+      <div class="field"><label>Price Unit</label><input value="${c.unit}" onchange="DATA.${section}[${i}].unit=this.value"></div>
+      <div class="field"><label>Tags (comma separated)</label><input value="${c.tags.join(', ')}" onchange="DATA.${section}[${i}].tags=this.value.split(',').map(s=>s.trim()).filter(Boolean)"></div>
+      <div class="field" style="grid-column:1/-1;"><label>Description</label><textarea onchange="DATA.${section}[${i}].desc=this.value">${c.desc}</textarea></div>
+    </div></div>`;
+}
+
+function removeItem(section,i){
+  if(!confirm('Remove this item permanently from storage?')) return;
+  DATA[section].splice(i,1); saveData(DATA); populateAdmin();
+}
+function addSlide(){ DATA.slides.push('assets/room1.png'); saveData(DATA); populateAdmin(); }
+function addCard(section){
+  DATA[section].push({img:"assets/room1.png",icon:"bed",title:"New Item",price:"₹0",unit:"/ night",desc:"Description here.",tags:["Tag"]});
+  saveData(DATA); populateAdmin();
+}
+function addAmen(){ DATA.amenities.push({iconKey:"star",title:"New Amenity"}); saveData(DATA); populateAdmin(); }
+function addTransport(){ DATA.transport.push({iconKey:"taxi",text:"New transport option."}); saveData(DATA); populateAdmin(); }
+function addSocial(){ DATA.social.push({iconKey:"instagram",label:"New Platform",url:"https://"}); saveData(DATA); populateAdmin(); }
+
+async function onPlaceTitleChange(i, value){
+  DATA.places[i].title = value;
+  const statusEl = document.getElementById('place_status_'+i);
+  statusEl.textContent = '— fetching distance…';
+  const result = await geocodePlace(value);
+  if(result){
+    DATA.places[i].lat = result.lat;
+    DATA.places[i].lng = result.lng;
+    DATA.places[i].dist = `~${result.distKm} km away`;
+    document.getElementById('place_dist_'+i).value = DATA.places[i].dist;
+    statusEl.textContent = '— auto-fetched';
+  } else {
+    statusEl.textContent = '— could not find location, enter distance manually';
+  }
+}
+
+function saveAdmin(){
+  DATA.maintenanceMsg = document.getElementById('f_maintMsg').value;
+  DATA.heroEyebrow = document.getElementById('f_heroEyebrow').value;
+  DATA.heroTitle = document.getElementById('f_heroTitle').value;
+  DATA.heroSub = document.getElementById('f_heroSub').value;
+  DATA.address = document.getElementById('f_address').value;
+  DATA.phone1 = document.getElementById('f_phone1').value;
+  DATA.phone2 = document.getElementById('f_phone2').value;
+  DATA.email = document.getElementById('f_email').value;
+  DATA.website = document.getElementById('f_website').value;
+  setSyncBadge('saving');
+  saveToFirestore(DATA).then(()=>{
+    setSyncBadge('saved');
+    renderMediaLibrary();
+    setTimeout(()=>setSyncBadge('synced'), 3000);
+  }).catch(e=>{
+    setSyncBadge('error');
+    alert('Firebase save failed: '+e.message+'\n\nChanges are saved locally as a backup.');
+    saveData(DATA);
+  });
+}
+function renderMediaLibrary(){
+  loadAllMedia().then(media => {
+    const used = collectUsedImageUrls(DATA);
+    const totalBytes = media.reduce((s,m)=>s+(m.size||0),0);
+    const unusedCount = media.filter(m=>!used.has(m.url)).length;
+    document.getElementById('mediaUsageNote').textContent =
+      `${media.length} file(s) in Firebase Storage · ${formatBytes(totalBytes)} · ${unusedCount} unused`;
+    document.getElementById('mediaGrid').innerHTML = media.map(m=>{
+      const isUsed = used.has(m.url);
+      const isVideo = m.type === 'video';
+      const preview = isVideo
+        ? `<video src="${m.url}" style="width:100%;height:100px;object-fit:cover;display:block;" muted></video>`
+        : `<img src="${m.url}" style="width:100%;height:100px;object-fit:cover;display:block;" loading="lazy">`;
+      return `
+      <div style="border:1px solid ${isUsed?'var(--line)':'rgba(168,19,45,.6)'};border-radius:8px;overflow:hidden;background:#1a1410;">
+        ${preview}
+        <div style="padding:10px;">
+          <div style="font-size:.68rem;color:${isUsed?'var(--muted)':'#ff8a8a'};margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${m.name}">
+            ${isUsed?'✓ In use':'⚠ Unused'} · ${formatBytes(m.size)}
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-outline" style="flex:1;padding:7px 4px;font-size:.68rem;" onclick="copyMediaUrl('${m.url}')">Copy URL</button>
+            <button class="btn btn-red" style="flex:1;padding:7px 4px;font-size:.68rem;" onclick="deleteOneMedia('${m.id}','${m.name.replace(/'/g,"\\'")}')">Delete</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('') || `<p class="note" style="padding:20px 0;">No media uploaded yet. Drag & drop images or videos above — they go straight to Firebase Storage.</p>`;
+  }).catch(()=>{
+    document.getElementById('mediaGrid').innerHTML = `<p class="note" style="color:#e05252;">Could not load media — check Firebase connection.</p>`;
+  });
+}
+
+async function handleMediaFiles(files){
+  if(!files||!files.length) return;
+  const arr  = Array.from(files);
+  const prog = document.getElementById('uploadProgress');
+  const bar  = document.getElementById('uploadBar');
+  const label= document.getElementById('uploadLabel');
+  const pct  = document.getElementById('uploadPct');
+  prog.style.display = 'block';
+  for(let i=0;i<arr.length;i++){
+    const file = arr[i];
+    label.textContent = `Uploading to Cloudinary: ${file.name} (${i+1}/${arr.length})`;
+    bar.style.width='0%'; pct.textContent='0%';
+    try{
+      await uploadMediaFile(file, p => {
+        bar.style.width = p+'%';
+        pct.textContent = p+'%';
+      });
+    }catch(e){
+      alert('Upload failed for '+file.name+':\n'+e.message);
+    }
+  }
+  prog.style.display='none';
+  document.getElementById('mediaUpload').value='';
+  renderMediaLibrary();
+}
+
+function copyMediaUrl(url){
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(()=>btn.textContent='Copy URL', 2000);
+  });
+}
+
+async function deleteOneMedia(id, name){
+  if(!confirm(`Remove "${name}" from the media library?\n\nThis removes it from the catalogue. To also free Cloudinary storage, go to your Cloudinary Media Library dashboard.`)) return;
+  try{
+    await MEDIA_COL.doc(id).delete();
+    renderMediaLibrary();
+  }catch(e){ alert('Delete failed: '+e.message); }
+}
+
+async function runCleanUnusedMedia(){
+  if(!confirm('Remove all unused media records from the catalogue?\n\nThis clears Firestore entries for files no longer used on the site. To also free Cloudinary storage, visit your Cloudinary Media Library and delete the files there.')) return;
+  document.getElementById('mediaUsageNote').textContent = 'Scanning for unused files…';
+  try{
+    const result = await deleteUnusedMedia(DATA);
+    renderMediaLibrary();
+    if(result.removedCount === 0){
+      alert('No unused media found — every file in the catalogue is currently used on the site.');
+    } else {
+      alert(`Removed ${result.removedCount} unused record(s) from the catalogue (${formatBytes(result.freedBytes)}).\n\nTo also delete the actual files from Cloudinary and free cloud storage, go to:\ncloudinary.com → Media Library → select the unused files → Delete.`);
+    }
+  }catch(e){ alert('Cleanup failed: '+e.message); }
+}
+
+function resetAllData(){
+  if(!confirm('This will erase ALL saved edits and restore default content. Continue?')) return;
+  resetData(); DATA = JSON.parse(JSON.stringify(DEFAULTS));
+  setSyncBadge('saving');
+  saveToFirestore(DATA).then(()=>{ setSyncBadge('saved'); setTimeout(()=>setSyncBadge('synced'),3000); }).catch(()=>setSyncBadge('error'));
+  populateAdmin();
+  alert('Content reset to defaults. Media files in Firebase Storage are NOT deleted — use "Delete Unused Media" to clean those up.');
+}
+</script>
+</body>
+</html>
