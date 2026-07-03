@@ -5,444 +5,883 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Inn — Admin</title>
 <meta name="robots" content="noindex,nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="site-data.js"></script>
 <style>
-:root{--black:#070605;--black2:#120e0a;--black3:#1a140e;--gold:#cda44c;--gold-light:#f1d98a;--cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.18);--green:#2e8b46;--red:#a8132d;}
+:root{
+  --bg:#080706;--surface:#111009;--surface2:#1a1610;--surface3:#221e14;
+  --gold:#cda44c;--gold-l:#f1d98a;--gold-d:#a9802f;
+  --red:#8c1029;--red2:#b81c39;
+  --cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.15);
+  --success:#3a9e60;--danger:#a8132d;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--black);color:var(--cream);padding:0;min-height:100vh;}
+html,body{height:100%;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--cream);font-size:14px;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:var(--gold-d);}
 h1,h2,h3{font-family:'Playfair Display',serif;}
-.gold-text{background:linear-gradient(100deg,var(--gold-light),var(--gold) 60%);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ic-wrap svg{width:100%;height:100%;}
-.wrap{max-width:1100px;margin:0 auto;padding:40px 5vw 120px;}
-#loginBox{max-width:380px;margin:14vh auto;text-align:center;background:var(--black2);border:1px solid var(--line);border-radius:14px;padding:44px 36px;}
-#loginBox .ic-wrap{width:40px;height:40px;color:var(--gold);margin:0 auto 18px;}
-#loginBox h2{margin-bottom:8px;}
-#loginBox p{color:var(--muted);font-size:.85rem;margin-bottom:22px;}
-input,textarea,select{width:100%;padding:12px 14px;background:#1a1410;border:1px solid var(--line);border-radius:6px;color:var(--cream);font-family:inherit;font-size:.92rem;margin-bottom:4px;}
-input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:5px;font-weight:600;cursor:pointer;border:none;font-size:.85rem;letter-spacing:.3px;}
-.btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#1a1305;}
-.btn-outline{background:transparent;border:1px solid var(--line);color:var(--gold-light);}
-.btn-green{background:linear-gradient(135deg,#3aa959,var(--green));color:#fff;}
-.btn-red{background:linear-gradient(135deg,#c9233f,var(--red));color:#fff;}
-.btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
-.topbar{position:sticky;top:0;z-index:50;background:rgba(7,6,5,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:18px 5vw;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
-.topbar .left{display:flex;align-items:center;gap:12px;}
-.topbar img{height:36px;width:36px;border-radius:50%;}
-.maint-banner{background:linear-gradient(90deg,#3a0d16,#1a0608);border:1px solid var(--red);border-radius:10px;padding:18px 22px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
-.maint-banner.off{border-color:var(--green);background:linear-gradient(90deg,#0e2a16,#06180a);}
-.block{background:var(--black2);border:1px solid var(--line);border-radius:12px;padding:26px;margin-bottom:24px;}
-.block h3{color:var(--gold-light);margin-bottom:16px;font-size:1.15rem;display:flex;align-items:center;justify-content:space-between;}
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:.74rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.item-row{border:1px dashed var(--line);padding:18px;border-radius:8px;margin-bottom:14px;position:relative;}
-.item-row .item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.item-top span{color:var(--gold-light);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
-.save-bar{position:fixed;bottom:0;left:0;width:100%;background:rgba(7,6,5,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:16px 5vw;display:flex;justify-content:flex-end;gap:12px;z-index:60;}
-.note{font-size:.78rem;color:var(--muted);margin-top:8px;}
-.icon-select{display:flex;gap:8px;align-items:center;}
-.icon-select select{flex:1;}
-@media(max-width:700px){.row2{grid-template-columns:1fr;}}
+a{color:inherit;text-decoration:none;}
+button,input,textarea,select{font-family:inherit;}
+
+/* ── LOGIN ── */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 40% 30%,#1a120a,var(--bg) 65%);}
+.login-box{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:40px 34px;}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold-l);margin-bottom:4px;}
+.login-sub{font-size:.8rem;color:var(--muted);margin-bottom:28px;}
+.f-label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.f-input{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:11px 13px;color:var(--cream);font-size:.9rem;margin-bottom:14px;}
+.f-input:focus{outline:none;border-color:var(--gold);}
+.err{font-size:.75rem;color:#e05252;margin-top:8px;display:none;}
+.err.on{display:block;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:5px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:.2s;letter-spacing:.3px;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gold-l),var(--gold) 60%,var(--gold-d));color:#1a1305;}
+.btn-gold:hover{filter:brightness(1.08);}
+.btn-outline{background:transparent;border:1px solid var(--line);color:var(--muted);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold-l);}
+.btn-red{background:linear-gradient(135deg,var(--red2),var(--red));color:#fff;}
+.btn-red:hover{filter:brightness(1.1);}
+.btn-green{background:linear-gradient(135deg,#3a9e60,#256640);color:#fff;}
+.btn-sm{padding:7px 13px;font-size:.74rem;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* ── APP SHELL ── */
+#app{display:none;height:100vh;overflow:hidden;}
+#app.on{display:flex;}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 12px;height:100vh;position:sticky;top:0;}
+.s-logo{display:flex;align-items:center;gap:10px;padding:0 8px 24px;}
+.s-logo img{height:34px;width:34px;border-radius:50%;}
+.s-logo b{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gold-l);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:.82rem;color:var(--muted);cursor:pointer;margin-bottom:2px;transition:.18s;}
+.nav-item:hover{background:var(--surface2);color:var(--cream);}
+.nav-item.active{background:var(--surface3);color:var(--gold-l);}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--line);flex-shrink:0;transition:.18s;}
+.nav-item.active .nav-dot{background:var(--gold);}
+.s-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);}
+#syncBadge{font-size:.68rem;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted);margin:0 8px 10px;display:block;}
+
+.main{flex:1;overflow-y:auto;padding:32px 40px;}
+.panel{display:none;max-width:900px;}
+.panel.active{display:block;}
+.p-head{margin-bottom:28px;}
+.p-head h1{font-size:1.7rem;margin-bottom:5px;}
+.p-head p{color:var(--muted);font-size:.85rem;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:26px;right:26px;z-index:999;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 18px;font-size:.8rem;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;}
+#toast.on{opacity:1;transform:none;}
+#toast.ok{border-color:var(--success);}
+#toast.err{border-color:var(--danger);}
+
+/* ── MAINTENANCE BANNER ── */
+.maint-bar{border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
+.maint-bar.off{background:linear-gradient(90deg,#0e2a16,#06180a);border:1px solid var(--success);}
+.maint-bar.on{background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid var(--danger);}
+/* ── TOGGLE ── */
+.switch{position:relative;width:42px;height:24px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.sw-slider{position:absolute;cursor:pointer;inset:0;background:var(--line);border-radius:999px;transition:.2s;}
+.sw-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s;}
+.switch input:checked + .sw-slider{background:var(--gold);}
+.switch input:checked + .sw-slider::before{transform:translateX(18px);background:#1a1305;}
+
+/* ── SECTION BLOCK ── */
+.block{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:18px;}
+.block-title{font-size:.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:16px;font-weight:600;}
+
+/* ── FIELD ── */
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.field input,.field textarea,.field select{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:10px 12px;color:var(--cream);font-size:.88rem;}
+.field textarea{resize:vertical;min-height:72px;}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--gold);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;}
+.tags-input-wrap{display:flex;flex-wrap:wrap;gap:6px;background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:8px 10px;min-height:42px;cursor:text;}
+.tags-input-wrap input{background:transparent;border:none;outline:none;color:var(--cream);font-size:.85rem;min-width:100px;flex:1;}
+.tag-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface3);border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:.72rem;color:var(--gold-l);}
+.tag-pill button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;line-height:1;padding:0;}
+
+/* ── CARD ROW ── */
+.card-row{background:var(--surface2);border:1px solid var(--line);border-radius:10px;margin-bottom:12px;overflow:hidden;}
+.card-row-top{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:.18s;}
+.card-row-top:hover{background:var(--surface3);}
+.card-row-img{width:52px;height:40px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--surface3);}
+.card-row-info{flex:1;min-width:0;}
+.card-row-title{font-size:.9rem;font-weight:600;color:var(--cream);}
+.card-row-meta{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.card-row-actions{display:flex;gap:7px;flex-shrink:0;}
+.card-row-body{display:none;padding:16px;border-top:1px solid var(--line);}
+.card-row-body.open{display:block;}
+.reorder-btns{display:flex;gap:5px;}
+.reorder-btn{width:28px;height:28px;border-radius:5px;background:var(--surface3);border:1px solid var(--line);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:.18s;}
+.reorder-btn:hover{border-color:var(--gold);color:var(--gold-l);}
+.reorder-btn:disabled{opacity:.3;cursor:default;}
+
+/* ── IMAGE UPLOAD ZONE ── */
+.img-upload{position:relative;border:1px dashed var(--line);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;background:var(--surface3);}
+.img-upload:hover{border-color:var(--gold);}
+.img-upload img{width:100%;height:160px;object-fit:cover;display:block;}
+.img-upload .img-placeholder{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:.8rem;}
+.img-upload .img-placeholder svg{width:28px;height:28px;opacity:.5;}
+.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-overlay{position:absolute;inset:0;background:rgba(7,6,5,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;}
+.img-upload:hover .img-overlay{opacity:1;}
+.img-overlay span{color:var(--gold-l);font-size:.78rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+.upload-bar-wrap{height:3px;background:var(--surface3);}
+.upload-bar{height:3px;background:linear-gradient(90deg,var(--gold-l),var(--gold));width:0;transition:.15s;}
+
+/* ── DROP ZONE (media library) ── */
+.drop-zone{border:2px dashed var(--line);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:.2s;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--gold);background:rgba(205,164,76,.04);}
+.drop-zone svg{width:34px;height:34px;color:var(--gold);margin:0 auto 12px;display:block;opacity:.7;}
+.drop-zone p{color:var(--muted);font-size:.85rem;}
+.drop-zone small{font-size:.72rem;color:var(--muted);opacity:.7;}
+.progress-wrap{margin-top:12px;display:none;}
+.progress-wrap.on{display:block;}
+.prog-label{display:flex;justify-content:space-between;font-size:.74rem;color:var(--muted);margin-bottom:5px;}
+.prog-bar-bg{background:var(--surface3);border-radius:3px;height:5px;}
+.prog-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--gold-l),var(--gold));width:0;transition:.15s;}
+
+/* ── MEDIA GRID ── */
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:16px 0;}
+.media-thumb{border-radius:8px;overflow:hidden;background:var(--surface2);border:1px solid var(--line);transition:.2s;}
+.media-thumb:hover{border-color:var(--gold);}
+.media-thumb img,.media-thumb video{width:100%;height:96px;object-fit:cover;display:block;}
+.media-thumb-info{padding:8px 10px;}
+.media-thumb-status{font-size:.67rem;font-weight:600;margin-bottom:4px;}
+.media-thumb-status.used{color:var(--success);}
+.media-thumb-status.unused{color:#e07b39;}
+.media-thumb-btns{display:flex;gap:5px;}
+.media-thumb-btns button{flex:1;padding:5px 6px;font-size:.66rem;}
+
+/* ── PLACE CARD ── */
+.amenity-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;}
+.amenity-row .icon-sel{width:90px;}
+.amenity-row .title-input{flex:1;}
+.amenity-row .amen-btns{display:flex;gap:6px;}
+
+/* ── SOCIAL ROW ── */
+.social-item{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;}
+.social-item select{width:110px;}
+.social-item input{flex:1;}
+
+/* ── ADD BTN ── */
+.add-row{border:1px dashed var(--line);border-radius:8px;padding:12px;text-align:center;color:var(--muted);font-size:.8rem;cursor:pointer;transition:.2s;margin-bottom:8px;}
+.add-row:hover{border-color:var(--gold);color:var(--gold-l);}
+
+.save-bar{position:fixed;bottom:0;left:220px;right:0;background:rgba(8,7,6,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:14px 40px;display:flex;justify-content:flex-end;gap:10px;z-index:100;}
+.divider{height:1px;background:var(--line);margin:20px 0;}
+.note{font-size:.74rem;color:var(--muted);}
+@media(max-width:720px){
+  .sidebar{width:60px;padding:14px 8px;}
+  .s-logo b,.nav-item span:not(.nav-dot){display:none;}
+  .nav-item{justify-content:center;}
+  .s-footer .btn,.s-footer #syncBadge{display:none;}
+  .main{padding:20px 16px;}
+  .save-bar{left:60px;}
+  .grid2,.grid3{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
-<div id="loginBox">
-  <div class="ic-wrap" id="lockIcon"></div>
-  <h2>Admin Access</h2>
-  <p>This panel is kept on a separate page for security. Sign in to edit Golden Inn's website content.</p>
-  <input type="password" id="adminPass" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()">
-  <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:10px;" onclick="adminLogin()">Sign In</button>
-  <p class="note">Default password: <b>golden123</b> — change ADMIN_PASSWORD in this file's script before going live.</p>
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Golden Inn</div>
+    <div class="login-sub">Admin Panel — Sign in to manage site content</div>
+    <label class="f-label">Password</label>
+    <input class="f-input" type="password" id="adminPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn btn-gold" style="width:100%;" onclick="login()">Sign In</button>
+    <div class="err" id="loginErr">Incorrect password.</div>
+  </div>
 </div>
 
-<div id="panel" style="display:none;">
-  <div class="topbar">
-    <div class="left">
-      <img src="assets/logo.png" alt="Golden Inn">
-      <div><h3 class="gold-text" style="font-size:1.1rem;">Golden Inn Admin</h3></div>
-      <div id="syncBadge" style="font-size:.72rem;padding:5px 12px;border-radius:20px;border:1px solid var(--line);color:var(--muted);">Connecting…</div>
+<!-- APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="s-logo">
+      <img src="assets/logo.png" alt="logo">
+      <b>Golden Inn</b>
     </div>
-    <div style="display:flex;gap:10px;">
-      <a href="index.html?preview=1" target="_blank" class="btn btn-outline">Preview Live Site</a>
-      <button class="btn btn-outline" onclick="logout()">Log Out</button>
+    <div class="nav-item active" data-panel="hero"><span class="nav-dot"></span><span>Hero & Slider</span></div>
+    <div class="nav-item" data-panel="rooms"><span class="nav-dot"></span><span>Rooms</span></div>
+    <div class="nav-item" data-panel="hall"><span class="nav-dot"></span><span>Party Hall</span></div>
+    <div class="nav-item" data-panel="amenities"><span class="nav-dot"></span><span>Amenities</span></div>
+    <div class="nav-item" data-panel="explore"><span class="nav-dot"></span><span>Explore BLR</span></div>
+    <div class="nav-item" data-panel="location"><span class="nav-dot"></span><span>Location</span></div>
+    <div class="nav-item" data-panel="contact"><span class="nav-dot"></span><span>Contact & Social</span></div>
+    <div class="nav-item" data-panel="media"><span class="nav-dot"></span><span>Media Library</span></div>
+    <div class="nav-item" data-panel="settings"><span class="nav-dot"></span><span>Settings</span></div>
+    <div class="s-footer">
+      <span id="syncBadge">Connecting…</span>
+      <button class="btn btn-outline btn-sm" style="width:100%;" onclick="logout()">Sign Out</button>
     </div>
   </div>
 
-  <div class="wrap">
+  <div class="main">
 
-    <div class="maint-banner" id="maintBanner">
-      <div>
-        <h3 style="font-size:1.05rem;margin-bottom:6px;" id="maintTitle"></h3>
-        <p class="note" id="maintSub" style="margin-top:0;"></p>
+    <!-- HERO -->
+    <div class="panel active" id="panel-hero">
+      <div class="p-head"><h1>Hero & Slider</h1><p>The full-screen opening section visitors see first.</p></div>
+      <div class="block">
+        <div class="block-title">Text Content</div>
+        <div class="field"><label>Eyebrow</label><input id="h_eyebrow"></div>
+        <div class="field"><label>Main Title</label><input id="h_title"></div>
+        <div class="field"><label>Subtitle</label><textarea id="h_sub"></textarea></div>
       </div>
-      <button class="btn" id="maintToggleBtn" onclick="toggleMaintenance()"></button>
-    </div>
-    <div class="block">
-      <h3>Maintenance Message</h3>
-      <div class="field"><label>Message shown to visitors while in maintenance mode</label><textarea id="f_maintMsg"></textarea></div>
-    </div>
-
-    <div class="block">
-      <h3>Hero Section</h3>
-      <div class="field"><label>Eyebrow Text</label><input id="f_heroEyebrow"></div>
-      <div class="field"><label>Hero Title</label><input id="f_heroTitle"></div>
-      <div class="field"><label>Hero Subtitle</label><textarea id="f_heroSub"></textarea></div>
-    </div>
-
-    <div class="block"><h3>Hero Slider Images <span class="note" style="margin:0;">add image URL / path, or remove a slide</span></h3><div id="adminSlides"></div><button class="btn btn-green" onclick="addSlide()">+ Add Slide</button></div>
-
-    <div class="block"><h3>Rooms</h3><div id="adminRooms"></div><button class="btn btn-green" onclick="addCard('rooms')">+ Add Room</button></div>
-
-    <div class="block"><h3>Party Hall</h3><div id="adminHall"></div><button class="btn btn-green" onclick="addCard('hall')">+ Add Hall Package</button></div>
-
-    <div class="block"><h3>Amenities</h3><div id="adminAmen"></div><button class="btn btn-green" onclick="addAmen()">+ Add Amenity</button></div>
-
-    <div class="block"><h3>Explore Bangalore — Places</h3><div id="adminPlaces"></div><button class="btn btn-green" onclick="addCard('places')">+ Add Place</button></div>
-
-    <div class="block">
-      <h3>Location & Transport</h3>
-      <div class="field"><label>Hotel Address</label><textarea id="f_address"></textarea></div>
-      <div id="adminTransport"></div>
-      <button class="btn btn-green" onclick="addTransport()">+ Add Transport Option</button>
-    </div>
-
-    <div class="block">
-      <h3>Contact Details</h3>
-      <div class="row2">
-        <div class="field"><label>Primary Phone</label><input id="f_phone1"></div>
-        <div class="field"><label>Secondary Phone</label><input id="f_phone2"></div>
-        <div class="field"><label>Email</label><input id="f_email"></div>
-        <div class="field"><label>Website</label><input id="f_website"></div>
+      <div class="block">
+        <div class="block-title">Slider Images <span class="note">(drag & drop to upload · click × to remove)</span></div>
+        <div id="sliderGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:14px;"></div>
+        <div class="add-row" onclick="addSlide()">+ Add Slide</div>
       </div>
     </div>
 
-    <div class="block"><h3>Social Media Handles</h3><div id="adminSocial"></div><button class="btn btn-green" onclick="addSocial()">+ Add Social Handle</button></div>
+    <!-- ROOMS -->
+    <div class="panel" id="panel-rooms">
+      <div class="p-head"><h1>Rooms</h1><p>Each card shows on the Rooms section with price, tags and booking links.</p></div>
+      <div id="roomsList"></div>
+      <div class="add-row" onclick="addCard('rooms')">+ Add Room</div>
+    </div>
 
-    <div class="block">
-      <h3>Media Library <span class="note" style="margin:0;">uploaded to Firebase Storage — paste any URL into an image field above</span></h3>
+    <!-- HALL -->
+    <div class="panel" id="panel-hall">
+      <div class="p-head"><h1>Party Hall</h1><p>Samarambha Party Hall packages and event options.</p></div>
+      <div id="hallList"></div>
+      <div class="add-row" onclick="addCard('hall')">+ Add Hall Package</div>
+    </div>
 
-      <!-- Drop zone -->
-      <div id="dropZone" style="border:2px dashed var(--line);border-radius:10px;padding:36px;text-align:center;cursor:pointer;margin-bottom:18px;transition:.25s;" onclick="document.getElementById('mediaUpload').click()" ondragover="event.preventDefault();this.style.borderColor='var(--gold)'" ondragleave="this.style.borderColor=''" ondrop="event.preventDefault();this.style.borderColor='';handleMediaFiles(event.dataTransfer.files)">
-        <div style="width:36px;height:36px;color:var(--gold);margin:0 auto 12px;" id="uploadIcon"></div>
-        <p style="color:var(--muted);font-size:.9rem;">Drag & drop images or videos here, or <span style="color:var(--gold-light);text-decoration:underline;">click to browse</span></p>
-        <p class="note" style="margin-top:6px;">Supports JPG, PNG, WebP, MP4, MOV — files go directly to Firebase Storage</p>
-        <input type="file" id="mediaUpload" accept="image/*,video/*" multiple style="display:none" onchange="handleMediaFiles(this.files)">
+    <!-- AMENITIES -->
+    <div class="panel" id="panel-amenities">
+      <div class="p-head"><h1>Amenities</h1><p>Icons and labels shown in the facilities grid.</p></div>
+      <div id="amenList"></div>
+      <div class="add-row" onclick="addAmen()">+ Add Amenity</div>
+    </div>
+
+    <!-- EXPLORE -->
+    <div class="panel" id="panel-explore">
+      <div class="p-head"><h1>Explore Bangalore</h1><p>Places near Golden Inn — distance auto-fetched when you enter the name.</p></div>
+      <div id="placesList"></div>
+      <div class="add-row" onclick="addCard('places')">+ Add Place</div>
+    </div>
+
+    <!-- LOCATION -->
+    <div class="panel" id="panel-location">
+      <div class="p-head"><h1>Location & How to Reach</h1><p>Address and transport options shown in the location section.</p></div>
+      <div class="block">
+        <div class="block-title">Address</div>
+        <div class="field"><label>Hotel Address</label><textarea id="l_address"></textarea></div>
       </div>
+      <div class="block">
+        <div class="block-title">Transport Options</div>
+        <div id="transportList"></div>
+        <div class="add-row" onclick="addTransport()">+ Add Transport Option</div>
+      </div>
+    </div>
 
-      <!-- Upload progress -->
-      <div id="uploadProgress" style="display:none;margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:6px;">
-          <span id="uploadLabel">Uploading…</span><span id="uploadPct">0%</span>
+    <!-- CONTACT -->
+    <div class="panel" id="panel-contact">
+      <div class="p-head"><h1>Contact & Social</h1><p>Phone numbers, email, website and social media handles.</p></div>
+      <div class="block">
+        <div class="block-title">Contact Details</div>
+        <div class="grid2">
+          <div class="field"><label>Primary Phone</label><input id="c_phone1"></div>
+          <div class="field"><label>Secondary Phone</label><input id="c_phone2"></div>
+          <div class="field"><label>Email</label><input id="c_email"></div>
+          <div class="field"><label>Website</label><input id="c_website"></div>
         </div>
-        <div style="background:var(--black3);border-radius:4px;height:6px;">
-          <div id="uploadBar" style="height:6px;border-radius:4px;background:linear-gradient(90deg,var(--gold-light),var(--gold));width:0%;transition:.2s;"></div>
-        </div>
       </div>
-
-      <!-- Media grid -->
-      <div id="mediaGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin:16px 0;"></div>
-
-      <!-- Footer bar -->
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line);padding-top:16px;">
-        <p class="note" id="mediaUsageNote" style="margin:0;"></p>
-        <button class="btn btn-red" onclick="runCleanUnusedMedia()">Delete Unused Media</button>
+      <div class="block">
+        <div class="block-title">Social Media Handles</div>
+        <div id="socialList"></div>
+        <div class="add-row" onclick="addSocial()">+ Add Social Handle</div>
       </div>
-      <p class="note" style="margin-top:8px;">Files are stored on <b>Cloudinary</b> (free · 25GB). "Delete Unused" removes records from the catalogue — to also free Cloudinary storage, delete the files from your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gold-light);">Cloudinary Media Library</a>.</p>
     </div>
 
-    <div class="block" style="border-color:var(--red);">
-      <h3 style="color:#ff8a8a;">Danger Zone</h3>
-      <p class="note" style="margin-bottom:14px;">This permanently clears all saved edits from local storage and restores the original default content.</p>
-      <button class="btn btn-red" onclick="resetAllData()">Reset All Data (Clear Storage)</button>
+    <!-- MEDIA LIBRARY -->
+    <div class="panel" id="panel-media">
+      <div class="p-head"><h1>Media Library</h1><p>All files stored on Cloudinary (free · 25GB). Upload here, copy the URL, paste into any image field.</p></div>
+      <div class="block">
+        <div class="drop-zone" id="mediaDropZone" onclick="document.getElementById('mediaFileInput').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="event.preventDefault();this.classList.remove('dragover');uploadMediaFiles(event.dataTransfer.files)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p>Drag & drop images or videos here, or click to browse</p>
+          <small>JPG, PNG, WebP, MP4, MOV — uploaded directly to Cloudinary</small>
+          <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display:none" onchange="uploadMediaFiles(this.files)">
+        </div>
+        <div class="progress-wrap" id="mediaProgress">
+          <div class="prog-label"><span id="mediaProgLabel">Uploading…</span><span id="mediaProgPct">0%</span></div>
+          <div class="prog-bar-bg"><div class="prog-bar" id="mediaProgBar"></div></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+        <span class="note" id="mediaStats"></span>
+        <button class="btn btn-red btn-sm" onclick="cleanUnused()">Delete Unused Media</button>
+      </div>
+      <div class="media-grid" id="mediaGrid"></div>
+      <p class="note" style="margin-top:8px;">To free Cloudinary storage: after deleting unused records here, go to <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gold-l);">Cloudinary Media Library</a> and delete the files there too.</p>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel" id="panel-settings">
+      <div class="p-head"><h1>Settings</h1><p>Site-wide toggles and maintenance mode.</p></div>
+      <div class="maint-bar off" id="maintBar">
+        <div>
+          <div style="font-weight:600;margin-bottom:3px;" id="maintTitle">Maintenance Mode: OFF</div>
+          <div class="note" id="maintSub">The live site is visible to all visitors.</div>
+        </div>
+        <button class="btn btn-red btn-sm" id="maintBtn" onclick="toggleMaintenance()">Turn On</button>
+      </div>
+      <div class="block">
+        <div class="block-title">Maintenance Message</div>
+        <div class="field"><label>Shown to visitors while site is in maintenance mode</label><textarea id="s_maintMsg"></textarea></div>
+      </div>
     </div>
 
   </div>
 
   <div class="save-bar">
-    <button class="btn btn-outline" onclick="populateAdmin()">Discard Changes</button>
-    <button class="btn btn-gold" onclick="saveAdmin()">Save All Changes</button>
+    <button class="btn btn-outline btn-sm" onclick="loadFromFirestoreAndRender()">Discard Changes</button>
+    <button class="btn btn-gold" onclick="saveAll()">Save All Changes</button>
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="site-data.js"></script>
+<div id="toast"></div>
+
 <script>
 const ADMIN_PASSWORD = "golden123";
+const CLOUDINARY_CLOUD  = "egokdwtb";
+const CLOUDINARY_PRESET = "goldeninn media";
 let DATA = loadData();
-document.getElementById('lockIcon').innerHTML = ICONS.lock;
-document.getElementById('uploadIcon').innerHTML = ICONS.upload;
+let mediaItems = [];
 
-function adminLogin(){
+/* ── AUTH ─────────────────────────────────────────────── */
+function login(){
   if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
-    document.getElementById('loginBox').style.display='none';
-    document.getElementById('panel').style.display='block';
-    setSyncBadge('loading');
-    loadFromFirestore().then(fresh => {
-      if(fresh){ DATA = fresh; setSyncBadge('synced'); }
-      else { setSyncBadge('offline'); }
-      populateAdmin();
-    }).catch(()=>{ setSyncBadge('offline'); populateAdmin(); });
-  } else { alert('Incorrect password.'); }
-}
-function setSyncBadge(state){
-  const el = document.getElementById('syncBadge');
-  const states = {
-    loading:{ text:'Syncing with Firebase…', color:'var(--muted)',  border:'var(--line)' },
-    synced: { text:'Firebase — Live',        color:'#4caf7d',       border:'#4caf7d'     },
-    saving: { text:'Saving to Firebase…',   color:'var(--gold)',   border:'var(--gold)' },
-    saved:  { text:'Saved — Live for all',  color:'#4caf7d',       border:'#4caf7d'     },
-    offline:{ text:'Offline (cache only)',  color:'#e07b39',       border:'#e07b39'     },
-    error:  { text:'Save failed — retry',   color:'#e05252',       border:'#e05252'     },
-  };
-  const s = states[state]||states.offline;
-  el.textContent = s.text; el.style.color = s.color; el.style.borderColor = s.border;
-}
-function logout(){ document.getElementById('panel').style.display='none'; document.getElementById('loginBox').style.display='block'; document.getElementById('adminPass').value=''; }
-
-const ICON_OPTIONS = Object.keys(ICONS);
-function iconSelect(id,current,onchange){
-  return `<select id="${id}" onchange="${onchange}">${ICON_OPTIONS.map(k=>`<option value="${k}" ${k===current?'selected':''}>${k}</option>`).join('')}</select>`;
-}
-
-function toggleMaintenance(){
-  DATA.maintenance = !DATA.maintenance;
-  setSyncBadge('saving');
-  saveToFirestore(DATA).then(()=>{ setSyncBadge('saved'); setTimeout(()=>setSyncBadge('synced'),3000); }).catch(()=>{ saveData(DATA); setSyncBadge('error'); });
-  renderMaintBanner();
-}
-function renderMaintBanner(){
-  const banner = document.getElementById('maintBanner');
-  const btn = document.getElementById('maintToggleBtn');
-  if(DATA.maintenance){
-    banner.classList.remove('off');
-    document.getElementById('maintTitle').textContent = 'Maintenance Mode: ON';
-    document.getElementById('maintSub').textContent = 'Visitors currently see a "back soon" screen instead of the live site.';
-    btn.className = 'btn btn-green'; btn.textContent = 'Turn Off — Go Live';
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('on');
+    loadFromFirestoreAndRender();
+    loadMediaLibrary();
   } else {
-    banner.classList.add('off');
-    document.getElementById('maintTitle').textContent = 'Maintenance Mode: OFF';
-    document.getElementById('maintSub').textContent = 'The live site is visible to all visitors. Turn this on before making big changes.';
-    btn.className = 'btn btn-red'; btn.textContent = 'Turn On — Show Maintenance Screen';
+    document.getElementById('loginErr').classList.add('on');
   }
 }
+function logout(){
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminPass').value = '';
+}
+document.getElementById('adminPass').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
 
-function populateAdmin(){
-  DATA = loadData();
+/* ── NAV ──────────────────────────────────────────────── */
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('panel-' + item.dataset.panel).classList.add('active');
+  });
+});
+
+/* ── TOAST ────────────────────────────────────────────── */
+let toastTimer;
+function toast(msg, type=''){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'on' + (type ? ' '+type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 3200);
+}
+
+/* ── SYNC BADGE ───────────────────────────────────────── */
+function badge(state){
+  const el = document.getElementById('syncBadge');
+  const map = {
+    loading:  {t:'Connecting…',       c:'var(--muted)'},
+    live:     {t:'Firebase Live',      c:'#4caf7d'},
+    saving:   {t:'Saving…',           c:'var(--gold)'},
+    saved:    {t:'Saved — Live',       c:'#4caf7d'},
+    offline:  {t:'Offline (cache)',    c:'#e07b39'},
+    error:    {t:'Save Failed',        c:'#e05252'},
+  };
+  const s = map[state] || map.offline;
+  el.textContent = s.t; el.style.color = s.color = s.c; el.style.borderColor = s.c;
+}
+
+/* ── LOAD & RENDER ────────────────────────────────────── */
+async function loadFromFirestoreAndRender(){
+  badge('loading');
+  const fresh = await loadFromFirestore();
+  if(fresh){ DATA = fresh; badge('live'); } else { badge('offline'); }
+  renderAll();
+}
+
+function renderAll(){
+  renderHero();
+  renderCards('rooms', 'roomsList');
+  renderCards('hall', 'hallList');
+  renderAmenities();
+  renderPlaces();
+  renderLocation();
+  renderContact();
   renderMaintBanner();
-  renderMediaLibrary();
-  document.getElementById('f_maintMsg').value = DATA.maintenanceMsg;
-  document.getElementById('f_heroEyebrow').value = DATA.heroEyebrow;
-  document.getElementById('f_heroTitle').value = DATA.heroTitle;
-  document.getElementById('f_heroSub').value = DATA.heroSub;
-  document.getElementById('f_address').value = DATA.address;
-  document.getElementById('f_phone1').value = DATA.phone1;
-  document.getElementById('f_phone2').value = DATA.phone2;
-  document.getElementById('f_email').value = DATA.email;
-  document.getElementById('f_website').value = DATA.website;
-
-  document.getElementById('adminSlides').innerHTML = DATA.slides.map((s,i)=>`
-    <div class="item-row"><div class="item-top"><span>Slide ${i+1}</span><button class="btn btn-red" onclick="removeItem('slides',${i})">Remove</button></div>
-    <div class="field"><label>Image URL / Path</label><input value="${s}" onchange="DATA.slides[${i}]=this.value"></div></div>`).join('');
-
-  document.getElementById('adminRooms').innerHTML = DATA.rooms.map((r,i)=>cardAdminRow('rooms',r,i)).join('');
-  document.getElementById('adminHall').innerHTML = DATA.hall.map((r,i)=>cardAdminRow('hall',r,i)).join('');
-
-  document.getElementById('adminPlaces').innerHTML = DATA.places.map((p,i)=>`
-    <div class="item-row"><div class="item-top"><span>${p.title||'Place '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('places',${i})">Remove</button></div>
-      <div class="row2">
-        <div class="field"><label>Image URL</label><input value="${p.img}" onchange="DATA.places[${i}].img=this.value"></div>
-        <div class="field"><label>Title (used to auto-fetch distance)</label><input value="${p.title}" id="place_title_${i}" onchange="onPlaceTitleChange(${i},this.value)"></div>
-        <div class="field"><label>Distance <span id="place_status_${i}" class="note" style="margin:0;"></span></label><input value="${p.dist}" id="place_dist_${i}" onchange="DATA.places[${i}].dist=this.value"></div>
-        <div class="field"><label>Description</label><textarea onchange="DATA.places[${i}].desc=this.value">${p.desc}</textarea></div>
-      </div></div>`).join('');
-
-  document.getElementById('adminAmen').innerHTML = DATA.amenities.map((a,i)=>`
-    <div class="item-row"><div class="item-top"><span>${a.title||'Amenity '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('amenities',${i})">Remove</button></div>
-      <div class="row2">
-        <div class="field"><label>Icon</label><div class="icon-select">${iconSelect('am_ic_'+i,a.iconKey,`DATA.amenities[${i}].iconKey=this.value`)}</div></div>
-        <div class="field"><label>Title</label><input value="${a.title}" onchange="DATA.amenities[${i}].title=this.value"></div>
-      </div></div>`).join('');
-
-  document.getElementById('adminTransport').innerHTML = DATA.transport.map((t,i)=>`
-    <div class="item-row"><div class="item-top"><span>Option ${i+1}</span><button class="btn btn-red" onclick="removeItem('transport',${i})">Remove</button></div>
-      <div class="row2">
-        <div class="field"><label>Icon</label><div class="icon-select">${iconSelect('tr_ic_'+i,t.iconKey,`DATA.transport[${i}].iconKey=this.value`)}</div></div>
-        <div class="field"><label>Text</label><textarea onchange="DATA.transport[${i}].text=this.value">${t.text}</textarea></div>
-      </div></div>`).join('');
-
-  document.getElementById('adminSocial').innerHTML = DATA.social.map((s,i)=>`
-    <div class="item-row"><div class="item-top"><span>${s.label||'Social '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('social',${i})">Remove</button></div>
-      <div class="row2">
-        <div class="field"><label>Platform Icon</label><div class="icon-select">${iconSelect('so_ic_'+i,s.iconKey,`DATA.social[${i}].iconKey=this.value`)}</div></div>
-        <div class="field"><label>Label</label><input value="${s.label}" onchange="DATA.social[${i}].label=this.value"></div>
-        <div class="field" style="grid-column:1/-1;"><label>Profile URL</label><input value="${s.url}" onchange="DATA.social[${i}].url=this.value"></div>
-      </div></div>`).join('');
 }
 
-function cardAdminRow(section,c,i){
+/* ── HERO ─────────────────────────────────────────────── */
+function renderHero(){
+  document.getElementById('h_eyebrow').value = DATA.heroEyebrow || '';
+  document.getElementById('h_title').value   = DATA.heroTitle   || '';
+  document.getElementById('h_sub').value     = DATA.heroSub     || '';
+  renderSliderGrid();
+}
+function renderSliderGrid(){
+  const grid = document.getElementById('sliderGrid');
+  grid.innerHTML = (DATA.slides || []).map((src, i) => `
+    <div style="position:relative;">
+      ${imgUploadEl('slide_img_' + i, src, 120, url => { DATA.slides[i] = url; renderSliderGrid(); })}
+      <button onclick="DATA.slides.splice(${i},1);renderSliderGrid()" style="position:absolute;top:6px;right:6px;background:rgba(7,6,5,.8);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:.9rem;">×</button>
+      <div style="text-align:center;font-size:.7rem;color:var(--muted);padding:5px 0;">Slide ${i+1}</div>
+    </div>`).join('');
+}
+function addSlide(){
+  if(!DATA.slides) DATA.slides = [];
+  DATA.slides.push('assets/room1.png');
+  renderSliderGrid();
+}
+
+/* ── IMAGE UPLOAD ELEMENT (inline per card) ──────────── */
+function imgUploadEl(id, currentSrc, height=160, onDone){
+  const h = height;
   return `
-  <div class="item-row"><div class="item-top"><span>${c.title||'Card '+(i+1)}</span><button class="btn btn-red" onclick="removeItem('${section}',${i})">Remove</button></div>
-    <div class="row2">
-      <div class="field"><label>Image URL</label><input value="${c.img}" onchange="DATA.${section}[${i}].img=this.value"></div>
-      <div class="field"><label>Icon</label><div class="icon-select">${iconSelect(section+'_ic_'+i,c.icon,`DATA.${section}[${i}].icon=this.value`)}</div></div>
-      <div class="field"><label>Title</label><input value="${c.title}" onchange="DATA.${section}[${i}].title=this.value"></div>
-      <div class="field"><label>Price</label><input value="${c.price}" onchange="DATA.${section}[${i}].price=this.value"></div>
-      <div class="field"><label>Price Unit</label><input value="${c.unit}" onchange="DATA.${section}[${i}].unit=this.value"></div>
-      <div class="field"><label>Tags (comma separated)</label><input value="${c.tags.join(', ')}" onchange="DATA.${section}[${i}].tags=this.value.split(',').map(s=>s.trim()).filter(Boolean)"></div>
-      <div class="field" style="grid-column:1/-1;"><label>Description</label><textarea onchange="DATA.${section}[${i}].desc=this.value">${c.desc}</textarea></div>
-    </div></div>`;
+  <div class="img-upload" id="wrap_${id}" style="height:${h}px;" onclick="document.getElementById('file_${id}').click()">
+    ${currentSrc
+      ? `<img src="${currentSrc}" style="height:${h}px;width:100%;object-fit:cover;">`
+      : `<div class="img-placeholder" style="height:${h}px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Upload Image</span></div>`}
+    <div class="img-overlay"><span>Change Image</span></div>
+    <input type="file" id="file_${id}" accept="image/*,video/*" style="display:none" onchange="handleInlineUpload('${id}', this, ${JSON.stringify(JSON.stringify(onDone ? onDone.toString() : ''))})">
+    <div class="upload-bar-wrap"><div class="upload-bar" id="bar_${id}"></div></div>
+  </div>`;
 }
 
-function removeItem(section,i){
-  if(!confirm('Remove this item permanently from storage?')) return;
-  DATA[section].splice(i,1); saveData(DATA); populateAdmin();
+/* We store callbacks by id since they can't be embedded in HTML strings */
+const uploadCallbacks = {};
+function registerUpload(id, fn){ uploadCallbacks[id] = fn; }
+
+async function handleInlineUpload(id, input, _){
+  const file = input.files[0];
+  if(!file) return;
+  const bar = document.getElementById('bar_' + id);
+  bar.style.width = '20%';
+  const url = await cloudinaryUpload(file, pct => { bar.style.width = pct+'%'; });
+  bar.style.width = '100%';
+  setTimeout(() => { if(bar) bar.style.width='0%'; }, 500);
+  if(url && uploadCallbacks[id]) uploadCallbacks[id](url);
 }
-function addSlide(){ DATA.slides.push('assets/room1.png'); saveData(DATA); populateAdmin(); }
+
+/* ── CLOUDINARY UPLOAD ────────────────────────────────── */
+async function cloudinaryUpload(file, onProgress){
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'goldeninn');
+  const resourceType = file.type.startsWith('video') ? 'video' : 'image';
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`);
+    xhr.upload.onprogress = e => { if(e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100)); };
+    xhr.onload = () => {
+      const res = JSON.parse(xhr.responseText);
+      if(xhr.status === 200){ resolve(res.secure_url); }
+      else { toast('Upload failed: ' + (res.error?.message || 'Unknown error'), 'err'); resolve(null); }
+    };
+    xhr.onerror = () => { toast('Network error during upload', 'err'); resolve(null); };
+    xhr.send(fd);
+  });
+}
+
+/* ── CARDS (Rooms / Hall) ─────────────────────────────── */
+const ICON_KEYS = Object.keys(ICONS);
+function cardIconSel(section, i){
+  return `<select onchange="DATA.${section}[${i}].icon=this.value" style="width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--cream);">
+    ${ICON_KEYS.map(k=>`<option value="${k}" ${DATA[section][i]?.icon===k?'selected':''}>${k}</option>`).join('')}
+  </select>`;
+}
+
+function renderCards(section, listId){
+  const el = document.getElementById(listId);
+  const cards = DATA[section] || [];
+  el.innerHTML = cards.map((c,i) => {
+    const uid = section+'_'+i;
+    setTimeout(() => {
+      registerUpload(uid, url => {
+        DATA[section][i].img = url;
+        document.getElementById('img_val_'+uid).value = url;
+        const imgEl = document.querySelector(`#wrap_${uid} img`);
+        if(imgEl) imgEl.src = url;
+        else { document.getElementById('wrap_'+uid).innerHTML = `<img src="${url}" style="height:160px;width:100%;object-fit:cover;"><div class="img-overlay"><span>Change Image</span></div><input type="file" id="file_${uid}" accept="image/*,video/*" style="display:none" onchange="handleInlineUpload('${uid}',this)"><div class="upload-bar-wrap"><div class="upload-bar" id="bar_${uid}"></div></div>`; }
+      });
+    }, 0);
+    return `
+    <div class="card-row" id="cardrow_${section}_${i}">
+      <div class="card-row-top" onclick="toggleCard('cardrow_${section}_${i}')">
+        <img class="card-row-img" src="${c.img||'assets/room1.png'}" onerror="this.src='assets/room1.png'">
+        <div class="card-row-info">
+          <div class="card-row-title">${c.title||'Untitled'}</div>
+          <div class="card-row-meta">${c.price||''}${c.unit?' '+c.unit:''}</div>
+        </div>
+        <div class="card-row-actions">
+          <div class="reorder-btns">
+            <button class="reorder-btn" ${i===0?'disabled':''} onclick="event.stopPropagation();moveCard('${section}',${i},-1)">↑</button>
+            <button class="reorder-btn" ${i===cards.length-1?'disabled':''} onclick="event.stopPropagation();moveCard('${section}',${i},1)">↓</button>
+          </div>
+          <button class="btn btn-red btn-sm" onclick="event.stopPropagation();removeCard('${section}',${i})">Remove</button>
+        </div>
+      </div>
+      <div class="card-row-body" id="body_cardrow_${section}_${i}">
+        <div class="grid2" style="margin-bottom:13px;">
+          <div>
+            <label class="f-label" style="margin-bottom:6px;">Image</label>
+            ${imgUploadEl(uid, c.img, 160)}
+            <input type="hidden" id="img_val_${uid}" value="${c.img||''}">
+          </div>
+          <div>
+            <div class="field"><label>Icon</label>${cardIconSel(section, i)}</div>
+            <div class="field"><label>Title</label><input value="${esc(c.title)}" onchange="DATA.${section}[${i}].title=this.value"></div>
+            <div class="grid2">
+              <div class="field"><label>Price</label><input value="${esc(c.price)}" onchange="DATA.${section}[${i}].price=this.value"></div>
+              <div class="field"><label>Unit</label><input value="${esc(c.unit)}" onchange="DATA.${section}[${i}].unit=this.value" placeholder="/ night"></div>
+            </div>
+          </div>
+        </div>
+        <div class="field"><label>Description</label><textarea onchange="DATA.${section}[${i}].desc=this.value">${esc(c.desc)}</textarea></div>
+        <div class="field"><label>Tags (comma separated)</label><input value="${(c.tags||[]).join(', ')}" onchange="DATA.${section}[${i}].tags=this.value.split(',').map(s=>s.trim()).filter(Boolean)"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id){
+  const body = document.getElementById('body_'+id);
+  if(body) body.classList.toggle('open');
+}
+function moveCard(section, i, dir){
+  const arr = DATA[section];
+  const j = i+dir;
+  if(j<0||j>=arr.length) return;
+  [arr[i],arr[j]] = [arr[j],arr[i]];
+  renderCards(section, section+'List');
+  if(section==='hall') renderCards(section, 'hallList');
+}
+function removeCard(section, i){
+  if(!confirm('Remove this card?')) return;
+  DATA[section].splice(i,1);
+  renderCards(section, section==='rooms'?'roomsList':'hallList');
+}
 function addCard(section){
-  DATA[section].push({img:"assets/room1.png",icon:"bed",title:"New Item",price:"₹0",unit:"/ night",desc:"Description here.",tags:["Tag"]});
-  saveData(DATA); populateAdmin();
+  if(!DATA[section]) DATA[section] = [];
+  DATA[section].push({img:'assets/room1.png',icon:'bed',title:'New Item',price:'₹0',unit:'/ night',desc:'',tags:[]});
+  const listId = section==='rooms'?'roomsList':'hallList';
+  renderCards(section, listId);
 }
-function addAmen(){ DATA.amenities.push({iconKey:"star",title:"New Amenity"}); saveData(DATA); populateAdmin(); }
-function addTransport(){ DATA.transport.push({iconKey:"taxi",text:"New transport option."}); saveData(DATA); populateAdmin(); }
-function addSocial(){ DATA.social.push({iconKey:"instagram",label:"New Platform",url:"https://"}); saveData(DATA); populateAdmin(); }
 
-async function onPlaceTitleChange(i, value){
-  DATA.places[i].title = value;
-  const statusEl = document.getElementById('place_status_'+i);
-  statusEl.textContent = '— fetching distance…';
-  const result = await geocodePlace(value);
+/* ── AMENITIES ───────────────────────────────────────── */
+function renderAmenities(){
+  document.getElementById('amenList').innerHTML = (DATA.amenities||[]).map((a,i) => `
+    <div class="amenity-row">
+      <select class="icon-sel" onchange="DATA.amenities[${i}].iconKey=this.value">
+        ${ICON_KEYS.map(k=>`<option value="${k}" ${a.iconKey===k?'selected':''}>${k}</option>`).join('')}
+      </select>
+      <input class="title-input f-input" style="margin:0;" value="${esc(a.title)}" onchange="DATA.amenities[${i}].title=this.value">
+      <div class="amen-btns">
+        <button class="reorder-btn" ${i===0?'disabled':''} onclick="moveAmen(${i},-1)">↑</button>
+        <button class="reorder-btn" ${i===(DATA.amenities.length-1)?'disabled':''} onclick="moveAmen(${i},1)">↓</button>
+        <button class="btn btn-red btn-sm" onclick="DATA.amenities.splice(${i},1);renderAmenities()">×</button>
+      </div>
+    </div>`).join('');
+}
+function moveAmen(i,dir){ const a=DATA.amenities,j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; renderAmenities(); }
+function addAmen(){ DATA.amenities.push({iconKey:'star',title:'New Amenity'}); renderAmenities(); }
+
+/* ── PLACES ──────────────────────────────────────────── */
+function renderPlaces(){
+  const el = document.getElementById('placesList');
+  const places = DATA.places || [];
+  el.innerHTML = places.map((p,i) => {
+    const uid = 'place_'+i;
+    setTimeout(() => {
+      registerUpload(uid, url => {
+        DATA.places[i].img = url;
+        const imgEl = document.querySelector(`#wrap_${uid} img`);
+        if(imgEl) imgEl.src = url;
+      });
+    }, 0);
+    return `
+    <div class="card-row" id="placerow_${i}">
+      <div class="card-row-top" onclick="toggleCard('placerow_${i}')">
+        <img class="card-row-img" src="${p.img||'assets/room9.png'}" onerror="this.src='assets/room9.png'">
+        <div class="card-row-info">
+          <div class="card-row-title">${p.title||'Untitled'}</div>
+          <div class="card-row-meta">${p.dist||''}</div>
+        </div>
+        <div class="card-row-actions">
+          <div class="reorder-btns">
+            <button class="reorder-btn" ${i===0?'disabled':''} onclick="event.stopPropagation();movePlace(${i},-1)">↑</button>
+            <button class="reorder-btn" ${i===places.length-1?'disabled':''} onclick="event.stopPropagation();movePlace(${i},1)">↓</button>
+          </div>
+          <button class="btn btn-red btn-sm" onclick="event.stopPropagation();DATA.places.splice(${i},1);renderPlaces()">Remove</button>
+        </div>
+      </div>
+      <div class="card-row-body" id="body_placerow_${i}">
+        <div class="grid2" style="margin-bottom:13px;">
+          <div>
+            <label class="f-label" style="margin-bottom:6px;">Image</label>
+            ${imgUploadEl(uid, p.img, 140)}
+          </div>
+          <div>
+            <div class="field">
+              <label>Place Name <span class="note">(auto-fetches distance)</span></label>
+              <input value="${esc(p.title)}" id="place_title_${i}" onchange="DATA.places[${i}].title=this.value" onblur="autoFetchDist(${i})">
+            </div>
+            <div class="field">
+              <label>Distance <span class="note" id="dist_status_${i}"></span></label>
+              <input value="${esc(p.dist)}" id="place_dist_${i}" onchange="DATA.places[${i}].dist=this.value">
+            </div>
+          </div>
+        </div>
+        <div class="field"><label>Description</label><textarea onchange="DATA.places[${i}].desc=this.value">${esc(p.desc)}</textarea></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function movePlace(i,dir){ const a=DATA.places,j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; renderPlaces(); }
+async function autoFetchDist(i){
+  const title = document.getElementById('place_title_'+i)?.value;
+  if(!title) return;
+  const statusEl = document.getElementById('dist_status_'+i);
+  if(statusEl) statusEl.textContent = '— fetching…';
+  const result = await geocodePlace(title);
   if(result){
     DATA.places[i].lat = result.lat;
     DATA.places[i].lng = result.lng;
     DATA.places[i].dist = `~${result.distKm} km away`;
-    document.getElementById('place_dist_'+i).value = DATA.places[i].dist;
-    statusEl.textContent = '— auto-fetched';
+    const distEl = document.getElementById('place_dist_'+i);
+    if(distEl) distEl.value = DATA.places[i].dist;
+    if(statusEl) statusEl.textContent = '— auto-fetched ✓';
   } else {
-    statusEl.textContent = '— could not find location, enter distance manually';
+    if(statusEl) statusEl.textContent = '— not found, enter manually';
   }
 }
-
-function saveAdmin(){
-  DATA.maintenanceMsg = document.getElementById('f_maintMsg').value;
-  DATA.heroEyebrow = document.getElementById('f_heroEyebrow').value;
-  DATA.heroTitle = document.getElementById('f_heroTitle').value;
-  DATA.heroSub = document.getElementById('f_heroSub').value;
-  DATA.address = document.getElementById('f_address').value;
-  DATA.phone1 = document.getElementById('f_phone1').value;
-  DATA.phone2 = document.getElementById('f_phone2').value;
-  DATA.email = document.getElementById('f_email').value;
-  DATA.website = document.getElementById('f_website').value;
-  setSyncBadge('saving');
-  saveToFirestore(DATA).then(()=>{
-    setSyncBadge('saved');
-    renderMediaLibrary();
-    setTimeout(()=>setSyncBadge('synced'), 3000);
-  }).catch(e=>{
-    setSyncBadge('error');
-    alert('Firebase save failed: '+e.message+'\n\nChanges are saved locally as a backup.');
-    saveData(DATA);
-  });
+function addCard_places(){
+  if(!DATA.places) DATA.places = [];
+  DATA.places.push({img:'assets/room9.png',title:'New Place',dist:'',desc:'',lat:null,lng:null});
+  renderPlaces();
 }
-function renderMediaLibrary(){
-  loadAllMedia().then(media => {
-    const used = collectUsedImageUrls(DATA);
-    const totalBytes = media.reduce((s,m)=>s+(m.size||0),0);
-    const unusedCount = media.filter(m=>!used.has(m.url)).length;
-    document.getElementById('mediaUsageNote').textContent =
-      `${media.length} file(s) in Firebase Storage · ${formatBytes(totalBytes)} · ${unusedCount} unused`;
-    document.getElementById('mediaGrid').innerHTML = media.map(m=>{
-      const isUsed = used.has(m.url);
-      const isVideo = m.type === 'video';
-      const preview = isVideo
-        ? `<video src="${m.url}" style="width:100%;height:100px;object-fit:cover;display:block;" muted></video>`
-        : `<img src="${m.url}" style="width:100%;height:100px;object-fit:cover;display:block;" loading="lazy">`;
-      return `
-      <div style="border:1px solid ${isUsed?'var(--line)':'rgba(168,19,45,.6)'};border-radius:8px;overflow:hidden;background:#1a1410;">
-        ${preview}
-        <div style="padding:10px;">
-          <div style="font-size:.68rem;color:${isUsed?'var(--muted)':'#ff8a8a'};margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${m.name}">
-            ${isUsed?'✓ In use':'⚠ Unused'} · ${formatBytes(m.size)}
-          </div>
-          <div style="display:flex;gap:6px;">
-            <button class="btn btn-outline" style="flex:1;padding:7px 4px;font-size:.68rem;" onclick="copyMediaUrl('${m.url}')">Copy URL</button>
-            <button class="btn btn-red" style="flex:1;padding:7px 4px;font-size:.68rem;" onclick="deleteOneMedia('${m.id}','${m.name.replace(/'/g,"\\'")}')">Delete</button>
-          </div>
+
+/* ── LOCATION ────────────────────────────────────────── */
+function renderLocation(){
+  document.getElementById('l_address').value = DATA.address || '';
+  const el = document.getElementById('transportList');
+  el.innerHTML = (DATA.transport||[]).map((t,i) => `
+    <div class="amenity-row">
+      <select class="icon-sel" onchange="DATA.transport[${i}].iconKey=this.value">
+        ${ICON_KEYS.map(k=>`<option value="${k}" ${t.iconKey===k?'selected':''}>${k}</option>`).join('')}
+      </select>
+      <input class="title-input f-input" style="margin:0;" value="${esc(t.text)}" onchange="DATA.transport[${i}].text=this.value">
+      <div class="amen-btns">
+        <button class="reorder-btn" ${i===0?'disabled':''} onclick="moveTransport(${i},-1)">↑</button>
+        <button class="reorder-btn" ${i===(DATA.transport.length-1)?'disabled':''} onclick="moveTransport(${i},1)">↓</button>
+        <button class="btn btn-red btn-sm" onclick="DATA.transport.splice(${i},1);renderLocation()">×</button>
+      </div>
+    </div>`).join('');
+}
+function moveTransport(i,dir){ const a=DATA.transport,j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; renderLocation(); }
+function addTransport(){ DATA.transport.push({iconKey:'taxi',text:'New transport option.'}); renderLocation(); }
+
+/* ── CONTACT ─────────────────────────────────────────── */
+function renderContact(){
+  document.getElementById('c_phone1').value  = DATA.phone1  || '';
+  document.getElementById('c_phone2').value  = DATA.phone2  || '';
+  document.getElementById('c_email').value   = DATA.email   || '';
+  document.getElementById('c_website').value = DATA.website || '';
+  const el = document.getElementById('socialList');
+  el.innerHTML = (DATA.social||[]).map((s,i) => `
+    <div class="social-item">
+      <select onchange="DATA.social[${i}].iconKey=this.value">
+        ${ICON_KEYS.map(k=>`<option value="${k}" ${s.iconKey===k?'selected':''}>${k}</option>`).join('')}
+      </select>
+      <input class="f-input" style="margin:0;width:120px;" value="${esc(s.label)}" placeholder="Label" onchange="DATA.social[${i}].label=this.value">
+      <input class="f-input" style="margin:0;flex:1;" value="${esc(s.url)}" placeholder="https://..." onchange="DATA.social[${i}].url=this.value">
+      <button class="btn btn-red btn-sm" onclick="DATA.social.splice(${i},1);renderContact()">×</button>
+    </div>`).join('');
+}
+function addSocial(){ if(!DATA.social)DATA.social=[]; DATA.social.push({iconKey:'instagram',label:'',url:'https://'}); renderContact(); }
+
+/* ── SETTINGS / MAINTENANCE ──────────────────────────── */
+function renderMaintBanner(){
+  const bar = document.getElementById('maintBar');
+  const btn = document.getElementById('maintBtn');
+  const title = document.getElementById('maintTitle');
+  const sub = document.getElementById('maintSub');
+  document.getElementById('s_maintMsg').value = DATA.maintenanceMsg || '';
+  if(DATA.maintenance){
+    bar.className='maint-bar on'; btn.textContent='Turn Off — Go Live'; btn.className='btn btn-green btn-sm';
+    title.textContent='Maintenance Mode: ON'; sub.textContent='Visitors see a "back soon" screen.';
+  } else {
+    bar.className='maint-bar off'; btn.textContent='Turn On — Enable Maintenance'; btn.className='btn btn-red btn-sm';
+    title.textContent='Maintenance Mode: OFF'; sub.textContent='The live site is visible to all visitors.';
+  }
+}
+async function toggleMaintenance(){
+  DATA.maintenance = !DATA.maintenance;
+  DATA.maintenanceMsg = document.getElementById('s_maintMsg').value;
+  renderMaintBanner();
+  badge('saving');
+  try{ await saveToFirestore(DATA); badge('saved'); setTimeout(()=>badge('live'),3000); toast('Maintenance mode ' + (DATA.maintenance?'ON':'OFF'), 'ok'); }
+  catch(e){ badge('error'); toast('Save failed: '+e.message,'err'); }
+}
+
+/* ── MEDIA LIBRARY ───────────────────────────────────── */
+async function loadMediaLibrary(){
+  try{
+    const items = await loadAllMedia();
+    mediaItems = items;
+    renderMediaGrid();
+  }catch(e){ console.warn('Media load failed', e); }
+}
+function renderMediaGrid(){
+  const used = collectUsedImageUrls(DATA);
+  const grid = document.getElementById('mediaGrid');
+  const total = mediaItems.reduce((s,m)=>s+(m.size||0),0);
+  const unusedCount = mediaItems.filter(m=>!used.has(m.url)).length;
+  document.getElementById('mediaStats').textContent =
+    `${mediaItems.length} file(s) · ${formatBytes(total)} · ${unusedCount} unused`;
+  if(!mediaItems.length){
+    grid.innerHTML = '<p class="note" style="padding:16px 0;">No media uploaded yet.</p>';
+    return;
+  }
+  grid.innerHTML = mediaItems.map(m => {
+    const isUsed = used.has(m.url);
+    const preview = m.type==='video'
+      ? `<video src="${m.url}" style="width:100%;height:96px;object-fit:cover;" muted></video>`
+      : `<img src="${m.url}" style="width:100%;height:96px;object-fit:cover;" loading="lazy">`;
+    return `
+    <div class="media-thumb">
+      ${preview}
+      <div class="media-thumb-info">
+        <div class="media-thumb-status ${isUsed?'used':'unused'}">${isUsed?'✓ In use':'⚠ Unused'} · ${formatBytes(m.size)}</div>
+        <div class="media-thumb-btns">
+          <button class="btn btn-outline btn-sm" onclick="copyUrl('${m.url}',this)">Copy URL</button>
+          <button class="btn btn-red btn-sm" onclick="deleteMedia('${m.id}','${esc(m.name)}')">Del</button>
         </div>
-      </div>`;
-    }).join('') || `<p class="note" style="padding:20px 0;">No media uploaded yet. Drag & drop images or videos above — they go straight to Firebase Storage.</p>`;
-  }).catch(()=>{
-    document.getElementById('mediaGrid').innerHTML = `<p class="note" style="color:#e05252;">Could not load media — check Firebase connection.</p>`;
-  });
+      </div>
+    </div>`;
+  }).join('');
+}
+function copyUrl(url, btn){
+  navigator.clipboard.writeText(url).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy URL',2000); });
+}
+async function deleteMedia(id, name){
+  if(!confirm(`Remove "${name}" from the media catalogue?`)) return;
+  await MEDIA_COL.doc(id).delete();
+  mediaItems = mediaItems.filter(m=>m.id!==id);
+  renderMediaGrid();
+  toast('Removed from catalogue', 'ok');
+}
+async function cleanUnused(){
+  if(!confirm('Remove all unused media records from the catalogue? Files remain on Cloudinary until you delete them there too.')) return;
+  const used = collectUsedImageUrls(DATA);
+  const unused = mediaItems.filter(m=>!used.has(m.url));
+  await Promise.all(unused.map(m => MEDIA_COL.doc(m.id).delete()));
+  mediaItems = mediaItems.filter(m=>used.has(m.url));
+  renderMediaGrid();
+  toast(unused.length ? `Removed ${unused.length} unused record(s)` : 'No unused media found', 'ok');
 }
 
-async function handleMediaFiles(files){
+async function uploadMediaFiles(files){
   if(!files||!files.length) return;
-  const arr  = Array.from(files);
-  const prog = document.getElementById('uploadProgress');
-  const bar  = document.getElementById('uploadBar');
-  const label= document.getElementById('uploadLabel');
-  const pct  = document.getElementById('uploadPct');
-  prog.style.display = 'block';
+  const arr = Array.from(files);
+  const prog = document.getElementById('mediaProgress');
+  const bar  = document.getElementById('mediaProgBar');
+  const label= document.getElementById('mediaProgLabel');
+  const pct  = document.getElementById('mediaProgPct');
+  prog.classList.add('on');
   for(let i=0;i<arr.length;i++){
     const file = arr[i];
-    label.textContent = `Uploading to Cloudinary: ${file.name} (${i+1}/${arr.length})`;
+    label.textContent = `Uploading ${file.name} (${i+1}/${arr.length})…`;
     bar.style.width='0%'; pct.textContent='0%';
-    try{
-      await uploadMediaFile(file, p => {
-        bar.style.width = p+'%';
-        pct.textContent = p+'%';
-      });
-    }catch(e){
-      alert('Upload failed for '+file.name+':\n'+e.message);
+    const resourceType = file.type.startsWith('video') ? 'video' : 'image';
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('folder', 'goldeninn');
+    const result = await new Promise(resolve => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`);
+      xhr.upload.onprogress = e => {
+        if(e.lengthComputable){ const p=Math.round(e.loaded/e.total*100); bar.style.width=p+'%'; pct.textContent=p+'%'; }
+      };
+      xhr.onload = () => {
+        const res = JSON.parse(xhr.responseText);
+        if(xhr.status===200) resolve(res);
+        else { toast('Upload failed: '+(res.error?.message||'error'),'err'); resolve(null); }
+      };
+      xhr.onerror = () => { toast('Network error','err'); resolve(null); };
+      xhr.send(fd);
+    });
+    if(result){
+      const item = { name:file.name, url:result.secure_url, size:result.bytes||file.size, type:resourceType, added:Date.now() };
+      const ref = await MEDIA_COL.add(item);
+      mediaItems.unshift({...item, id:ref.id});
+      toast(`Uploaded: ${file.name}`, 'ok');
     }
   }
-  prog.style.display='none';
-  document.getElementById('mediaUpload').value='';
-  renderMediaLibrary();
+  prog.classList.remove('on');
+  document.getElementById('mediaFileInput').value = '';
+  renderMediaGrid();
 }
 
-function copyMediaUrl(url){
-  navigator.clipboard.writeText(url).then(()=>{
-    const btn = event.target;
-    btn.textContent = 'Copied!';
-    setTimeout(()=>btn.textContent='Copy URL', 2000);
-  });
-}
-
-async function deleteOneMedia(id, name){
-  if(!confirm(`Remove "${name}" from the media library?\n\nThis removes it from the catalogue. To also free Cloudinary storage, go to your Cloudinary Media Library dashboard.`)) return;
+/* ── SAVE ALL ─────────────────────────────────────────── */
+async function saveAll(){
+  // collect all inline edits
+  DATA.heroEyebrow   = document.getElementById('h_eyebrow').value;
+  DATA.heroTitle     = document.getElementById('h_title').value;
+  DATA.heroSub       = document.getElementById('h_sub').value;
+  DATA.address       = document.getElementById('l_address').value;
+  DATA.phone1        = document.getElementById('c_phone1').value;
+  DATA.phone2        = document.getElementById('c_phone2').value;
+  DATA.email         = document.getElementById('c_email').value;
+  DATA.website       = document.getElementById('c_website').value;
+  DATA.maintenanceMsg= document.getElementById('s_maintMsg').value;
+  badge('saving');
   try{
-    await MEDIA_COL.doc(id).delete();
-    renderMediaLibrary();
-  }catch(e){ alert('Delete failed: '+e.message); }
+    await saveToFirestore(DATA);
+    badge('saved');
+    setTimeout(()=>badge('live'),3000);
+    toast('All changes saved — live for everyone', 'ok');
+    renderMediaGrid();
+  }catch(e){
+    badge('error');
+    saveData(DATA);
+    toast('Firebase error — saved locally: '+e.message, 'err');
+  }
 }
 
-async function runCleanUnusedMedia(){
-  if(!confirm('Remove all unused media records from the catalogue?\n\nThis clears Firestore entries for files no longer used on the site. To also free Cloudinary storage, visit your Cloudinary Media Library and delete the files there.')) return;
-  document.getElementById('mediaUsageNote').textContent = 'Scanning for unused files…';
-  try{
-    const result = await deleteUnusedMedia(DATA);
-    renderMediaLibrary();
-    if(result.removedCount === 0){
-      alert('No unused media found — every file in the catalogue is currently used on the site.');
-    } else {
-      alert(`Removed ${result.removedCount} unused record(s) from the catalogue (${formatBytes(result.freedBytes)}).\n\nTo also delete the actual files from Cloudinary and free cloud storage, go to:\ncloudinary.com → Media Library → select the unused files → Delete.`);
-    }
-  }catch(e){ alert('Cleanup failed: '+e.message); }
-}
+/* ── HELPERS ─────────────────────────────────────────── */
+function esc(s){ return (s||'').toString().replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function resetAllData(){
-  if(!confirm('This will erase ALL saved edits and restore default content. Continue?')) return;
-  resetData(); DATA = JSON.parse(JSON.stringify(DEFAULTS));
-  setSyncBadge('saving');
-  saveToFirestore(DATA).then(()=>{ setSyncBadge('saved'); setTimeout(()=>setSyncBadge('synced'),3000); }).catch(()=>setSyncBadge('error'));
-  populateAdmin();
-  alert('Content reset to defaults. Media files in Firebase Storage are NOT deleted — use "Delete Unused Media" to clean those up.');
-}
+// expose addCard for places via onclick
+window.addCard = function(section){
+  if(section==='rooms') addCard_rooms();
+  else if(section==='hall') addCard_hall();
+  else if(section==='places') addCard_places();
+};
+function addCard_rooms(){ if(!DATA.rooms)DATA.rooms=[]; DATA.rooms.push({img:'assets/room1.png',icon:'bed',title:'New Room',price:'₹0',unit:'/ night',desc:'',tags:[]}); renderCards('rooms','roomsList'); }
+function addCard_hall(){ if(!DATA.hall)DATA.hall=[]; DATA.hall.push({img:'assets/room12.png',icon:'party',title:'New Package',price:'₹0',unit:'/ event',desc:'',tags:[]}); renderCards('hall','hallList'); }
 </script>
 </body>
 </html>
