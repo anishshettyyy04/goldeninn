@@ -11,182 +11,168 @@
 <script src="site-data.js"></script>
 <style>
 :root{
-  --bg:#080706;--surface:#111009;--surface2:#1a1610;--surface3:#221e14;
-  --gold:#cda44c;--gold-l:#f1d98a;--gold-d:#a9802f;
-  --red:#8c1029;--red2:#b81c39;
+  --bg:#080706;--sf:#111009;--sf2:#1a1610;--sf3:#221e14;
+  --gold:#cda44c;--gl:#f1d98a;--gd:#a9802f;
+  --red:#8c1029;--r2:#b81c39;
   --cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.15);
-  --success:#3a9e60;--danger:#a8132d;
+  --ok:#3a9e60;--err:#a8132d;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;}
+html,body{height:100%;overflow:hidden;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--cream);font-size:14px;-webkit-font-smoothing:antialiased;}
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--sf);}
 ::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
-::-webkit-scrollbar-thumb:hover{background:var(--gold-d);}
 h1,h2,h3{font-family:'Playfair Display',serif;}
-a{color:inherit;text-decoration:none;}
 button,input,textarea,select{font-family:inherit;}
 
-/* ── LOGIN ── */
-#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 40% 30%,#1a120a,var(--bg) 65%);}
-.login-box{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:40px 34px;}
-.login-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold-l);margin-bottom:4px;}
-.login-sub{font-size:.8rem;color:var(--muted);margin-bottom:28px;}
-.f-label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.f-input{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:11px 13px;color:var(--cream);font-size:.9rem;margin-bottom:14px;}
-.f-input:focus{outline:none;border-color:var(--gold);}
-.err{font-size:.75rem;color:#e05252;margin-top:8px;display:none;}
-.err.on{display:block;}
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 40% 30%,#1a120a,var(--bg) 65%);z-index:100;}
+.login-box{width:100%;max-width:350px;background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:40px 34px;}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gl);margin-bottom:4px;}
+.login-sub{font-size:.8rem;color:var(--muted);margin-bottom:26px;}
+.fi{width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:6px;padding:11px 13px;color:var(--cream);font-size:.9rem;margin-bottom:12px;}
+.fi:focus{outline:none;border-color:var(--gold);}
+.err-msg{font-size:.75rem;color:#e05252;margin-top:8px;display:none;}
 
-/* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:5px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:.2s;letter-spacing:.3px;white-space:nowrap;}
-.btn-gold{background:linear-gradient(135deg,var(--gold-l),var(--gold) 60%,var(--gold-d));color:#1a1305;}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:5px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:.2s;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gl),var(--gold) 60%,var(--gd));color:#1a1305;}
 .btn-gold:hover{filter:brightness(1.08);}
 .btn-outline{background:transparent;border:1px solid var(--line);color:var(--muted);}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold-l);}
-.btn-red{background:linear-gradient(135deg,var(--red2),var(--red));color:#fff;}
-.btn-red:hover{filter:brightness(1.1);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gl);}
+.btn-red{background:linear-gradient(135deg,var(--r2),var(--red));color:#fff;}
 .btn-green{background:linear-gradient(135deg,#3a9e60,#256640);color:#fff;}
 .btn-sm{padding:7px 13px;font-size:.74rem;}
-.btn:disabled{opacity:.45;cursor:not-allowed;}
 
-/* ── APP SHELL ── */
+/* APP SHELL */
 #app{display:none;height:100vh;overflow:hidden;}
-#app.on{display:flex;}
-.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 12px;height:100vh;position:sticky;top:0;}
-.s-logo{display:flex;align-items:center;gap:10px;padding:0 8px 24px;}
+.sidebar{width:210px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 10px;height:100vh;}
+.s-logo{display:flex;align-items:center;gap:10px;padding:0 8px 22px;}
 .s-logo img{height:34px;width:34px;border-radius:50%;}
-.s-logo b{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gold-l);}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:.82rem;color:var(--muted);cursor:pointer;margin-bottom:2px;transition:.18s;}
-.nav-item:hover{background:var(--surface2);color:var(--cream);}
-.nav-item.active{background:var(--surface3);color:var(--gold-l);}
-.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--line);flex-shrink:0;transition:.18s;}
-.nav-item.active .nav-dot{background:var(--gold);}
+.s-logo b{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gl);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;font-size:.82rem;color:var(--muted);cursor:pointer;margin-bottom:2px;transition:.15s;}
+.nav-item:hover{background:var(--sf2);color:var(--cream);}
+.nav-item.active{background:var(--sf3);color:var(--gl);}
+.ndot{width:6px;height:6px;border-radius:50%;background:var(--line);flex-shrink:0;transition:.15s;}
+.nav-item.active .ndot{background:var(--gold);}
 .s-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);}
-#syncBadge{font-size:.68rem;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted);margin:0 8px 10px;display:block;}
+#syncBadge{font-size:.66rem;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted);display:block;margin:0 6px 10px;text-align:center;}
 
-.main{flex:1;overflow-y:auto;padding:32px 40px;}
-.panel{display:none;max-width:900px;}
+.main{flex:1;overflow-y:auto;padding:30px 38px 100px;}
+.panel{display:none;max-width:860px;}
 .panel.active{display:block;}
-.p-head{margin-bottom:28px;}
-.p-head h1{font-size:1.7rem;margin-bottom:5px;}
-.p-head p{color:var(--muted);font-size:.85rem;}
+.ph{margin-bottom:26px;}
+.ph h1{font-size:1.7rem;margin-bottom:4px;}
+.ph p{color:var(--muted);font-size:.84rem;}
 
-/* ── TOAST ── */
-#toast{position:fixed;bottom:26px;right:26px;z-index:999;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 18px;font-size:.8rem;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;}
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-size:.8rem;opacity:0;transform:translateY(8px);transition:.22s;pointer-events:none;max-width:320px;}
 #toast.on{opacity:1;transform:none;}
-#toast.ok{border-color:var(--success);}
-#toast.err{border-color:var(--danger);}
+#toast.ok{border-color:var(--ok);}
+#toast.er{border-color:var(--err);}
 
-/* ── MAINTENANCE BANNER ── */
-.maint-bar{border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
-.maint-bar.off{background:linear-gradient(90deg,#0e2a16,#06180a);border:1px solid var(--success);}
-.maint-bar.on{background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid var(--danger);}
-/* ── TOGGLE ── */
-.switch{position:relative;width:42px;height:24px;flex-shrink:0;}
-.switch input{opacity:0;width:0;height:0;}
-.sw-slider{position:absolute;cursor:pointer;inset:0;background:var(--line);border-radius:999px;transition:.2s;}
-.sw-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s;}
-.switch input:checked + .sw-slider{background:var(--gold);}
-.switch input:checked + .sw-slider::before{transform:translateX(18px);background:#1a1305;}
+/* BLOCK */
+.block{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;}
+.block-title{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:14px;font-weight:600;}
 
-/* ── SECTION BLOCK ── */
-.block{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:18px;}
-.block-title{font-size:.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:16px;font-weight:600;}
-
-/* ── FIELD ── */
-.field{margin-bottom:13px;}
-.field label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.field input,.field textarea,.field select{width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:10px 12px;color:var(--cream);font-size:.88rem;}
-.field textarea{resize:vertical;min-height:72px;}
+/* FIELDS */
+.field{margin-bottom:12px;}
+.field label,.fl{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.field input,.field textarea,.field select,
+input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:5px;padding:9px 11px;color:var(--cream);font-size:.87rem;}
+.field textarea{resize:vertical;min-height:70px;}
 .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--gold);}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;}
-.tags-input-wrap{display:flex;flex-wrap:wrap;gap:6px;background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:8px 10px;min-height:42px;cursor:text;}
-.tags-input-wrap input{background:transparent;border:none;outline:none;color:var(--cream);font-size:.85rem;min-width:100px;flex:1;}
-.tag-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface3);border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:.72rem;color:var(--gold-l);}
-.tag-pill button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;line-height:1;padding:0;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
-/* ── CARD ROW ── */
-.card-row{background:var(--surface2);border:1px solid var(--line);border-radius:10px;margin-bottom:12px;overflow:hidden;}
-.card-row-top{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:.18s;}
-.card-row-top:hover{background:var(--surface3);}
-.card-row-img{width:52px;height:40px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--surface3);}
-.card-row-info{flex:1;min-width:0;}
-.card-row-title{font-size:.9rem;font-weight:600;color:var(--cream);}
-.card-row-meta{font-size:.75rem;color:var(--muted);margin-top:2px;}
-.card-row-actions{display:flex;gap:7px;flex-shrink:0;}
-.card-row-body{display:none;padding:16px;border-top:1px solid var(--line);}
-.card-row-body.open{display:block;}
-.reorder-btns{display:flex;gap:5px;}
-.reorder-btn{width:28px;height:28px;border-radius:5px;background:var(--surface3);border:1px solid var(--line);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:.18s;}
-.reorder-btn:hover{border-color:var(--gold);color:var(--gold-l);}
-.reorder-btn:disabled{opacity:.3;cursor:default;}
+/* CARD ROW */
+.card-row{background:var(--sf2);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;}
+.card-top{display:flex;align-items:center;gap:12px;padding:12px 15px;cursor:pointer;}
+.card-top:hover{background:var(--sf3);border-radius:10px 10px 0 0;}
+.card-thumb{width:50px;height:38px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--sf3);}
+.card-info{flex:1;min-width:0;}
+.card-title{font-size:.88rem;font-weight:600;color:var(--cream);}
+.card-meta{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.card-acts{display:flex;gap:6px;flex-shrink:0;}
+.card-body{display:none;padding:16px;border-top:1px solid var(--line);}
+.card-body.open{display:block;}
+.rbtn{width:28px;height:28px;border-radius:5px;background:var(--sf3);border:1px solid var(--line);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.84rem;transition:.15s;}
+.rbtn:hover:not(:disabled){border-color:var(--gold);color:var(--gl);}
+.rbtn:disabled{opacity:.3;cursor:default;}
 
-/* ── IMAGE UPLOAD ZONE ── */
-.img-upload{position:relative;border:1px dashed var(--line);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;background:var(--surface3);}
-.img-upload:hover{border-color:var(--gold);}
-.img-upload img{width:100%;height:160px;object-fit:cover;display:block;}
-.img-upload .img-placeholder{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:.8rem;}
-.img-upload .img-placeholder svg{width:28px;height:28px;opacity:.5;}
-.img-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+/* IMAGE UPLOAD ZONE */
+.img-zone{position:relative;border:1px dashed var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--sf3);transition:.2s;}
+.img-zone:hover{border-color:var(--gold);}
+.img-zone img{width:100%;height:150px;object-fit:cover;display:block;}
+.img-placeholder{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:.78rem;}
+.img-placeholder svg{width:26px;height:26px;opacity:.5;}
 .img-overlay{position:absolute;inset:0;background:rgba(7,6,5,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;}
-.img-upload:hover .img-overlay{opacity:1;}
-.img-overlay span{color:var(--gold-l);font-size:.78rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
-.upload-bar-wrap{height:3px;background:var(--surface3);}
-.upload-bar{height:3px;background:linear-gradient(90deg,var(--gold-l),var(--gold));width:0;transition:.15s;}
+.img-zone:hover .img-overlay{opacity:1;}
+.img-overlay span{color:var(--gl);font-size:.76rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.up-bar-bg{height:3px;background:var(--sf3);}
+.up-bar{height:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
 
-/* ── DROP ZONE (media library) ── */
-.drop-zone{border:2px dashed var(--line);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:.2s;}
-.drop-zone:hover,.drop-zone.dragover{border-color:var(--gold);background:rgba(205,164,76,.04);}
-.drop-zone svg{width:34px;height:34px;color:var(--gold);margin:0 auto 12px;display:block;opacity:.7;}
-.drop-zone p{color:var(--muted);font-size:.85rem;}
-.drop-zone small{font-size:.72rem;color:var(--muted);opacity:.7;}
-.progress-wrap{margin-top:12px;display:none;}
-.progress-wrap.on{display:block;}
-.prog-label{display:flex;justify-content:space-between;font-size:.74rem;color:var(--muted);margin-bottom:5px;}
-.prog-bar-bg{background:var(--surface3);border-radius:3px;height:5px;}
-.prog-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--gold-l),var(--gold));width:0;transition:.15s;}
+/* SIMPLE ROW (amenities, transport, social) */
+.simple-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--sf2);border:1px solid var(--line);border-radius:8px;margin-bottom:7px;}
+.simple-row select{width:105px;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 8px;color:var(--cream);font-size:.82rem;}
+.simple-row input{flex:1;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 9px;color:var(--cream);font-size:.82rem;}
+.simple-row input:focus,.simple-row select:focus{outline:none;border-color:var(--gold);}
 
-/* ── MEDIA GRID ── */
-.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:16px 0;}
-.media-thumb{border-radius:8px;overflow:hidden;background:var(--surface2);border:1px solid var(--line);transition:.2s;}
-.media-thumb:hover{border-color:var(--gold);}
-.media-thumb img,.media-thumb video{width:100%;height:96px;object-fit:cover;display:block;}
-.media-thumb-info{padding:8px 10px;}
-.media-thumb-status{font-size:.67rem;font-weight:600;margin-bottom:4px;}
-.media-thumb-status.used{color:var(--success);}
-.media-thumb-status.unused{color:#e07b39;}
-.media-thumb-btns{display:flex;gap:5px;}
-.media-thumb-btns button{flex:1;padding:5px 6px;font-size:.66rem;}
+/* ADD ROW */
+.add-row{border:1px dashed var(--line);border-radius:8px;padding:11px;text-align:center;color:var(--muted);font-size:.8rem;cursor:pointer;transition:.18s;margin-bottom:8px;}
+.add-row:hover{border-color:var(--gold);color:var(--gl);}
 
-/* ── PLACE CARD ── */
-.amenity-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;}
-.amenity-row .icon-sel{width:90px;}
-.amenity-row .title-input{flex:1;}
-.amenity-row .amen-btns{display:flex;gap:6px;}
+/* SLIDER GRID */
+.slide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:12px;}
+.slide-item{position:relative;border-radius:8px;overflow:hidden;background:var(--sf3);}
+.slide-item img{width:100%;height:110px;object-fit:cover;display:block;}
+.slide-num{position:absolute;top:6px;left:6px;background:rgba(7,6,5,.8);color:var(--gl);font-size:.65rem;padding:2px 7px;border-radius:4px;}
+.slide-del{position:absolute;top:6px;right:6px;background:rgba(7,6,5,.8);border:none;color:#fff;width:21px;height:21px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;}
+.slide-del:hover{background:var(--red);}
+.slide-up-zone{position:relative;border:1px dashed var(--line);border-radius:8px;height:110px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.78rem;background:var(--sf3);}
+.slide-up-zone:hover{border-color:var(--gold);color:var(--gl);}
 
-/* ── SOCIAL ROW ── */
-.social-item{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;}
-.social-item select{width:110px;}
-.social-item input{flex:1;}
+/* MEDIA GRID */
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin:14px 0;}
+.media-card{border-radius:8px;overflow:hidden;background:var(--sf2);border:1px solid var(--line);}
+.media-card img,.media-card video{width:100%;height:90px;object-fit:cover;display:block;}
+.media-card-info{padding:8px 9px;}
+.used-badge{font-size:.64rem;font-weight:600;margin-bottom:5px;}
+.used-badge.yes{color:var(--ok);}
+.used-badge.no{color:#e07b39;}
+.media-btns{display:flex;gap:5px;}
+.media-btns button{flex:1;padding:5px;font-size:.65rem;}
 
-/* ── ADD BTN ── */
-.add-row{border:1px dashed var(--line);border-radius:8px;padding:12px;text-align:center;color:var(--muted);font-size:.8rem;cursor:pointer;transition:.2s;margin-bottom:8px;}
-.add-row:hover{border-color:var(--gold);color:var(--gold-l);}
+/* PROGRESS */
+.prog-wrap{display:none;margin-top:12px;}
+.prog-wrap.on{display:block;}
+.prog-top{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:4px;}
+.prog-bg{background:var(--sf3);border-radius:3px;height:5px;}
+.prog-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
 
-.save-bar{position:fixed;bottom:0;left:220px;right:0;background:rgba(8,7,6,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:14px 40px;display:flex;justify-content:flex-end;gap:10px;z-index:100;}
-.divider{height:1px;background:var(--line);margin:20px 0;}
-.note{font-size:.74rem;color:var(--muted);}
-@media(max-width:720px){
-  .sidebar{width:60px;padding:14px 8px;}
-  .s-logo b,.nav-item span:not(.nav-dot){display:none;}
+/* DROPZONE */
+.drop-zone{border:2px dashed var(--line);border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:.18s;}
+.drop-zone:hover,.drop-zone.dg{border-color:var(--gold);background:rgba(205,164,76,.04);}
+.drop-zone svg{width:30px;height:30px;color:var(--gold);margin:0 auto 10px;display:block;opacity:.7;}
+.drop-zone p{color:var(--muted);font-size:.84rem;}
+.drop-zone small{font-size:.7rem;color:var(--muted);opacity:.7;}
+
+/* MAINT */
+.maint-bar{border-radius:10px;padding:16px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.maint-off{background:linear-gradient(90deg,#0e2a16,#06180a);border:1px solid var(--ok);}
+.maint-on{background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid var(--err);}
+
+/* SAVE BAR */
+.save-bar{position:fixed;bottom:0;left:210px;right:0;background:rgba(8,7,6,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:13px 38px;display:flex;justify-content:flex-end;gap:10px;z-index:50;}
+.note{font-size:.72rem;color:var(--muted);}
+
+@media(max-width:700px){
+  .sidebar{width:58px;padding:14px 6px;}
+  .s-logo b,.nav-item span:not(.ndot),#syncBadge,.s-footer .btn{display:none;}
   .nav-item{justify-content:center;}
-  .s-footer .btn,.s-footer #syncBadge{display:none;}
-  .main{padding:20px 16px;}
-  .save-bar{left:60px;}
-  .grid2,.grid3{grid-template-columns:1fr;}
+  .main{padding:18px 14px 90px;}
+  .save-bar{left:58px;}
+  .g2,.g3{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -196,102 +182,95 @@ button,input,textarea,select{font-family:inherit;}
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">Golden Inn</div>
-    <div class="login-sub">Admin Panel — Sign in to manage site content</div>
-    <label class="f-label">Password</label>
-    <input class="f-input" type="password" id="adminPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')login()">
-    <button class="btn btn-gold" style="width:100%;" onclick="login()">Sign In</button>
-    <div class="err" id="loginErr">Incorrect password.</div>
+    <div class="login-sub">Admin Panel — enter your password to continue</div>
+    <label class="fl">Password</label>
+    <input class="fi" type="password" id="adminPass" placeholder="Password">
+    <button class="btn btn-gold" style="width:100%;margin-top:4px;" id="loginBtn">Sign In</button>
+    <div class="err-msg" id="loginErr">Incorrect password. Try again.</div>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app">
+<div id="app" style="display:flex;">
   <div class="sidebar">
     <div class="s-logo">
-      <img src="assets/logo.png" alt="logo">
+      <img src="assets/logo.png" alt="">
       <b>Golden Inn</b>
     </div>
-    <div class="nav-item active" data-panel="hero"><span class="nav-dot"></span><span>Hero & Slider</span></div>
-    <div class="nav-item" data-panel="rooms"><span class="nav-dot"></span><span>Rooms</span></div>
-    <div class="nav-item" data-panel="hall"><span class="nav-dot"></span><span>Party Hall</span></div>
-    <div class="nav-item" data-panel="amenities"><span class="nav-dot"></span><span>Amenities</span></div>
-    <div class="nav-item" data-panel="explore"><span class="nav-dot"></span><span>Explore BLR</span></div>
-    <div class="nav-item" data-panel="location"><span class="nav-dot"></span><span>Location</span></div>
-    <div class="nav-item" data-panel="contact"><span class="nav-dot"></span><span>Contact & Social</span></div>
-    <div class="nav-item" data-panel="media"><span class="nav-dot"></span><span>Media Library</span></div>
-    <div class="nav-item" data-panel="settings"><span class="nav-dot"></span><span>Settings</span></div>
+    <div class="nav-item active" data-panel="hero"><span class="ndot"></span><span>Hero & Slider</span></div>
+    <div class="nav-item" data-panel="rooms"><span class="ndot"></span><span>Rooms</span></div>
+    <div class="nav-item" data-panel="hall"><span class="ndot"></span><span>Party Hall</span></div>
+    <div class="nav-item" data-panel="amenities"><span class="ndot"></span><span>Amenities</span></div>
+    <div class="nav-item" data-panel="explore"><span class="ndot"></span><span>Explore BLR</span></div>
+    <div class="nav-item" data-panel="location"><span class="ndot"></span><span>Location</span></div>
+    <div class="nav-item" data-panel="contact"><span class="ndot"></span><span>Contact</span></div>
+    <div class="nav-item" data-panel="media"><span class="ndot"></span><span>Media Library</span></div>
+    <div class="nav-item" data-panel="settings"><span class="ndot"></span><span>Settings</span></div>
     <div class="s-footer">
-      <span id="syncBadge">Connecting…</span>
-      <button class="btn btn-outline btn-sm" style="width:100%;" onclick="logout()">Sign Out</button>
+      <span id="syncBadge">Not connected</span>
+      <button class="btn btn-outline btn-sm" style="width:100%;" id="logoutBtn">Sign Out</button>
     </div>
   </div>
 
   <div class="main">
 
-    <!-- HERO -->
     <div class="panel active" id="panel-hero">
-      <div class="p-head"><h1>Hero & Slider</h1><p>The full-screen opening section visitors see first.</p></div>
+      <div class="ph"><h1>Hero & Slider</h1><p>The full-screen opening section visitors see first.</p></div>
       <div class="block">
         <div class="block-title">Text Content</div>
-        <div class="field"><label>Eyebrow</label><input id="h_eyebrow"></div>
+        <div class="field"><label>Eyebrow Text</label><input id="h_eyebrow"></div>
         <div class="field"><label>Main Title</label><input id="h_title"></div>
         <div class="field"><label>Subtitle</label><textarea id="h_sub"></textarea></div>
       </div>
       <div class="block">
-        <div class="block-title">Slider Images <span class="note">(drag & drop to upload · click × to remove)</span></div>
-        <div id="sliderGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:14px;"></div>
-        <div class="add-row" onclick="addSlide()">+ Add Slide</div>
+        <div class="block-title">Slider Images <span class="note">— click any image to swap it, click × to remove</span></div>
+        <div class="slide-grid" id="slideGrid"></div>
+        <div class="add-row" id="addSlideBtn">+ Add Slide</div>
       </div>
     </div>
 
-    <!-- ROOMS -->
     <div class="panel" id="panel-rooms">
-      <div class="p-head"><h1>Rooms</h1><p>Each card shows on the Rooms section with price, tags and booking links.</p></div>
+      <div class="ph"><h1>Rooms</h1><p>Click a card to expand and edit. Upload images directly on each card.</p></div>
       <div id="roomsList"></div>
-      <div class="add-row" onclick="addCard('rooms')">+ Add Room</div>
+      <div class="add-row" id="addRoomBtn">+ Add Room</div>
     </div>
 
-    <!-- HALL -->
     <div class="panel" id="panel-hall">
-      <div class="p-head"><h1>Party Hall</h1><p>Samarambha Party Hall packages and event options.</p></div>
+      <div class="ph"><h1>Party Hall</h1><p>Samarambha Party Hall packages.</p></div>
       <div id="hallList"></div>
-      <div class="add-row" onclick="addCard('hall')">+ Add Hall Package</div>
+      <div class="add-row" id="addHallBtn">+ Add Hall Package</div>
     </div>
 
-    <!-- AMENITIES -->
     <div class="panel" id="panel-amenities">
-      <div class="p-head"><h1>Amenities</h1><p>Icons and labels shown in the facilities grid.</p></div>
+      <div class="ph"><h1>Amenities</h1><p>Icons and labels shown in the facilities grid.</p></div>
       <div id="amenList"></div>
-      <div class="add-row" onclick="addAmen()">+ Add Amenity</div>
+      <div class="add-row" id="addAmenBtn">+ Add Amenity</div>
     </div>
 
-    <!-- EXPLORE -->
     <div class="panel" id="panel-explore">
-      <div class="p-head"><h1>Explore Bangalore</h1><p>Places near Golden Inn — distance auto-fetched when you enter the name.</p></div>
+      <div class="ph"><h1>Explore Bangalore</h1><p>Places near Golden Inn — distance auto-fetches when you type the name.</p></div>
       <div id="placesList"></div>
-      <div class="add-row" onclick="addCard('places')">+ Add Place</div>
+      <div class="add-row" id="addPlaceBtn">+ Add Place</div>
     </div>
 
-    <!-- LOCATION -->
     <div class="panel" id="panel-location">
-      <div class="p-head"><h1>Location & How to Reach</h1><p>Address and transport options shown in the location section.</p></div>
+      <div class="ph"><h1>Location & Transport</h1></div>
       <div class="block">
         <div class="block-title">Address</div>
-        <div class="field"><label>Hotel Address</label><textarea id="l_address"></textarea></div>
+        <div class="field"><label>Hotel Address</label><textarea id="l_address" rows="3"></textarea></div>
       </div>
       <div class="block">
-        <div class="block-title">Transport Options</div>
+        <div class="block-title">How To Reach — Transport Options</div>
         <div id="transportList"></div>
-        <div class="add-row" onclick="addTransport()">+ Add Transport Option</div>
+        <div class="add-row" id="addTransportBtn">+ Add Transport Option</div>
       </div>
     </div>
 
-    <!-- CONTACT -->
     <div class="panel" id="panel-contact">
-      <div class="p-head"><h1>Contact & Social</h1><p>Phone numbers, email, website and social media handles.</p></div>
+      <div class="ph"><h1>Contact & Social</h1></div>
       <div class="block">
         <div class="block-title">Contact Details</div>
-        <div class="grid2">
+        <div class="g2">
           <div class="field"><label>Primary Phone</label><input id="c_phone1"></div>
           <div class="field"><label>Secondary Phone</label><input id="c_phone2"></div>
           <div class="field"><label>Email</label><input id="c_email"></div>
@@ -299,545 +278,702 @@ button,input,textarea,select{font-family:inherit;}
         </div>
       </div>
       <div class="block">
-        <div class="block-title">Social Media Handles</div>
+        <div class="block-title">Social Media</div>
         <div id="socialList"></div>
-        <div class="add-row" onclick="addSocial()">+ Add Social Handle</div>
+        <div class="add-row" id="addSocialBtn">+ Add Social Handle</div>
       </div>
     </div>
 
-    <!-- MEDIA LIBRARY -->
     <div class="panel" id="panel-media">
-      <div class="p-head"><h1>Media Library</h1><p>All files stored on Cloudinary (free · 25GB). Upload here, copy the URL, paste into any image field.</p></div>
+      <div class="ph"><h1>Media Library</h1><p>Files stored on Cloudinary (free · 25 GB). Copy any URL and paste into an image field.</p></div>
       <div class="block">
-        <div class="drop-zone" id="mediaDropZone" onclick="document.getElementById('mediaFileInput').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="event.preventDefault();this.classList.remove('dragover');uploadMediaFiles(event.dataTransfer.files)">
+        <div class="drop-zone" id="mediaDropZone">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <p>Drag & drop images or videos here, or click to browse</p>
-          <small>JPG, PNG, WebP, MP4, MOV — uploaded directly to Cloudinary</small>
-          <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display:none" onchange="uploadMediaFiles(this.files)">
+          <small>JPG · PNG · WebP · MP4 · MOV — uploaded directly to Cloudinary</small>
+          <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display:none">
         </div>
-        <div class="progress-wrap" id="mediaProgress">
-          <div class="prog-label"><span id="mediaProgLabel">Uploading…</span><span id="mediaProgPct">0%</span></div>
-          <div class="prog-bar-bg"><div class="prog-bar" id="mediaProgBar"></div></div>
+        <div class="prog-wrap" id="mediaProgress">
+          <div class="prog-top"><span id="mediaProgLabel">Uploading…</span><span id="mediaProgPct">0%</span></div>
+          <div class="prog-bg"><div class="prog-bar" id="mediaProgBar"></div></div>
         </div>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
-        <span class="note" id="mediaStats"></span>
-        <button class="btn btn-red btn-sm" onclick="cleanUnused()">Delete Unused Media</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <span class="note" id="mediaStats">Loading…</span>
+        <button class="btn btn-red btn-sm" id="cleanUnusedBtn">Delete Unused Media</button>
       </div>
       <div class="media-grid" id="mediaGrid"></div>
-      <p class="note" style="margin-top:8px;">To free Cloudinary storage: after deleting unused records here, go to <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gold-l);">Cloudinary Media Library</a> and delete the files there too.</p>
+      <p class="note">To free Cloudinary storage: after removing unused records here, also delete the files in your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gl);">Cloudinary Media Library</a>.</p>
     </div>
 
-    <!-- SETTINGS -->
     <div class="panel" id="panel-settings">
-      <div class="p-head"><h1>Settings</h1><p>Site-wide toggles and maintenance mode.</p></div>
-      <div class="maint-bar off" id="maintBar">
+      <div class="ph"><h1>Settings</h1></div>
+      <div class="maint-bar maint-off" id="maintBar">
         <div>
           <div style="font-weight:600;margin-bottom:3px;" id="maintTitle">Maintenance Mode: OFF</div>
           <div class="note" id="maintSub">The live site is visible to all visitors.</div>
         </div>
-        <button class="btn btn-red btn-sm" id="maintBtn" onclick="toggleMaintenance()">Turn On</button>
+        <button class="btn btn-red btn-sm" id="maintBtn">Turn On</button>
       </div>
       <div class="block">
         <div class="block-title">Maintenance Message</div>
-        <div class="field"><label>Shown to visitors while site is in maintenance mode</label><textarea id="s_maintMsg"></textarea></div>
+        <div class="field"><label>Shown to visitors while maintenance mode is ON</label><textarea id="s_maintMsg"></textarea></div>
       </div>
     </div>
 
   </div>
 
   <div class="save-bar">
-    <button class="btn btn-outline btn-sm" onclick="loadFromFirestoreAndRender()">Discard Changes</button>
-    <button class="btn btn-gold" onclick="saveAll()">Save All Changes</button>
+    <button class="btn btn-outline btn-sm" id="discardBtn">Discard Changes</button>
+    <button class="btn btn-gold" id="saveBtn">Save All Changes</button>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-const ADMIN_PASSWORD = "golden123";
+/* ─── CONFIG ─────────────────────────────────────────── */
+const ADMIN_PASSWORD    = "golden123";
 const CLOUDINARY_CLOUD  = "egokdwtb";
 const CLOUDINARY_PRESET = "goldeninn media";
-let DATA = loadData();
+
+/* ─── STATE ──────────────────────────────────────────── */
+let DATA = {};
 let mediaItems = [];
+const ICON_KEYS = typeof ICONS !== 'undefined' ? Object.keys(ICONS) : ['bed','party','wifi','breakfast','parking','pin','phone','star'];
 
-/* ── AUTH ─────────────────────────────────────────────── */
-function login(){
-  if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').classList.add('on');
-    loadFromFirestoreAndRender();
-    loadMediaLibrary();
-  } else {
-    document.getElementById('loginErr').classList.add('on');
-  }
-}
-function logout(){
-  document.getElementById('app').classList.remove('on');
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('adminPass').value = '';
-}
-document.getElementById('adminPass').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
-
-/* ── NAV ──────────────────────────────────────────────── */
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    item.classList.add('active');
-    document.getElementById('panel-' + item.dataset.panel).classList.add('active');
-  });
+/* ─── INIT ───────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', function() {
+  showLogin();
+  setupNav();
+  setupEvents();
 });
 
-/* ── TOAST ────────────────────────────────────────────── */
-let toastTimer;
-function toast(msg, type=''){
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'on' + (type ? ' '+type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('on'), 3200);
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
 }
-
-/* ── SYNC BADGE ───────────────────────────────────────── */
-function badge(state){
-  const el = document.getElementById('syncBadge');
-  const map = {
-    loading:  {t:'Connecting…',       c:'var(--muted)'},
-    live:     {t:'Firebase Live',      c:'#4caf7d'},
-    saving:   {t:'Saving…',           c:'var(--gold)'},
-    saved:    {t:'Saved — Live',       c:'#4caf7d'},
-    offline:  {t:'Offline (cache)',    c:'#e07b39'},
-    error:    {t:'Save Failed',        c:'#e05252'},
-  };
-  const s = map[state] || map.offline;
-  el.textContent = s.t; el.style.color = s.color = s.c; el.style.borderColor = s.c;
-}
-
-/* ── LOAD & RENDER ────────────────────────────────────── */
-async function loadFromFirestoreAndRender(){
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
   badge('loading');
-  const fresh = await loadFromFirestore();
-  if(fresh){ DATA = fresh; badge('live'); } else { badge('offline'); }
-  renderAll();
+  loadFromFirestore().then(function(fresh) {
+    DATA = fresh || loadData();
+    badge(fresh ? 'live' : 'offline');
+    renderAll();
+    loadMediaLibrary();
+  }).catch(function() {
+    DATA = loadData();
+    badge('offline');
+    renderAll();
+  });
 }
 
-function renderAll(){
+/* ─── LOGIN ──────────────────────────────────────────── */
+function setupEvents() {
+  document.getElementById('loginBtn').addEventListener('click', doLogin);
+  document.getElementById('adminPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    showLogin();
+    document.getElementById('adminPass').value = '';
+  });
+  document.getElementById('saveBtn').addEventListener('click', saveAll);
+  document.getElementById('discardBtn').addEventListener('click', function() {
+    loadFromFirestore().then(function(fresh) {
+      if (fresh) DATA = fresh;
+      else DATA = loadData();
+      renderAll();
+      toast('Changes discarded', '');
+    });
+  });
+  document.getElementById('addSlideBtn').addEventListener('click', function() {
+    if (!DATA.slides) DATA.slides = [];
+    DATA.slides.push('assets/room1.png');
+    renderSlides();
+  });
+  document.getElementById('addRoomBtn').addEventListener('click', function() {
+    if (!DATA.rooms) DATA.rooms = [];
+    DATA.rooms.push({img:'assets/room1.png',icon:'bed',title:'New Room',price:'₹0',unit:'/ night',desc:'',tags:[]});
+    renderCards('rooms', 'roomsList');
+  });
+  document.getElementById('addHallBtn').addEventListener('click', function() {
+    if (!DATA.hall) DATA.hall = [];
+    DATA.hall.push({img:'assets/room12.png',icon:'party',title:'New Package',price:'₹0',unit:'/ event',desc:'',tags:[]});
+    renderCards('hall', 'hallList');
+  });
+  document.getElementById('addAmenBtn').addEventListener('click', function() {
+    if (!DATA.amenities) DATA.amenities = [];
+    DATA.amenities.push({iconKey:'star',title:'New Amenity'});
+    renderAmenities();
+  });
+  document.getElementById('addPlaceBtn').addEventListener('click', function() {
+    if (!DATA.places) DATA.places = [];
+    DATA.places.push({img:'assets/room9.png',title:'New Place',dist:'',desc:'',lat:null,lng:null});
+    renderPlaces();
+  });
+  document.getElementById('addTransportBtn').addEventListener('click', function() {
+    if (!DATA.transport) DATA.transport = [];
+    DATA.transport.push({iconKey:'taxi',text:'New transport option.'});
+    renderTransport();
+  });
+  document.getElementById('addSocialBtn').addEventListener('click', function() {
+    if (!DATA.social) DATA.social = [];
+    DATA.social.push({iconKey:'instagram',label:'',url:'https://'});
+    renderSocial();
+  });
+  document.getElementById('maintBtn').addEventListener('click', toggleMaintenance);
+  document.getElementById('cleanUnusedBtn').addEventListener('click', cleanUnused);
+
+  // Media upload
+  var dz = document.getElementById('mediaDropZone');
+  var fi = document.getElementById('mediaFileInput');
+  dz.addEventListener('click', function(e) { if (e.target !== fi) fi.click(); });
+  dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('dg'); });
+  dz.addEventListener('dragleave', function() { dz.classList.remove('dg'); });
+  dz.addEventListener('drop', function(e) { e.preventDefault(); dz.classList.remove('dg'); uploadMediaFiles(e.dataTransfer.files); });
+  fi.addEventListener('change', function() { uploadMediaFiles(fi.files); });
+}
+
+function doLogin() {
+  var pass = document.getElementById('adminPass').value;
+  var err  = document.getElementById('loginErr');
+  err.style.display = 'none';
+  if (pass === ADMIN_PASSWORD) {
+    showApp();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('adminPass').focus();
+  }
+}
+
+/* ─── NAV ────────────────────────────────────────────── */
+function setupNav() {
+  document.querySelectorAll('.nav-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+      item.classList.add('active');
+      var panel = document.getElementById('panel-' + item.dataset.panel);
+      if (panel) panel.classList.add('active');
+    });
+  });
+}
+
+/* ─── TOAST ──────────────────────────────────────────── */
+var toastTimer;
+function toast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'on' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('on'); }, 3200);
+}
+
+/* ─── SYNC BADGE ─────────────────────────────────────── */
+function badge(state) {
+  var el = document.getElementById('syncBadge');
+  var map = {
+    loading: {t:'Connecting…',     c:'var(--muted)'},
+    live:    {t:'Firebase Live',    c:'#4caf7d'},
+    saving:  {t:'Saving…',         c:'var(--gold)'},
+    saved:   {t:'Saved — Live',     c:'#4caf7d'},
+    offline: {t:'Offline (cache)', c:'#e07b39'},
+    error:   {t:'Save Failed',      c:'#e05252'},
+  };
+  var s = map[state] || map.offline;
+  el.textContent = s.t;
+  el.style.color = s.c;
+  el.style.borderColor = s.c;
+}
+
+/* ─── RENDER ALL ─────────────────────────────────────── */
+function renderAll() {
   renderHero();
   renderCards('rooms', 'roomsList');
   renderCards('hall', 'hallList');
   renderAmenities();
   renderPlaces();
-  renderLocation();
+  renderTransport();
   renderContact();
+  renderSocial();
   renderMaintBanner();
 }
 
-/* ── HERO ─────────────────────────────────────────────── */
-function renderHero(){
+/* ─── HERO ───────────────────────────────────────────── */
+function renderHero() {
   document.getElementById('h_eyebrow').value = DATA.heroEyebrow || '';
   document.getElementById('h_title').value   = DATA.heroTitle   || '';
   document.getElementById('h_sub').value     = DATA.heroSub     || '';
-  renderSliderGrid();
+  renderSlides();
 }
-function renderSliderGrid(){
-  const grid = document.getElementById('sliderGrid');
-  grid.innerHTML = (DATA.slides || []).map((src, i) => `
-    <div style="position:relative;">
-      ${imgUploadEl('slide_img_' + i, src, 120, url => { DATA.slides[i] = url; renderSliderGrid(); })}
-      <button onclick="DATA.slides.splice(${i},1);renderSliderGrid()" style="position:absolute;top:6px;right:6px;background:rgba(7,6,5,.8);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:.9rem;">×</button>
-      <div style="text-align:center;font-size:.7rem;color:var(--muted);padding:5px 0;">Slide ${i+1}</div>
-    </div>`).join('');
-}
-function addSlide(){
-  if(!DATA.slides) DATA.slides = [];
-  DATA.slides.push('assets/room1.png');
-  renderSliderGrid();
-}
-
-/* ── IMAGE UPLOAD ELEMENT (inline per card) ──────────── */
-function imgUploadEl(id, currentSrc, height=160, onDone){
-  const h = height;
-  return `
-  <div class="img-upload" id="wrap_${id}" style="height:${h}px;" onclick="document.getElementById('file_${id}').click()">
-    ${currentSrc
-      ? `<img src="${currentSrc}" style="height:${h}px;width:100%;object-fit:cover;">`
-      : `<div class="img-placeholder" style="height:${h}px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Upload Image</span></div>`}
-    <div class="img-overlay"><span>Change Image</span></div>
-    <input type="file" id="file_${id}" accept="image/*,video/*" style="display:none" onchange="handleInlineUpload('${id}', this, ${JSON.stringify(JSON.stringify(onDone ? onDone.toString() : ''))})">
-    <div class="upload-bar-wrap"><div class="upload-bar" id="bar_${id}"></div></div>
-  </div>`;
-}
-
-/* We store callbacks by id since they can't be embedded in HTML strings */
-const uploadCallbacks = {};
-function registerUpload(id, fn){ uploadCallbacks[id] = fn; }
-
-async function handleInlineUpload(id, input, _){
-  const file = input.files[0];
-  if(!file) return;
-  const bar = document.getElementById('bar_' + id);
-  bar.style.width = '20%';
-  const url = await cloudinaryUpload(file, pct => { bar.style.width = pct+'%'; });
-  bar.style.width = '100%';
-  setTimeout(() => { if(bar) bar.style.width='0%'; }, 500);
-  if(url && uploadCallbacks[id]) uploadCallbacks[id](url);
-}
-
-/* ── CLOUDINARY UPLOAD ────────────────────────────────── */
-async function cloudinaryUpload(file, onProgress){
-  const fd = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', CLOUDINARY_PRESET);
-  fd.append('folder', 'goldeninn');
-  const resourceType = file.type.startsWith('video') ? 'video' : 'image';
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`);
-    xhr.upload.onprogress = e => { if(e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100)); };
-    xhr.onload = () => {
-      const res = JSON.parse(xhr.responseText);
-      if(xhr.status === 200){ resolve(res.secure_url); }
-      else { toast('Upload failed: ' + (res.error?.message || 'Unknown error'), 'err'); resolve(null); }
-    };
-    xhr.onerror = () => { toast('Network error during upload', 'err'); resolve(null); };
-    xhr.send(fd);
+function renderSlides() {
+  var grid = document.getElementById('slideGrid');
+  var slides = DATA.slides || [];
+  var html = slides.map(function(src, i) {
+    return '<div class="slide-item">' +
+      '<img src="' + esc(src) + '" onerror="this.src=\'assets/room1.png\'">' +
+      '<span class="slide-num">' + (i+1) + '</span>' +
+      '<button class="slide-del" data-del="' + i + '">×</button>' +
+      '<label style="display:block;cursor:pointer;margin:0;">' +
+        '<input type="file" accept="image/*,video/*" data-slide="' + i + '" style="display:none" class="slide-file-input">' +
+        '<div style="background:var(--sf3);text-align:center;font-size:.68rem;color:var(--muted);padding:4px;">Click to swap</div>' +
+      '</label>' +
+    '</div>';
+  }).join('');
+  grid.innerHTML = html;
+  grid.querySelectorAll('[data-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      DATA.slides.splice(parseInt(btn.dataset.del), 1);
+      renderSlides();
+    });
+  });
+  grid.querySelectorAll('.slide-file-input').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var idx = parseInt(inp.dataset.slide);
+      var file = inp.files[0];
+      if (!file) return;
+      cloudinaryUpload(file, null).then(function(url) {
+        if (url) { DATA.slides[idx] = url; renderSlides(); toast('Slide image updated', 'ok'); }
+      });
+    });
   });
 }
 
-/* ── CARDS (Rooms / Hall) ─────────────────────────────── */
-const ICON_KEYS = Object.keys(ICONS);
-function cardIconSel(section, i){
-  return `<select onchange="DATA.${section}[${i}].icon=this.value" style="width:100%;background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--cream);">
-    ${ICON_KEYS.map(k=>`<option value="${k}" ${DATA[section][i]?.icon===k?'selected':''}>${k}</option>`).join('')}
-  </select>`;
-}
-
-function renderCards(section, listId){
-  const el = document.getElementById(listId);
-  const cards = DATA[section] || [];
-  el.innerHTML = cards.map((c,i) => {
-    const uid = section+'_'+i;
-    setTimeout(() => {
-      registerUpload(uid, url => {
-        DATA[section][i].img = url;
-        document.getElementById('img_val_'+uid).value = url;
-        const imgEl = document.querySelector(`#wrap_${uid} img`);
-        if(imgEl) imgEl.src = url;
-        else { document.getElementById('wrap_'+uid).innerHTML = `<img src="${url}" style="height:160px;width:100%;object-fit:cover;"><div class="img-overlay"><span>Change Image</span></div><input type="file" id="file_${uid}" accept="image/*,video/*" style="display:none" onchange="handleInlineUpload('${uid}',this)"><div class="upload-bar-wrap"><div class="upload-bar" id="bar_${uid}"></div></div>`; }
-      });
-    }, 0);
-    return `
-    <div class="card-row" id="cardrow_${section}_${i}">
-      <div class="card-row-top" onclick="toggleCard('cardrow_${section}_${i}')">
-        <img class="card-row-img" src="${c.img||'assets/room1.png'}" onerror="this.src='assets/room1.png'">
-        <div class="card-row-info">
-          <div class="card-row-title">${c.title||'Untitled'}</div>
-          <div class="card-row-meta">${c.price||''}${c.unit?' '+c.unit:''}</div>
-        </div>
-        <div class="card-row-actions">
-          <div class="reorder-btns">
-            <button class="reorder-btn" ${i===0?'disabled':''} onclick="event.stopPropagation();moveCard('${section}',${i},-1)">↑</button>
-            <button class="reorder-btn" ${i===cards.length-1?'disabled':''} onclick="event.stopPropagation();moveCard('${section}',${i},1)">↓</button>
-          </div>
-          <button class="btn btn-red btn-sm" onclick="event.stopPropagation();removeCard('${section}',${i})">Remove</button>
-        </div>
-      </div>
-      <div class="card-row-body" id="body_cardrow_${section}_${i}">
-        <div class="grid2" style="margin-bottom:13px;">
-          <div>
-            <label class="f-label" style="margin-bottom:6px;">Image</label>
-            ${imgUploadEl(uid, c.img, 160)}
-            <input type="hidden" id="img_val_${uid}" value="${c.img||''}">
-          </div>
-          <div>
-            <div class="field"><label>Icon</label>${cardIconSel(section, i)}</div>
-            <div class="field"><label>Title</label><input value="${esc(c.title)}" onchange="DATA.${section}[${i}].title=this.value"></div>
-            <div class="grid2">
-              <div class="field"><label>Price</label><input value="${esc(c.price)}" onchange="DATA.${section}[${i}].price=this.value"></div>
-              <div class="field"><label>Unit</label><input value="${esc(c.unit)}" onchange="DATA.${section}[${i}].unit=this.value" placeholder="/ night"></div>
-            </div>
-          </div>
-        </div>
-        <div class="field"><label>Description</label><textarea onchange="DATA.${section}[${i}].desc=this.value">${esc(c.desc)}</textarea></div>
-        <div class="field"><label>Tags (comma separated)</label><input value="${(c.tags||[]).join(', ')}" onchange="DATA.${section}[${i}].tags=this.value.split(',').map(s=>s.trim()).filter(Boolean)"></div>
-      </div>
-    </div>`;
+/* ─── CARDS (Rooms / Hall) ───────────────────────────── */
+function iconOptions(current) {
+  return ICON_KEYS.map(function(k) {
+    return '<option value="' + k + '"' + (k === current ? ' selected' : '') + '>' + k + '</option>';
   }).join('');
 }
 
-function toggleCard(id){
-  const body = document.getElementById('body_'+id);
-  if(body) body.classList.toggle('open');
-}
-function moveCard(section, i, dir){
-  const arr = DATA[section];
-  const j = i+dir;
-  if(j<0||j>=arr.length) return;
-  [arr[i],arr[j]] = [arr[j],arr[i]];
-  renderCards(section, section+'List');
-  if(section==='hall') renderCards(section, 'hallList');
-}
-function removeCard(section, i){
-  if(!confirm('Remove this card?')) return;
-  DATA[section].splice(i,1);
-  renderCards(section, section==='rooms'?'roomsList':'hallList');
-}
-function addCard(section){
-  if(!DATA[section]) DATA[section] = [];
-  DATA[section].push({img:'assets/room1.png',icon:'bed',title:'New Item',price:'₹0',unit:'/ night',desc:'',tags:[]});
-  const listId = section==='rooms'?'roomsList':'hallList';
-  renderCards(section, listId);
-}
-
-/* ── AMENITIES ───────────────────────────────────────── */
-function renderAmenities(){
-  document.getElementById('amenList').innerHTML = (DATA.amenities||[]).map((a,i) => `
-    <div class="amenity-row">
-      <select class="icon-sel" onchange="DATA.amenities[${i}].iconKey=this.value">
-        ${ICON_KEYS.map(k=>`<option value="${k}" ${a.iconKey===k?'selected':''}>${k}</option>`).join('')}
-      </select>
-      <input class="title-input f-input" style="margin:0;" value="${esc(a.title)}" onchange="DATA.amenities[${i}].title=this.value">
-      <div class="amen-btns">
-        <button class="reorder-btn" ${i===0?'disabled':''} onclick="moveAmen(${i},-1)">↑</button>
-        <button class="reorder-btn" ${i===(DATA.amenities.length-1)?'disabled':''} onclick="moveAmen(${i},1)">↓</button>
-        <button class="btn btn-red btn-sm" onclick="DATA.amenities.splice(${i},1);renderAmenities()">×</button>
-      </div>
-    </div>`).join('');
-}
-function moveAmen(i,dir){ const a=DATA.amenities,j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; renderAmenities(); }
-function addAmen(){ DATA.amenities.push({iconKey:'star',title:'New Amenity'}); renderAmenities(); }
-
-/* ── PLACES ──────────────────────────────────────────── */
-function renderPlaces(){
-  const el = document.getElementById('placesList');
-  const places = DATA.places || [];
-  el.innerHTML = places.map((p,i) => {
-    const uid = 'place_'+i;
-    setTimeout(() => {
-      registerUpload(uid, url => {
-        DATA.places[i].img = url;
-        const imgEl = document.querySelector(`#wrap_${uid} img`);
-        if(imgEl) imgEl.src = url;
-      });
-    }, 0);
-    return `
-    <div class="card-row" id="placerow_${i}">
-      <div class="card-row-top" onclick="toggleCard('placerow_${i}')">
-        <img class="card-row-img" src="${p.img||'assets/room9.png'}" onerror="this.src='assets/room9.png'">
-        <div class="card-row-info">
-          <div class="card-row-title">${p.title||'Untitled'}</div>
-          <div class="card-row-meta">${p.dist||''}</div>
-        </div>
-        <div class="card-row-actions">
-          <div class="reorder-btns">
-            <button class="reorder-btn" ${i===0?'disabled':''} onclick="event.stopPropagation();movePlace(${i},-1)">↑</button>
-            <button class="reorder-btn" ${i===places.length-1?'disabled':''} onclick="event.stopPropagation();movePlace(${i},1)">↓</button>
-          </div>
-          <button class="btn btn-red btn-sm" onclick="event.stopPropagation();DATA.places.splice(${i},1);renderPlaces()">Remove</button>
-        </div>
-      </div>
-      <div class="card-row-body" id="body_placerow_${i}">
-        <div class="grid2" style="margin-bottom:13px;">
-          <div>
-            <label class="f-label" style="margin-bottom:6px;">Image</label>
-            ${imgUploadEl(uid, p.img, 140)}
-          </div>
-          <div>
-            <div class="field">
-              <label>Place Name <span class="note">(auto-fetches distance)</span></label>
-              <input value="${esc(p.title)}" id="place_title_${i}" onchange="DATA.places[${i}].title=this.value" onblur="autoFetchDist(${i})">
-            </div>
-            <div class="field">
-              <label>Distance <span class="note" id="dist_status_${i}"></span></label>
-              <input value="${esc(p.dist)}" id="place_dist_${i}" onchange="DATA.places[${i}].dist=this.value">
-            </div>
-          </div>
-        </div>
-        <div class="field"><label>Description</label><textarea onchange="DATA.places[${i}].desc=this.value">${esc(p.desc)}</textarea></div>
-      </div>
-    </div>`;
+function renderCards(section, listId) {
+  var el = document.getElementById(listId);
+  var cards = DATA[section] || [];
+  if (!cards.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No items yet — add one below.</p>'; return; }
+  el.innerHTML = cards.map(function(c, i) {
+    return '<div class="card-row" id="cr_' + section + '_' + i + '">' +
+      '<div class="card-top" data-toggle="cr_' + section + '_' + i + '">' +
+        '<img class="card-thumb" src="' + esc(c.img || 'assets/room1.png') + '" onerror="this.src=\'assets/room1.png\'" id="thumb_' + section + '_' + i + '">' +
+        '<div class="card-info">' +
+          '<div class="card-title">' + esc(c.title || 'Untitled') + '</div>' +
+          '<div class="card-meta">' + esc((c.price || '') + (c.unit ? ' ' + c.unit : '')) + '</div>' +
+        '</div>' +
+        '<div class="card-acts">' +
+          '<button class="rbtn" data-move="' + section + '" data-idx="' + i + '" data-dir="-1"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="rbtn" data-move="' + section + '" data-idx="' + i + '" data-dir="1"' + (i === cards.length - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="btn btn-red btn-sm" data-remove="' + section + '" data-idx="' + i + '">Remove</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card-body" id="body_' + section + '_' + i + '">' +
+        '<div class="g2" style="margin-bottom:12px;">' +
+          '<div>' +
+            '<label class="fl" style="margin-bottom:6px;">Image — click to upload</label>' +
+            '<label style="display:block;cursor:pointer;" class="img-zone">' +
+              '<img src="' + esc(c.img || 'assets/room1.png') + '" id="img_' + section + '_' + i + '">' +
+              '<div class="img-overlay"><span>Upload New Image</span></div>' +
+              '<div class="up-bar-bg"><div class="up-bar" id="bar_' + section + '_' + i + '"></div></div>' +
+              '<input type="file" accept="image/*,video/*" style="display:none" class="card-img-input" data-sec="' + section + '" data-idx="' + i + '">' +
+            '</label>' +
+          '</div>' +
+          '<div>' +
+            '<div class="field"><label>Icon</label><select data-field="' + section + '.' + i + '.icon">' + iconOptions(c.icon) + '</select></div>' +
+            '<div class="field"><label>Title</label><input value="' + esc(c.title) + '" data-field="' + section + '.' + i + '.title"></div>' +
+            '<div class="g2">' +
+              '<div class="field"><label>Price</label><input value="' + esc(c.price) + '" data-field="' + section + '.' + i + '.price"></div>' +
+              '<div class="field"><label>Unit</label><input value="' + esc(c.unit) + '" data-field="' + section + '.' + i + '.unit" placeholder="/ night"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="field"><label>Description</label><textarea data-field="' + section + '.' + i + '.desc">' + esc(c.desc) + '</textarea></div>' +
+        '<div class="field"><label>Tags (comma separated)</label><input value="' + esc((c.tags || []).join(', ')) + '" data-tags="' + section + '.' + i + '"></div>' +
+      '</div>' +
+    '</div>';
   }).join('');
-}
-function movePlace(i,dir){ const a=DATA.places,j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; renderPlaces(); }
-async function autoFetchDist(i){
-  const title = document.getElementById('place_title_'+i)?.value;
-  if(!title) return;
-  const statusEl = document.getElementById('dist_status_'+i);
-  if(statusEl) statusEl.textContent = '— fetching…';
-  const result = await geocodePlace(title);
-  if(result){
-    DATA.places[i].lat = result.lat;
-    DATA.places[i].lng = result.lng;
-    DATA.places[i].dist = `~${result.distKm} km away`;
-    const distEl = document.getElementById('place_dist_'+i);
-    if(distEl) distEl.value = DATA.places[i].dist;
-    if(statusEl) statusEl.textContent = '— auto-fetched ✓';
-  } else {
-    if(statusEl) statusEl.textContent = '— not found, enter manually';
-  }
-}
-function addCard_places(){
-  if(!DATA.places) DATA.places = [];
-  DATA.places.push({img:'assets/room9.png',title:'New Place',dist:'',desc:'',lat:null,lng:null});
-  renderPlaces();
+
+  // Toggle expand
+  el.querySelectorAll('.card-top').forEach(function(top) {
+    top.addEventListener('click', function(e) {
+      if (e.target.closest('.card-acts')) return;
+      var id = top.dataset.toggle;
+      var body = document.getElementById('body_' + id.replace('cr_',''));
+      if (body) body.classList.toggle('open');
+    });
+  });
+
+  // Move
+  el.querySelectorAll('[data-move]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var sec = btn.dataset.move, i = parseInt(btn.dataset.idx), dir = parseInt(btn.dataset.dir);
+      var arr = DATA[sec], j = i + dir;
+      if (j < 0 || j >= arr.length) return;
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+      renderCards(sec, sec === 'rooms' ? 'roomsList' : 'hallList');
+    });
+  });
+
+  // Remove
+  el.querySelectorAll('[data-remove]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!confirm('Remove this card?')) return;
+      var sec = btn.dataset.remove, i = parseInt(btn.dataset.idx);
+      DATA[sec].splice(i, 1);
+      renderCards(sec, sec === 'rooms' ? 'roomsList' : 'hallList');
+    });
+  });
+
+  // Inline image upload
+  el.querySelectorAll('.card-img-input').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var sec = inp.dataset.sec, i = parseInt(inp.dataset.idx), file = inp.files[0];
+      if (!file) return;
+      var bar = document.getElementById('bar_' + sec + '_' + i);
+      cloudinaryUpload(file, function(pct) { if (bar) bar.style.width = pct + '%'; }).then(function(url) {
+        if (url) {
+          DATA[sec][i].img = url;
+          var imgEl = document.getElementById('img_' + sec + '_' + i);
+          var thumb = document.getElementById('thumb_' + sec + '_' + i);
+          if (imgEl) imgEl.src = url;
+          if (thumb) thumb.src = url;
+          if (bar) setTimeout(function() { bar.style.width = '0'; }, 500);
+          toast('Image updated', 'ok');
+        }
+      });
+    });
+  });
+
+  // Live field binding
+  el.querySelectorAll('[data-field]').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var parts = inp.dataset.field.split('.');
+      DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
+    });
+    inp.addEventListener('input', function() {
+      var parts = inp.dataset.field.split('.');
+      DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
+    });
+  });
+  el.querySelectorAll('[data-tags]').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var parts = inp.dataset.tags.split('.');
+      DATA[parts[0]][parseInt(parts[1])].tags = inp.value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    });
+  });
 }
 
-/* ── LOCATION ────────────────────────────────────────── */
-function renderLocation(){
-  document.getElementById('l_address').value = DATA.address || '';
-  const el = document.getElementById('transportList');
-  el.innerHTML = (DATA.transport||[]).map((t,i) => `
-    <div class="amenity-row">
-      <select class="icon-sel" onchange="DATA.transport[${i}].iconKey=this.value">
-        ${ICON_KEYS.map(k=>`<option value="${k}" ${t.iconKey===k?'selected':''}>${k}</option>`).join('')}
-      </select>
-      <input class="title-input f-input" style="margin:0;" value="${esc(t.text)}" onchange="DATA.transport[${i}].text=this.value">
-      <div class="amen-btns">
-        <button class="reorder-btn" ${i===0?'disabled':''} onclick="moveTransport(${i},-1)">↑</button>
-        <button class="reorder-btn" ${i===(DATA.transport.length-1)?'disabled':''} onclick="moveTransport(${i},1)">↓</button>
-        <button class="btn btn-red btn-sm" onclick="DATA.transport.splice(${i},1);renderLocation()">×</button>
-      </div>
-    </div>`).join('');
-}
-function moveTransport(i,dir){ const a=DATA.transport,j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; renderLocation(); }
-function addTransport(){ DATA.transport.push({iconKey:'taxi',text:'New transport option.'}); renderLocation(); }
+/* ─── AMENITIES ──────────────────────────────────────── */
+function renderAmenities() {
+  var el = document.getElementById('amenList');
+  var items = DATA.amenities || [];
+  el.innerHTML = items.map(function(a, i) {
+    return '<div class="simple-row">' +
+      '<select data-amen-icon="' + i + '">' + iconOptions(a.iconKey) + '</select>' +
+      '<input value="' + esc(a.title) + '" data-amen-title="' + i + '">' +
+      '<button class="rbtn" data-amen-up="' + i + '"' + (i===0?' disabled':'') + '>↑</button>' +
+      '<button class="rbtn" data-amen-dn="' + i + '"' + (i===items.length-1?' disabled':'') + '>↓</button>' +
+      '<button class="btn btn-red btn-sm" data-amen-del="' + i + '">×</button>' +
+    '</div>';
+  }).join('') || '<p class="note" style="padding:10px 0;">No amenities yet.</p>';
 
-/* ── CONTACT ─────────────────────────────────────────── */
-function renderContact(){
+  el.querySelectorAll('[data-amen-icon]').forEach(function(sel) {
+    sel.addEventListener('change', function() { DATA.amenities[parseInt(sel.dataset.amenIcon)].iconKey = sel.value; });
+  });
+  el.querySelectorAll('[data-amen-title]').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.amenities[parseInt(inp.dataset.amenTitle)].title = inp.value; });
+  });
+  el.querySelectorAll('[data-amen-up]').forEach(function(btn) {
+    btn.addEventListener('click', function() { var i=parseInt(btn.dataset.amenUp); if(i>0){var a=DATA.amenities;var t=a[i];a[i]=a[i-1];a[i-1]=t;renderAmenities();} });
+  });
+  el.querySelectorAll('[data-amen-dn]').forEach(function(btn) {
+    btn.addEventListener('click', function() { var i=parseInt(btn.dataset.amenDn),a=DATA.amenities; if(i<a.length-1){var t=a[i];a[i]=a[i+1];a[i+1]=t;renderAmenities();} });
+  });
+  el.querySelectorAll('[data-amen-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() { DATA.amenities.splice(parseInt(btn.dataset.amenDel),1); renderAmenities(); });
+  });
+}
+
+/* ─── PLACES ─────────────────────────────────────────── */
+function renderPlaces() {
+  var el = document.getElementById('placesList');
+  var places = DATA.places || [];
+  if (!places.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No places yet.</p>'; return; }
+  el.innerHTML = places.map(function(p, i) {
+    return '<div class="card-row">' +
+      '<div class="card-top" data-ptoggle="place_' + i + '">' +
+        '<img class="card-thumb" src="' + esc(p.img || 'assets/room9.png') + '" onerror="this.src=\'assets/room9.png\'" id="pthumb_' + i + '">' +
+        '<div class="card-info"><div class="card-title">' + esc(p.title || 'Untitled') + '</div><div class="card-meta">' + esc(p.dist || '') + '</div></div>' +
+        '<div class="card-acts">' +
+          '<button class="rbtn" data-pmove="' + i + '" data-pdir="-1"' + (i===0?' disabled':'') + '>↑</button>' +
+          '<button class="rbtn" data-pmove="' + i + '" data-pdir="1"' + (i===places.length-1?' disabled':'') + '>↓</button>' +
+          '<button class="btn btn-red btn-sm" data-pdel="' + i + '">Remove</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card-body" id="place_' + i + '">' +
+        '<div class="g2" style="margin-bottom:12px;">' +
+          '<div>' +
+            '<label class="fl" style="margin-bottom:6px;">Image — click to upload</label>' +
+            '<label style="display:block;cursor:pointer;" class="img-zone">' +
+              '<img src="' + esc(p.img || 'assets/room9.png') + '" id="pimg_' + i + '">' +
+              '<div class="img-overlay"><span>Upload New Image</span></div>' +
+              '<div class="up-bar-bg"><div class="up-bar" id="pbar_' + i + '"></div></div>' +
+              '<input type="file" accept="image/*,video/*" style="display:none" class="place-img-inp" data-idx="' + i + '">' +
+            '</label>' +
+          '</div>' +
+          '<div>' +
+            '<div class="field"><label>Place Name <span class="note" id="pdist_status_' + i + '"></span></label><input value="' + esc(p.title) + '" id="ptitle_' + i + '" data-pidx="' + i + '" class="place-title-inp"></div>' +
+            '<div class="field"><label>Distance</label><input value="' + esc(p.dist) + '" id="pdist_' + i + '" data-pidx="' + i + '" class="place-dist-inp"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="field"><label>Description</label><textarea class="place-desc-inp" data-idx="' + i + '">' + esc(p.desc) + '</textarea></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  el.querySelectorAll('[data-ptoggle]').forEach(function(top) {
+    top.addEventListener('click', function(e) {
+      if (e.target.closest('.card-acts')) return;
+      var body = document.getElementById(top.dataset.ptoggle);
+      if (body) body.classList.toggle('open');
+    });
+  });
+  el.querySelectorAll('[data-pmove]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var i=parseInt(btn.dataset.pmove), dir=parseInt(btn.dataset.pdir), a=DATA.places, j=i+dir;
+      if(j<0||j>=a.length) return;
+      var t=a[i];a[i]=a[j];a[j]=t;renderPlaces();
+    });
+  });
+  el.querySelectorAll('[data-pdel]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if(!confirm('Remove this place?')) return;
+      DATA.places.splice(parseInt(btn.dataset.pdel),1); renderPlaces();
+    });
+  });
+  el.querySelectorAll('.place-img-inp').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var i=parseInt(inp.dataset.idx), file=inp.files[0];
+      if(!file) return;
+      var bar=document.getElementById('pbar_'+i);
+      cloudinaryUpload(file, function(pct){if(bar)bar.style.width=pct+'%';}).then(function(url){
+        if(url){DATA.places[i].img=url;var ig=document.getElementById('pimg_'+i);var th=document.getElementById('pthumb_'+i);if(ig)ig.src=url;if(th)th.src=url;if(bar)setTimeout(function(){bar.style.width='0';},500);toast('Image updated','ok');}
+      });
+    });
+  });
+  el.querySelectorAll('.place-title-inp').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.pidx)].title = inp.value; });
+    inp.addEventListener('blur', function() { autoFetchDist(parseInt(inp.dataset.pidx), inp.value); });
+  });
+  el.querySelectorAll('.place-dist-inp').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.pidx)].dist = inp.value; });
+  });
+  el.querySelectorAll('.place-desc-inp').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.idx)].desc = inp.value; });
+  });
+}
+
+async function autoFetchDist(i, title) {
+  if (!title || typeof geocodePlace === 'undefined') return;
+  var s = document.getElementById('pdist_status_' + i);
+  if (s) s.textContent = '— fetching…';
+  var result = await geocodePlace(title);
+  if (result) {
+    DATA.places[i].lat = result.lat; DATA.places[i].lng = result.lng;
+    DATA.places[i].dist = '~' + result.distKm + ' km away';
+    var d = document.getElementById('pdist_' + i); if (d) d.value = DATA.places[i].dist;
+    if (s) s.textContent = '— auto-fetched ✓';
+  } else { if (s) s.textContent = '— enter manually'; }
+}
+
+/* ─── TRANSPORT ──────────────────────────────────────── */
+function renderTransport() {
+  var el = document.getElementById('transportList');
+  var items = DATA.transport || [];
+  el.innerHTML = items.map(function(t, i) {
+    return '<div class="simple-row">' +
+      '<select data-tr-icon="' + i + '">' + iconOptions(t.iconKey) + '</select>' +
+      '<input value="' + esc(t.text) + '" data-tr-text="' + i + '">' +
+      '<button class="rbtn" data-tr-up="' + i + '"' + (i===0?' disabled':'') + '>↑</button>' +
+      '<button class="rbtn" data-tr-dn="' + i + '"' + (i===items.length-1?' disabled':'') + '>↓</button>' +
+      '<button class="btn btn-red btn-sm" data-tr-del="' + i + '">×</button>' +
+    '</div>';
+  }).join('') || '<p class="note" style="padding:10px 0;">No transport options yet.</p>';
+
+  el.querySelectorAll('[data-tr-icon]').forEach(function(sel){sel.addEventListener('change',function(){DATA.transport[parseInt(sel.dataset.trIcon)].iconKey=sel.value;});});
+  el.querySelectorAll('[data-tr-text]').forEach(function(inp){inp.addEventListener('input',function(){DATA.transport[parseInt(inp.dataset.trText)].text=inp.value;});});
+  el.querySelectorAll('[data-tr-up]').forEach(function(btn){btn.addEventListener('click',function(){var i=parseInt(btn.dataset.trUp),a=DATA.transport;if(i>0){var t=a[i];a[i]=a[i-1];a[i-1]=t;renderTransport();}});});
+  el.querySelectorAll('[data-tr-dn]').forEach(function(btn){btn.addEventListener('click',function(){var i=parseInt(btn.dataset.trDn),a=DATA.transport;if(i<a.length-1){var t=a[i];a[i]=a[i+1];a[i+1]=t;renderTransport();}});});
+  el.querySelectorAll('[data-tr-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.transport.splice(parseInt(btn.dataset.trDel),1);renderTransport();});});
+}
+
+/* ─── CONTACT / SOCIAL ───────────────────────────────── */
+function renderContact() {
   document.getElementById('c_phone1').value  = DATA.phone1  || '';
   document.getElementById('c_phone2').value  = DATA.phone2  || '';
   document.getElementById('c_email').value   = DATA.email   || '';
   document.getElementById('c_website').value = DATA.website || '';
-  const el = document.getElementById('socialList');
-  el.innerHTML = (DATA.social||[]).map((s,i) => `
-    <div class="social-item">
-      <select onchange="DATA.social[${i}].iconKey=this.value">
-        ${ICON_KEYS.map(k=>`<option value="${k}" ${s.iconKey===k?'selected':''}>${k}</option>`).join('')}
-      </select>
-      <input class="f-input" style="margin:0;width:120px;" value="${esc(s.label)}" placeholder="Label" onchange="DATA.social[${i}].label=this.value">
-      <input class="f-input" style="margin:0;flex:1;" value="${esc(s.url)}" placeholder="https://..." onchange="DATA.social[${i}].url=this.value">
-      <button class="btn btn-red btn-sm" onclick="DATA.social.splice(${i},1);renderContact()">×</button>
-    </div>`).join('');
 }
-function addSocial(){ if(!DATA.social)DATA.social=[]; DATA.social.push({iconKey:'instagram',label:'',url:'https://'}); renderContact(); }
+function renderSocial() {
+  var el = document.getElementById('socialList');
+  var items = DATA.social || [];
+  el.innerHTML = items.map(function(s, i) {
+    return '<div class="simple-row">' +
+      '<select data-soc-icon="' + i + '" style="width:110px;">' + iconOptions(s.iconKey) + '</select>' +
+      '<input value="' + esc(s.label) + '" data-soc-label="' + i + '" style="width:110px;flex:none;" placeholder="Label">' +
+      '<input value="' + esc(s.url) + '" data-soc-url="' + i + '" placeholder="https://...">' +
+      '<button class="btn btn-red btn-sm" data-soc-del="' + i + '">×</button>' +
+    '</div>';
+  }).join('') || '<p class="note" style="padding:10px 0;">No social handles yet.</p>';
 
-/* ── SETTINGS / MAINTENANCE ──────────────────────────── */
-function renderMaintBanner(){
-  const bar = document.getElementById('maintBar');
-  const btn = document.getElementById('maintBtn');
-  const title = document.getElementById('maintTitle');
-  const sub = document.getElementById('maintSub');
+  el.querySelectorAll('[data-soc-icon]').forEach(function(sel){sel.addEventListener('change',function(){DATA.social[parseInt(sel.dataset.socIcon)].iconKey=sel.value;});});
+  el.querySelectorAll('[data-soc-label]').forEach(function(inp){inp.addEventListener('input',function(){DATA.social[parseInt(inp.dataset.socLabel)].label=inp.value;});});
+  el.querySelectorAll('[data-soc-url]').forEach(function(inp){inp.addEventListener('input',function(){DATA.social[parseInt(inp.dataset.socUrl)].url=inp.value;});});
+  el.querySelectorAll('[data-soc-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.social.splice(parseInt(btn.dataset.socDel),1);renderSocial();});});
+}
+
+/* ─── SETTINGS ───────────────────────────────────────── */
+function renderMaintBanner() {
+  var bar   = document.getElementById('maintBar');
+  var btn   = document.getElementById('maintBtn');
+  var title = document.getElementById('maintTitle');
+  var sub   = document.getElementById('maintSub');
   document.getElementById('s_maintMsg').value = DATA.maintenanceMsg || '';
-  if(DATA.maintenance){
-    bar.className='maint-bar on'; btn.textContent='Turn Off — Go Live'; btn.className='btn btn-green btn-sm';
-    title.textContent='Maintenance Mode: ON'; sub.textContent='Visitors see a "back soon" screen.';
+  if (DATA.maintenance) {
+    bar.className = 'maint-bar maint-on';
+    btn.className = 'btn btn-green btn-sm'; btn.textContent = 'Turn Off — Go Live';
+    title.textContent = 'Maintenance Mode: ON';
+    sub.textContent = 'Visitors see a "back soon" screen.';
   } else {
-    bar.className='maint-bar off'; btn.textContent='Turn On — Enable Maintenance'; btn.className='btn btn-red btn-sm';
-    title.textContent='Maintenance Mode: OFF'; sub.textContent='The live site is visible to all visitors.';
+    bar.className = 'maint-bar maint-off';
+    btn.className = 'btn btn-red btn-sm'; btn.textContent = 'Turn On';
+    title.textContent = 'Maintenance Mode: OFF';
+    sub.textContent = 'The live site is visible to all visitors.';
   }
 }
-async function toggleMaintenance(){
+async function toggleMaintenance() {
   DATA.maintenance = !DATA.maintenance;
   DATA.maintenanceMsg = document.getElementById('s_maintMsg').value;
   renderMaintBanner();
   badge('saving');
-  try{ await saveToFirestore(DATA); badge('saved'); setTimeout(()=>badge('live'),3000); toast('Maintenance mode ' + (DATA.maintenance?'ON':'OFF'), 'ok'); }
-  catch(e){ badge('error'); toast('Save failed: '+e.message,'err'); }
+  try {
+    await saveToFirestore(DATA);
+    badge('saved'); setTimeout(function(){badge('live');},3000);
+    toast('Maintenance ' + (DATA.maintenance?'ON':'OFF'), 'ok');
+  } catch(e) { badge('error'); toast('Save failed','er'); }
 }
 
-/* ── MEDIA LIBRARY ───────────────────────────────────── */
-async function loadMediaLibrary(){
-  try{
-    const items = await loadAllMedia();
-    mediaItems = items;
-    renderMediaGrid();
-  }catch(e){ console.warn('Media load failed', e); }
-}
-function renderMediaGrid(){
-  const used = collectUsedImageUrls(DATA);
-  const grid = document.getElementById('mediaGrid');
-  const total = mediaItems.reduce((s,m)=>s+(m.size||0),0);
-  const unusedCount = mediaItems.filter(m=>!used.has(m.url)).length;
-  document.getElementById('mediaStats').textContent =
-    `${mediaItems.length} file(s) · ${formatBytes(total)} · ${unusedCount} unused`;
-  if(!mediaItems.length){
-    grid.innerHTML = '<p class="note" style="padding:16px 0;">No media uploaded yet.</p>';
-    return;
-  }
-  grid.innerHTML = mediaItems.map(m => {
-    const isUsed = used.has(m.url);
-    const preview = m.type==='video'
-      ? `<video src="${m.url}" style="width:100%;height:96px;object-fit:cover;" muted></video>`
-      : `<img src="${m.url}" style="width:100%;height:96px;object-fit:cover;" loading="lazy">`;
-    return `
-    <div class="media-thumb">
-      ${preview}
-      <div class="media-thumb-info">
-        <div class="media-thumb-status ${isUsed?'used':'unused'}">${isUsed?'✓ In use':'⚠ Unused'} · ${formatBytes(m.size)}</div>
-        <div class="media-thumb-btns">
-          <button class="btn btn-outline btn-sm" onclick="copyUrl('${m.url}',this)">Copy URL</button>
-          <button class="btn btn-red btn-sm" onclick="deleteMedia('${m.id}','${esc(m.name)}')">Del</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function copyUrl(url, btn){
-  navigator.clipboard.writeText(url).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy URL',2000); });
-}
-async function deleteMedia(id, name){
-  if(!confirm(`Remove "${name}" from the media catalogue?`)) return;
-  await MEDIA_COL.doc(id).delete();
-  mediaItems = mediaItems.filter(m=>m.id!==id);
-  renderMediaGrid();
-  toast('Removed from catalogue', 'ok');
-}
-async function cleanUnused(){
-  if(!confirm('Remove all unused media records from the catalogue? Files remain on Cloudinary until you delete them there too.')) return;
-  const used = collectUsedImageUrls(DATA);
-  const unused = mediaItems.filter(m=>!used.has(m.url));
-  await Promise.all(unused.map(m => MEDIA_COL.doc(m.id).delete()));
-  mediaItems = mediaItems.filter(m=>used.has(m.url));
-  renderMediaGrid();
-  toast(unused.length ? `Removed ${unused.length} unused record(s)` : 'No unused media found', 'ok');
-}
-
-async function uploadMediaFiles(files){
-  if(!files||!files.length) return;
-  const arr = Array.from(files);
-  const prog = document.getElementById('mediaProgress');
-  const bar  = document.getElementById('mediaProgBar');
-  const label= document.getElementById('mediaProgLabel');
-  const pct  = document.getElementById('mediaProgPct');
-  prog.classList.add('on');
-  for(let i=0;i<arr.length;i++){
-    const file = arr[i];
-    label.textContent = `Uploading ${file.name} (${i+1}/${arr.length})…`;
-    bar.style.width='0%'; pct.textContent='0%';
-    const resourceType = file.type.startsWith('video') ? 'video' : 'image';
-    const fd = new FormData();
+/* ─── CLOUDINARY UPLOAD ──────────────────────────────── */
+function cloudinaryUpload(file, onProgress) {
+  return new Promise(function(resolve) {
+    var resourceType = file.type.startsWith('video') ? 'video' : 'image';
+    var fd = new FormData();
     fd.append('file', file);
     fd.append('upload_preset', CLOUDINARY_PRESET);
     fd.append('folder', 'goldeninn');
-    const result = await new Promise(resolve => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`);
-      xhr.upload.onprogress = e => {
-        if(e.lengthComputable){ const p=Math.round(e.loaded/e.total*100); bar.style.width=p+'%'; pct.textContent=p+'%'; }
-      };
-      xhr.onload = () => {
-        const res = JSON.parse(xhr.responseText);
-        if(xhr.status===200) resolve(res);
-        else { toast('Upload failed: '+(res.error?.message||'error'),'err'); resolve(null); }
-      };
-      xhr.onerror = () => { toast('Network error','err'); resolve(null); };
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload');
+    xhr.upload.onprogress = function(e) {
+      if (e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100));
+    };
+    xhr.onload = function() {
+      try {
+        var res = JSON.parse(xhr.responseText);
+        if (xhr.status === 200) { resolve(res.secure_url); }
+        else { toast('Upload failed: ' + (res.error ? res.error.message : 'error'), 'er'); resolve(null); }
+      } catch(e) { toast('Upload error', 'er'); resolve(null); }
+    };
+    xhr.onerror = function() { toast('Network error', 'er'); resolve(null); };
+    xhr.send(fd);
+  });
+}
+
+/* ─── MEDIA LIBRARY ──────────────────────────────────── */
+async function loadMediaLibrary() {
+  try {
+    var items = await loadAllMedia();
+    mediaItems = items;
+    renderMediaGrid();
+  } catch(e) { document.getElementById('mediaStats').textContent = 'Could not load media.'; }
+}
+function renderMediaGrid() {
+  var used = collectUsedImageUrls(DATA);
+  var grid = document.getElementById('mediaGrid');
+  var total = mediaItems.reduce(function(s,m){return s+(m.size||0);},0);
+  var unusedCt = mediaItems.filter(function(m){return !used.has(m.url);}).length;
+  document.getElementById('mediaStats').textContent = mediaItems.length + ' file(s) · ' + formatBytes(total) + ' · ' + unusedCt + ' unused';
+  if (!mediaItems.length) { grid.innerHTML = '<p class="note">No media uploaded yet.</p>'; return; }
+  grid.innerHTML = mediaItems.map(function(m) {
+    var isUsed = used.has(m.url);
+    var preview = m.type==='video'
+      ? '<video src="' + esc(m.url) + '" style="width:100%;height:90px;object-fit:cover;" muted></video>'
+      : '<img src="' + esc(m.url) + '" style="width:100%;height:90px;object-fit:cover;" loading="lazy">';
+    return '<div class="media-card">' + preview +
+      '<div class="media-card-info">' +
+        '<div class="used-badge ' + (isUsed?'yes':'no') + '">' + (isUsed?'✓ In use':'⚠ Unused') + ' · ' + formatBytes(m.size) + '</div>' +
+        '<div class="media-btns">' +
+          '<button class="btn btn-outline btn-sm" data-copy="' + esc(m.url) + '">Copy URL</button>' +
+          '<button class="btn btn-red btn-sm" data-mdel="' + m.id + '" data-mname="' + esc(m.name) + '">Del</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  grid.querySelectorAll('[data-copy]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      navigator.clipboard.writeText(btn.dataset.copy).then(function(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy URL';},2000);});
+    });
+  });
+  grid.querySelectorAll('[data-mdel]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (!confirm('Remove "' + btn.dataset.mname + '" from catalogue?')) return;
+      MEDIA_COL.doc(btn.dataset.mdel).delete().then(function(){
+        mediaItems = mediaItems.filter(function(m){return m.id!==btn.dataset.mdel;});
+        renderMediaGrid(); toast('Removed from catalogue','ok');
+      });
+    });
+  });
+}
+async function cleanUnused() {
+  if (!confirm('Remove all unused media records from the catalogue?')) return;
+  var used = collectUsedImageUrls(DATA);
+  var unused = mediaItems.filter(function(m){return !used.has(m.url);});
+  await Promise.all(unused.map(function(m){return MEDIA_COL.doc(m.id).delete();}));
+  mediaItems = mediaItems.filter(function(m){return used.has(m.url);});
+  renderMediaGrid();
+  toast(unused.length ? 'Removed ' + unused.length + ' unused record(s)' : 'No unused media found', 'ok');
+}
+async function uploadMediaFiles(files) {
+  if (!files || !files.length) return;
+  var arr = Array.from(files);
+  var prog  = document.getElementById('mediaProgress');
+  var bar   = document.getElementById('mediaProgBar');
+  var label = document.getElementById('mediaProgLabel');
+  var pct   = document.getElementById('mediaProgPct');
+  prog.classList.add('on');
+  for (var i = 0; i < arr.length; i++) {
+    var file = arr[i];
+    label.textContent = 'Uploading ' + file.name + ' (' + (i+1) + '/' + arr.length + ')…';
+    bar.style.width = '0%'; pct.textContent = '0%';
+    var resourceType = file.type.startsWith('video') ? 'video' : 'image';
+    var fd = new FormData();
+    fd.append('file', file); fd.append('upload_preset', CLOUDINARY_PRESET); fd.append('folder','goldeninn');
+    var result = await new Promise(function(resolve) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/'+resourceType+'/upload');
+      xhr.upload.onprogress = function(e){if(e.lengthComputable){var p=Math.round(e.loaded/e.total*100);bar.style.width=p+'%';pct.textContent=p+'%';}};
+      xhr.onload = function(){try{var r=JSON.parse(xhr.responseText);if(xhr.status===200)resolve(r);else{toast('Upload failed: '+(r.error?r.error.message:'error'),'er');resolve(null);}}catch(e){resolve(null);}};
+      xhr.onerror=function(){toast('Network error','er');resolve(null);};
       xhr.send(fd);
     });
-    if(result){
-      const item = { name:file.name, url:result.secure_url, size:result.bytes||file.size, type:resourceType, added:Date.now() };
-      const ref = await MEDIA_COL.add(item);
-      mediaItems.unshift({...item, id:ref.id});
-      toast(`Uploaded: ${file.name}`, 'ok');
+    if (result) {
+      var item = {name:file.name,url:result.secure_url,size:result.bytes||file.size,type:resourceType,added:Date.now()};
+      var ref = await MEDIA_COL.add(item);
+      mediaItems.unshift(Object.assign({id:ref.id},item));
+      toast('Uploaded: ' + file.name, 'ok');
     }
   }
   prog.classList.remove('on');
@@ -845,43 +981,35 @@ async function uploadMediaFiles(files){
   renderMediaGrid();
 }
 
-/* ── SAVE ALL ─────────────────────────────────────────── */
-async function saveAll(){
-  // collect all inline edits
-  DATA.heroEyebrow   = document.getElementById('h_eyebrow').value;
-  DATA.heroTitle     = document.getElementById('h_title').value;
-  DATA.heroSub       = document.getElementById('h_sub').value;
-  DATA.address       = document.getElementById('l_address').value;
-  DATA.phone1        = document.getElementById('c_phone1').value;
-  DATA.phone2        = document.getElementById('c_phone2').value;
-  DATA.email         = document.getElementById('c_email').value;
-  DATA.website       = document.getElementById('c_website').value;
-  DATA.maintenanceMsg= document.getElementById('s_maintMsg').value;
+/* ─── SAVE ALL ───────────────────────────────────────── */
+async function saveAll() {
+  DATA.heroEyebrow    = document.getElementById('h_eyebrow').value;
+  DATA.heroTitle      = document.getElementById('h_title').value;
+  DATA.heroSub        = document.getElementById('h_sub').value;
+  DATA.address        = document.getElementById('l_address').value;
+  DATA.phone1         = document.getElementById('c_phone1').value;
+  DATA.phone2         = document.getElementById('c_phone2').value;
+  DATA.email          = document.getElementById('c_email').value;
+  DATA.website        = document.getElementById('c_website').value;
+  DATA.maintenanceMsg = document.getElementById('s_maintMsg').value;
   badge('saving');
-  try{
+  try {
     await saveToFirestore(DATA);
     badge('saved');
-    setTimeout(()=>badge('live'),3000);
-    toast('All changes saved — live for everyone', 'ok');
+    setTimeout(function(){badge('live');}, 3000);
+    toast('Saved — changes are live for everyone', 'ok');
     renderMediaGrid();
-  }catch(e){
+  } catch(e) {
     badge('error');
     saveData(DATA);
-    toast('Firebase error — saved locally: '+e.message, 'err');
+    toast('Firebase error — saved locally. ' + e.message, 'er');
   }
 }
 
-/* ── HELPERS ─────────────────────────────────────────── */
-function esc(s){ return (s||'').toString().replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// expose addCard for places via onclick
-window.addCard = function(section){
-  if(section==='rooms') addCard_rooms();
-  else if(section==='hall') addCard_hall();
-  else if(section==='places') addCard_places();
-};
-function addCard_rooms(){ if(!DATA.rooms)DATA.rooms=[]; DATA.rooms.push({img:'assets/room1.png',icon:'bed',title:'New Room',price:'₹0',unit:'/ night',desc:'',tags:[]}); renderCards('rooms','roomsList'); }
-function addCard_hall(){ if(!DATA.hall)DATA.hall=[]; DATA.hall.push({img:'assets/room12.png',icon:'party',title:'New Package',price:'₹0',unit:'/ event',desc:'',tags:[]}); renderCards('hall','hallList'); }
+/* ─── UTILS ──────────────────────────────────────────── */
+function esc(s) {
+  return (s||'').toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 </script>
 </body>
 </html>
