@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Inn — Luxury Rooms · Samarambha Party Hall · Pub | Electronic City, Bangalore</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -284,7 +286,7 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
   <div class="kicker">Get In Touch</div>
   <h2 class="section-title">Contact <span class="gold-text">Us</span></h2>
   <div class="contact-wrap">
-    <form class="form" onsubmit="event.preventDefault();alert('Thank you! We will get back to you shortly. For immediate help, please call us.');this.reset();">
+    <form class="form" id="contactForm" onsubmit="submitContact(event)">
       <input type="text" placeholder="Your Name" required>
       <input type="tel" placeholder="Phone Number" required>
       <input type="email" placeholder="Email Address">
@@ -459,7 +461,30 @@ burger.onclick = ()=>{
 document.querySelectorAll('#navList a').forEach(a=>a.onclick=()=>{
   document.getElementById('navList').classList.remove('open');
   burger.innerHTML = ICONS.menu;
-});
+});async function submitContact(e){
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('button[type=submit]');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  const msg = {
+    name:    form.querySelector('input[type=text]').value.trim(),
+    phone:   form.querySelector('input[type=tel]').value.trim(),
+    email:   form.querySelector('input[type=email]').value.trim(),
+    message: form.querySelector('textarea').value.trim(),
+    read:    false,
+    sentAt:  new Date().toISOString()
+  };
+  try {
+    await db.collection('messages').add(msg);
+    btn.textContent = 'Message Sent!';
+    btn.style.background = 'linear-gradient(135deg,#3a9e60,#256640)';
+    form.reset();
+    setTimeout(()=>{ btn.textContent='Send Message'; btn.style.background=''; btn.disabled=false; }, 3500);
+  } catch(err) {
+    btn.textContent = 'Send Message'; btn.disabled = false;
+    alert('Could not send — please call us directly at ' + DATA.phone1);
+  }
+}
 </script>
 </body>
 </html>
