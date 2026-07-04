@@ -64,25 +64,12 @@ nav a::after{content:'';position:absolute;left:0;bottom:0;height:1px;width:0;bac
 nav a:hover::after{width:100%;}
 .nav-right{display:flex;align-items:center;gap:16px;}
 .burger{display:none;cursor:pointer;color:var(--gold-light);width:26px;height:26px;}
-
-/* GOOGLE TRANSLATE WIDGET STYLES */
-#google_translate_element { margin-right: 8px; }
-.goog-te-gadget-simple { background-color: var(--black3) !important; border: 1px solid var(--line) !important; border-radius: 4px; padding: 6px 10px !important; display: flex !important; align-items: center; }
-.goog-te-gadget-simple .goog-te-menu-value { color: var(--gold-light) !important; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-.goog-te-gadget-simple .goog-te-menu-value span { color: var(--gold-light) !important; }
-.goog-te-gadget-simple .goog-te-menu-value span:nth-child(5) { display: none; }
-.goog-te-gadget-simple .goog-te-menu-value span:nth-child(3) { border-left: none !important; }
-.goog-te-gadget-icon { display: none; }
-.skiptranslate iframe { display: none !important; }
-body { top: 0 !important; }
-
 @media(max-width:980px){
   nav{position:fixed;top:0;right:-100%;height:100vh;width:min(78vw,320px);background:linear-gradient(165deg,var(--black3),var(--black));border-left:1px solid var(--line);transition:.35s;padding:90px 30px;z-index:999;}
   nav.open{right:0;}
   nav ul{flex-direction:column;gap:26px;}
   .burger{display:flex;}
   .nav-call-text{display:none;}
-  #google_translate_element { display: none; } /* Hide on mobile to save space, or move into nav menu */
 }
 
 .hero{position:relative;height:100svh;min-height:560px;max-height:980px;overflow:hidden;}
@@ -216,7 +203,6 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
       </ul>
     </nav>
     <div class="nav-right">
-      <div id="google_translate_element"></div>
       <a id="navCallBtn" href="tel:+918746834131" class="btn btn-call"><span class="ic-wrap"></span><span class="nav-call-text">Call Now</span></a>
       <div class="burger" id="burger"></div>
     </div>
@@ -330,17 +316,6 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 
 </div>
 
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'en',
-      includedLanguages: 'en,kn,ta,te,hi,ml', // English, Kannada, Tamil, Telugu, Hindi, Malayalam
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
-  }
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="site-data.js"></script>
@@ -372,8 +347,6 @@ if(DATA.maintenance && !BYPASS){
 }
 
 function render(){
-  curSlide = 0; // FIX: Reset the slide tracker when we repaint the content
-
   document.getElementById('heroEyebrow').textContent = DATA.heroEyebrow;
   document.getElementById('heroTitle').textContent = DATA.heroTitle;
   document.getElementById('heroSub').textContent = DATA.heroSub;
@@ -461,7 +434,6 @@ function showSlide(i){
   slides[curSlide].classList.remove('active'); dots[curSlide].classList.remove('active');
   curSlide=(i+slides.length)%slides.length;
   slides[curSlide].classList.add('active'); dots[curSlide].classList.add('active');
-  startSlider(); // FIX: Reset the timer so it doesn't double-slide right after clicking
 }
 function startSlider(){ clearInterval(slideTimer); slideTimer=setInterval(()=>showSlide(curSlide+1),5000); }
 
@@ -489,9 +461,7 @@ burger.onclick = ()=>{
 document.querySelectorAll('#navList a').forEach(a=>a.onclick=()=>{
   document.getElementById('navList').classList.remove('open');
   burger.innerHTML = ICONS.menu;
-});
-
-async function submitContact(e){
+});async function submitContact(e){
   e.preventDefault();
   const form = e.target;
   const btn = form.querySelector('button[type=submit]');
