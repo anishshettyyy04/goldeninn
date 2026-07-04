@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Inn — Admin</title>
 <meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="assets/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -213,6 +214,7 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
     <div class="nav-item" data-panel="contact"><span class="ndot"></span><span>Contact</span></div>
     <div class="nav-item" data-panel="media"><span class="ndot"></span><span>Media Library</span></div>
     <div class="nav-item" data-panel="settings"><span class="ndot"></span><span>Settings</span></div>
+    <div class="nav-item" data-panel="messages"><span class="ndot"></span><span>Messages <span id="msgCount" style="background:var(--r2);color:#fff;border-radius:20px;padding:1px 7px;font-size:.65rem;margin-left:4px;display:none;"></span></span></div>
     <div class="s-footer">
       <span id="syncBadge">Not connected</span>
       <button class="btn btn-outline btn-sm" style="width:100%;" id="logoutBtn">Sign Out</button>
@@ -328,6 +330,15 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
       </div>
     </div>
 
+    <div class="panel" id="panel-messages">
+      <div class="ph"><h1>Messages</h1><p>Enquiries sent from the contact form on the main site.</p></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <span class="note" id="msgStats"></span>
+        <button class="btn btn-outline btn-sm" onclick="loadMessages()">Refresh</button>
+      </div>
+      <div id="messagesList"><p class="note" style="padding:10px 0;">Loading…</p></div>
+    </div>
+
   </div>
 
   <div class="save-bar">
@@ -402,6 +413,7 @@ function showApp() {
     }).catch(function() { badge('offline'); });
   }
   if (typeof loadMediaLibrary === 'function') loadMediaLibrary();
+  loadMessages();
 }
 
 window.doLogin = function doLogin() {
@@ -1039,6 +1051,56 @@ async function saveAll() {
     saveData(DATA);
     toast('Firebase error — saved locally. ' + e.message, 'er');
   }
+}
+
+/* ─── MESSAGES ───────────────────────────────────────── */
+async function loadMessages() {
+  var el = document.getElementById('messagesList');
+  var stats = document.getElementById('msgStats');
+  var badge = document.getElementById('msgCount');
+  if (!el) return;
+  el.innerHTML = '<p class="note" style="padding:10px 0;">Loading…</p>';
+  try {
+    var snap = await db.collection('messages').orderBy('sentAt','desc').get();
+    var msgs = snap.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
+    var unread = msgs.filter(function(m) { return !m.read; }).length;
+    stats.textContent = msgs.length + ' message(s) · ' + unread + ' unread';
+    if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline'; }
+    else { badge.style.display = 'none'; }
+    if (!msgs.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No messages yet. Messages from the contact form will appear here.</p>'; return; }
+    el.innerHTML = msgs.map(function(m) {
+      var d = new Date(m.sentAt);
+      var dateStr = d.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      return '<div style="background:' + (m.read ? 'var(--sf2)' : 'var(--sf3)') + ';border:1px solid ' + (m.read ? 'var(--line)' : 'var(--gold)') + ';border-radius:10px;padding:18px 20px;margin-bottom:12px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;flex-wrap:wrap;">' +
+          '<div>' +
+            '<div style="font-weight:600;font-size:.95rem;">' + esc(m.name || 'Unknown') + (m.read ? '' : ' <span style="background:var(--r2);color:#fff;border-radius:10px;padding:2px 8px;font-size:.65rem;font-weight:600;margin-left:6px;">NEW</span>') + '</div>' +
+            '<div style="font-size:.76rem;color:var(--muted);margin-top:3px;">' + esc(m.phone || '') + (m.email ? ' · ' + esc(m.email) : '') + '</div>' +
+          '</div>' +
+          '<div style="font-size:.72rem;color:var(--muted);white-space:nowrap;">' + dateStr + '</div>' +
+        '</div>' +
+        '<div style="color:var(--cream);font-size:.88rem;line-height:1.6;margin-bottom:14px;white-space:pre-wrap;">' + esc(m.message || '') + '</div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          (m.phone ? '<a href="tel:' + esc(m.phone) + '" class="btn btn-green btn-sm">Call Back</a>' : '') +
+          (m.email ? '<a href="mailto:' + esc(m.email) + '" class="btn btn-outline btn-sm">Reply by Email</a>' : '') +
+          (!m.read ? '<button class="btn btn-outline btn-sm" onclick="markRead(\'' + m.id + '\')">Mark as Read</button>' : '') +
+          '<button class="btn btn-red btn-sm" onclick="deleteMsg(\'' + m.id + '\')">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<p class="note" style="color:#e05252;">Could not load messages. Check Firestore rules.</p>';
+  }
+}
+async function markRead(id) {
+  await db.collection('messages').doc(id).update({read: true});
+  loadMessages();
+}
+async function deleteMsg(id) {
+  if (!confirm('Delete this message permanently?')) return;
+  await db.collection('messages').doc(id).delete();
+  loadMessages();
+  toast('Message deleted', 'ok');
 }
 
 /* ─── UTILS ──────────────────────────────────────────── */
