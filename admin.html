@@ -192,7 +192,7 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
         <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
       </button>
     </div>
-    <button class="btn btn-gold" style="width:100%;margin-top:2px;" id="loginBtn">Sign In</button>
+    <button class="btn btn-gold" style="width:100%;margin-top:2px;" id="loginBtn" onclick="doLogin()">Sign In</button>
     <div class="err-msg" id="loginErr" style="display:none;margin-top:10px;font-size:.78rem;color:#e05252;"></div>
   </div>
 </div>
@@ -350,14 +350,22 @@ let DATA = {};
 let mediaItems = [];
 const ICON_KEYS = typeof ICONS !== 'undefined' ? Object.keys(ICONS) : ['bed','party','wifi','breakfast','parking','pin','phone','star'];
 
-/* ─── INIT ───────────────────────────────────────────── */
-window.addEventListener('DOMContentLoaded', function() {
-  showLogin();
-  setupNav();
-  setupEvents();
-});
+/* ─── INIT — runs immediately, no DOMContentLoaded needed ─ */
+(function init() {
+  // If DOM is already ready, run now; otherwise wait
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+  function run() {
+    try { showLogin(); } catch(e) { console.warn('showLogin error:', e); }
+    try { setupNav(); }   catch(e) { console.warn('setupNav error:', e); }
+    try { setupEvents(); } catch(e) { console.warn('setupEvents error:', e); }
+  }
+})();
 
-function togglePassVis() {
+window.togglePassVis = function togglePassVis() {
   var inp = document.getElementById('adminPass');
   var icon = document.getElementById('eyeIcon');
   if (inp.type === 'password') {
@@ -397,7 +405,7 @@ function showApp() {
   if (typeof loadMediaLibrary === 'function') loadMediaLibrary();
 }
 
-function doLogin() {
+window.doLogin = function doLogin() {
   var id   = (document.getElementById('adminId').value   || '').trim();
   var pass = (document.getElementById('adminPass').value || '').trim();
   var err  = document.getElementById('loginErr');
