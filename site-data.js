@@ -107,7 +107,17 @@ async function loadFromFirestore(){
   try{
     const snap = await CONTENT_REF.get();
     if(snap.exists && snap.data() && Object.keys(snap.data()).length > 0){
-      const data = Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), snap.data());
+      const defaults = JSON.parse(JSON.stringify(DEFAULTS));
+      const remote   = snap.data();
+      // Shallow merge remote into defaults
+      const data = Object.assign(defaults, remote);
+      // For array fields: if remote gave us an empty array, restore the default
+      // so the site never shows blank sections due to an accidental empty save
+      ['slides','rooms','hall','amenities','places','transport','social'].forEach(function(key){
+        if(!data[key] || !Array.isArray(data[key]) || data[key].length === 0){
+          data[key] = JSON.parse(JSON.stringify(DEFAULTS[key]));
+        }
+      });
       localStorage.setItem(STORE_KEY, JSON.stringify(data));
       return data;
     }
