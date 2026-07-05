@@ -218,8 +218,18 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 #maintenanceScreen img{height:80px;width:80px;border-radius:50%;margin-bottom:26px;}
 #maintenanceScreen h1{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:16px;}
 #maintenanceScreen p{max-width:480px;color:var(--muted);margin-bottom:26px;font-weight:300;}
+/* LANGUAGE SWITCHER */
+.lang-switcher{position:relative;}
+.lang-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:4px;background:transparent;border:1px solid var(--line);color:var(--cream);cursor:pointer;font-size:.78rem;font-weight:500;letter-spacing:.3px;transition:.2s;white-space:nowrap;}
+.lang-btn:hover{border-color:var(--gold);color:var(--gold-light);}
+.lang-btn svg{width:15px;height:15px;}
+.lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--black2);border:1px solid var(--line);border-radius:8px;min-width:170px;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-6px);transition:.22s;z-index:200;}
+.lang-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.lang-menu a{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.84rem;color:var(--muted);cursor:pointer;transition:.15s;text-decoration:none;}
+.lang-menu a:hover{background:rgba(205,164,76,.08);color:var(--gold-light);}
+.lang-menu a.active{color:var(--gold-light);font-weight:600;}
+.lang-flag{font-size:1.1rem;line-height:1;}
 </style>
-</head>
 <body>
 
 <div id="maintenanceScreen" style="display:none;">
@@ -239,17 +249,31 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
     </a>
     <nav id="navList">
       <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#rooms">Rooms</a></li>
-        <li><a href="#partyhall">Party Hall</a></li>
-        <li><a href="#amenities">Amenities</a></li>
-        <li><a href="#explore">Explore</a></li>
-        <li><a href="#location">Location</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#home" data-i18n="nav_home">Home</a></li>
+        <li><a href="#rooms" data-i18n="nav_rooms">Rooms</a></li>
+        <li><a href="#partyhall" data-i18n="nav_hall">Party Hall</a></li>
+        <li><a href="#amenities" data-i18n="nav_amenities">Amenities</a></li>
+        <li><a href="#explore" data-i18n="nav_explore">Explore</a></li>
+        <li><a href="#location" data-i18n="nav_location">Location</a></li>
+        <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
       </ul>
     </nav>
     <div class="nav-right">
-      <a id="navCallBtn" href="tel:+918746834131" class="btn btn-call"><span class="ic-wrap"></span><span class="nav-call-text">Call Now</span></a>
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-btn" id="langBtn" onclick="toggleLangMenu()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18A14 14 0 0 1 12 3z"/></svg>
+          <span id="langLabel">EN</span>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <a onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</a>
+          <a onclick="setLang('kn')"><span class="lang-flag">🇮🇳</span> ಕನ್ನಡ</a>
+          <a onclick="setLang('ta')"><span class="lang-flag">🇮🇳</span> தமிழ்</a>
+          <a onclick="setLang('te')"><span class="lang-flag">🇮🇳</span> తెలుగు</a>
+          <a onclick="setLang('hi')"><span class="lang-flag">🇮🇳</span> हिंदी</a>
+          <a onclick="setLang('ml')"><span class="lang-flag">🇮🇳</span> മലയാളം</a>
+        </div>
+      </div>
+      <a id="navCallBtn" href="tel:+918746834131" class="btn btn-call"><span class="ic-wrap"></span><span class="nav-call-text" data-i18n="nav_call">Call Now</span></a>
       <div class="burger" id="burger"></div>
     </div>
   </div>
@@ -258,66 +282,66 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 <section class="hero" id="home">
   <div id="sliderWrap"></div>
   <div class="hero-content">
-    <div class="eyebrow" id="heroEyebrow"></div>
+    <div class="eyebrow" id="heroEyebrow" data-i18n="hero_eyebrow"></div>
     <h1 class="gold-text" id="heroTitle">Golden Inn</h1>
-    <p id="heroSub"></p>
+    <p id="heroSub" data-i18n="hero_subtitle"></p>
     <div class="hero-btns">
-      <a href="#rooms" class="btn btn-gold">Explore Rooms</a>
-      <a id="heroCallBtn" href="tel:+918746834131" class="btn btn-outline"></a>
+      <a href="#rooms" class="btn btn-gold" data-i18n="hero_btn_rooms">Explore Rooms</a>
+      <a id="heroCallBtn" href="tel:+918746834131" class="btn btn-outline" data-i18n="hero_btn_call"></a>
     </div>
   </div>
   <div class="dots" id="dots"></div>
-  <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
+  <div class="scroll-cue"><span data-i18n="scroll_label">Scroll</span><span class="line"></span></div>
 </section>
 
 <div class="divider"></div>
 
 <section class="section" id="rooms">
-  <div class="kicker">Stay With Us</div>
-  <h2 class="section-title">Our <span class="gold-text">Rooms</span></h2>
-  <p class="section-desc">Considered interiors, restful beds and a complimentary morning breakfast with every stay — choose the room that suits your trip.</p>
+  <div class="kicker" data-i18n="rooms_kicker">Stay With Us</div>
+  <h2 class="section-title"><span data-i18n="rooms_title_a">Our</span> <span class="gold-text" data-i18n="rooms_title_b">Rooms</span></h2>
+  <p class="section-desc" data-i18n="rooms_desc">Considered interiors, restful beds and a complimentary morning breakfast with every stay — choose the room that suits your trip.</p>
   <div class="grid" id="roomsGrid"></div>
 </section>
 
 <div class="divider"></div>
 
 <section class="section" id="partyhall">
-  <div class="kicker">Celebrate With Us</div>
-  <h2 class="section-title">Samarambha <span class="gold-text">Party Hall</span></h2>
-  <p class="section-desc">A grand banquet space for weddings, milestone birthdays and corporate events — fully equipped, centrally located.</p>
+  <div class="kicker" data-i18n="hall_kicker">Celebrate With Us</div>
+  <h2 class="section-title"><span data-i18n="hall_title_a">Samarambha</span> <span class="gold-text" data-i18n="hall_title_b">Party Hall</span></h2>
+  <p class="section-desc" data-i18n="hall_desc">A grand banquet space for weddings, milestone birthdays and corporate events — fully equipped, centrally located.</p>
   <div class="grid" id="hallGrid"></div>
 </section>
 
 <div class="divider"></div>
 
 <section class="section" id="amenities">
-  <div class="kicker">Hotel Details</div>
-  <h2 class="section-title">Amenities & <span class="gold-text">Facilities</span></h2>
+  <div class="kicker" data-i18n="amen_kicker">Hotel Details</div>
+  <h2 class="section-title"><span data-i18n="amen_title_a">Amenities &</span> <span class="gold-text" data-i18n="amen_title_b">Facilities</span></h2>
   <div class="amen-grid" id="amenGrid"></div>
 </section>
 
 <div class="divider"></div>
 
 <section class="section" id="explore">
-  <div class="kicker">Around Golden Inn</div>
-  <h2 class="section-title">Explore <span class="gold-text">Bangalore</span></h2>
-  <p class="section-desc">Staying with us puts you close to some of Bangalore's most loved destinations — ideal for a day trip during your visit.</p>
+  <div class="kicker" data-i18n="explore_kicker">Around Golden Inn</div>
+  <h2 class="section-title"><span data-i18n="explore_title_a">Explore</span> <span class="gold-text" data-i18n="explore_title_b">Bangalore</span></h2>
+  <p class="section-desc" data-i18n="explore_desc">Staying with us puts you close to some of Bangalore's most loved destinations — ideal for a day trip during your visit.</p>
   <div class="grid" id="placesGrid"></div>
 </section>
 
 <div class="divider"></div>
 
 <section class="section" id="location">
-  <div class="kicker">Find Us</div>
-  <h2 class="section-title">Location & <span class="gold-text">How To Reach</span></h2>
+  <div class="kicker" data-i18n="loc_kicker">Find Us</div>
+  <h2 class="section-title"><span data-i18n="loc_title_a">Location &</span> <span class="gold-text" data-i18n="loc_title_b">How To Reach</span></h2>
   <div class="loc-wrap">
     <div class="loc-info">
       <div class="addr-box">
         <h4></h4>
         <p id="hotelAddress" style="color:var(--muted);font-weight:300;margin-bottom:18px;"></p>
-        <a id="directionsBtn" href="#" target="_blank" class="btn btn-gold">Get Directions</a>
+        <a id="directionsBtn" href="#" target="_blank" class="btn btn-gold" data-i18n="btn_directions">Get Directions</a>
       </div>
-      <h4 style="color:var(--gold-light);margin-bottom:6px;">Getting Here</h4>
+      <h4 style="color:var(--gold-light);margin-bottom:6px;" id="gettingHereLabel" data-i18n="loc_getting">Getting Here</h4>
       <ul class="transport-list" id="transportList"></ul>
     </div>
     <div class="map-frame">
@@ -329,15 +353,15 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 <div class="divider"></div>
 
 <section class="section" id="contact">
-  <div class="kicker">Get In Touch</div>
-  <h2 class="section-title">Contact <span class="gold-text">Us</span></h2>
+  <div class="kicker" data-i18n="contact_kicker">Get In Touch</div>
+  <h2 class="section-title"><span data-i18n="contact_title_a">Contact</span> <span class="gold-text" data-i18n="contact_title_b">Us</span></h2>
   <div class="contact-wrap">
     <form class="form" id="contactForm" onsubmit="submitContact(event)">
-      <input type="text" placeholder="Your Name" required>
-      <input type="tel" placeholder="Phone Number" required>
-      <input type="email" placeholder="Email Address">
-      <textarea placeholder="Your Message / Booking Query"></textarea>
-      <button class="btn btn-gold" type="submit" style="width:100%;border:none;cursor:pointer;justify-content:center;">Send Message</button>
+      <input type="text" id="fi_name" placeholder="Your Name" required data-i18n-ph="form_name">
+      <input type="tel" id="fi_phone" placeholder="Phone Number" required data-i18n-ph="form_phone">
+      <input type="email" id="fi_email" placeholder="Email Address" data-i18n-ph="form_email">
+      <textarea id="fi_msg" placeholder="Your Message / Booking Query" data-i18n-ph="form_msg"></textarea>
+      <button class="btn btn-gold" type="submit" id="fi_send" style="width:100%;border:none;cursor:pointer;justify-content:center;" data-i18n="form_send">Send Message</button>
     </form>
     <div class="contact-card">
       <div class="row"><span class="ic-wrap"></span><div><strong>Call Us</strong><a id="cPhone1" href="#"></a><br><a id="cPhone2" href="#"></a></div></div>
@@ -366,8 +390,46 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="site-data.js"></script>
 <script>
-let DATA = loadData(); // instant from cache
+let DATA = loadData();
 const BYPASS = new URLSearchParams(location.search).has('preview');
+
+/* ── LANGUAGE SYSTEM ─────────────────────────────────── */
+let LANG = localStorage.getItem('golden_inn_lang') || 'en';
+let T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[LANG]||DEFAULT_TRANSLATIONS.en));
+function tr(key){ return T[key] || (DEFAULT_TRANSLATIONS.en[key]) || key; }
+
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if(T[k]) el.textContent = T[k];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph');
+    if(T[k]) el.placeholder = T[k];
+  });
+  const labels={en:'EN',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिं',ml:'മലʼ};
+  const lbl = document.getElementById('langLabel');
+  if(lbl) lbl.textContent = labels[LANG]||LANG.toUpperCase();
+  document.querySelectorAll('#langMenu a').forEach((a,i)=>{
+    a.classList.toggle('active', ['en','kn','ta','te','hi','ml'][i]===LANG);
+  });
+}
+
+window.toggleLangMenu = function(){
+  document.getElementById('langMenu').classList.toggle('open');
+};
+document.addEventListener('click', e=>{
+  if(!e.target.closest('#langSwitcher')) document.getElementById('langMenu')?.classList.remove('open');
+});
+window.setLang = async function(lang){
+  LANG = lang;
+  localStorage.setItem('golden_inn_lang', lang);
+  document.getElementById('langMenu').classList.remove('open');
+  try{ T = await loadTranslations(lang); }
+  catch(e){ T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en)); }
+  applyTranslations();
+  render();
+};
 
 if(DATA.maintenance && !BYPASS){
   document.getElementById('siteRoot').style.display = 'none';
@@ -377,33 +439,34 @@ if(DATA.maintenance && !BYPASS){
   ms.querySelector('.btn-call').innerHTML = icon('phone',16) + ' Call ' + DATA.phone1;
   ms.querySelector('.btn-call').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
 } else {
-  render(); // paint immediately from cache
+  render();
+  applyTranslations();
   curSlide = 0; startSlider();
-  // then fetch fresh data from Firestore and re-render silently
+  // Load fresh Firestore content
   loadFromFirestore().then(fresh => {
     if(fresh){
       DATA = fresh;
-      if(fresh.maintenance && !BYPASS){
-        location.reload();
-      } else {
-        render();
-        curSlide = 0; startSlider(); // restart slider with fresh slides
-      }
+      if(fresh.maintenance && !BYPASS){ location.reload(); }
+      else { render(); curSlide = 0; startSlider(); }
     }
   });
+  // Load saved language
+  if(LANG !== 'en'){
+    loadTranslations(LANG).then(trans => {
+      T = trans; applyTranslations(); render();
+    }).catch(()=>{});
+  }
 }
 
 function render(){
-  document.getElementById('heroEyebrow').textContent = DATA.heroEyebrow;
   document.getElementById('heroTitle').textContent = DATA.heroTitle;
-  document.getElementById('heroSub').textContent = DATA.heroSub;
   document.getElementById('hotelAddress').textContent = DATA.address;
   document.getElementById('cAddress').textContent = DATA.address;
   document.querySelector('.addr-box h4').innerHTML = icon('pin',18) + ' Address';
 
   document.getElementById('navCallBtn').querySelector('.ic-wrap').innerHTML = ICONS.phone;
   document.getElementById('navCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
-  document.getElementById('heroCallBtn').innerHTML = icon('phone',16) + ' Call to Book';
+  document.getElementById('heroCallBtn').innerHTML = icon('phone',16) + ' ' + tr('hero_btn_call');
   document.getElementById('heroCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
 
   document.getElementById('cPhone1').textContent = DATA.phone1;
@@ -415,54 +478,56 @@ function render(){
   document.getElementById('cWebsite').textContent = DATA.website;
   document.getElementById('cWebsite').href = 'https://'+DATA.website.replace(/^https?:\/\//,'');
   const rows = document.querySelectorAll('.contact-card .row .ic-wrap');
-  rows[0].innerHTML = ICONS.phone; rows[1].innerHTML = ICONS.mail; rows[2].innerHTML = ICONS.globe; rows[3].innerHTML = ICONS.pin;
+  rows[0].innerHTML=ICONS.phone; rows[1].innerHTML=ICONS.mail; rows[2].innerHTML=ICONS.globe; rows[3].innerHTML=ICONS.pin;
 
   const sw = document.getElementById('sliderWrap'); const dots = document.getElementById('dots');
   sw.innerHTML=''; dots.innerHTML=''; curSlide=0;
   DATA.slides.forEach((src,i)=>{
     const d=document.createElement('div'); d.className='slide'+(i===0?' active':'');
-    d.innerHTML=`<img src="${src}" alt="Golden Inn">`; sw.appendChild(d);
+    const img = document.createElement('img');
+    img.src = src; img.alt = 'Golden Inn';
+    img.onerror = function(){ this.closest('.slide').style.display='none'; };
+    d.appendChild(img); sw.appendChild(d);
     const dot=document.createElement('span'); dot.className=i===0?'active':''; dot.onclick=()=>showSlide(i); dots.appendChild(dot);
   });
 
-  document.getElementById('roomsGrid').innerHTML = DATA.rooms.map(c=>cardHTML(c,'Book')).join('');
-  document.getElementById('hallGrid').innerHTML = DATA.hall.map(c=>cardHTML(c,'Enquire')).join('');
+  document.getElementById('roomsGrid').innerHTML = DATA.rooms.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
+  document.getElementById('hallGrid').innerHTML = DATA.hall.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
   document.getElementById('amenGrid').innerHTML = DATA.amenities.map(a=>`<div class="amen">${icon(a.iconKey,30)}<h4>${a.title}</h4></div>`).join('');
   document.getElementById('placesGrid').innerHTML = DATA.places.map(p=>`
     <div class="card place-card">
-      <div class="card-img"><img src="${p.img}" alt="${p.title}"></div>
+      <div class="card-img"><img src="${p.img}" alt="${p.title}" onerror="this.style.display='none'"></div>
       <div class="card-body">
         <h3>${p.title}</h3>
         <div class="dist">${icon('pin',13)} ${p.dist}</div>
         <p style="margin-top:8px;">${p.desc}</p>
-        <a href="${directionsUrl(p.lat,p.lng,p.title)}" target="_blank" class="btn btn-outline" style="margin-top:18px;width:100%;justify-content:center;">${icon('direction',14)} Get Directions</a>
+        <a href="${directionsUrl(p.lat,p.lng,p.title)}" target="_blank" class="btn btn-outline" style="margin-top:18px;width:100%;justify-content:center;">${icon('direction',14)} ${tr('btn_directions')}</a>
       </div>
     </div>`).join('');
   document.getElementById('transportList').innerHTML = DATA.transport.map(t=>`<li>${icon(t.iconKey,22)}<span>${t.text}</span></li>`).join('');
-
   document.getElementById('mapFrame').src = "https://www.google.com/maps?q="+encodeURIComponent(DATA.address)+"&output=embed";
   document.getElementById('directionsBtn').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(DATA.address)}`;
-
   const socialHTML = DATA.social.map(s=>`<a href="${s.url}" target="_blank" title="${s.label}">${icon(s.iconKey,18)}</a>`).join('');
   document.getElementById('socialRow').innerHTML = socialHTML;
   document.getElementById('footSocial').innerHTML = socialHTML;
+  applyTranslations();
 }
 
-function cardHTML(c,actionLabel){
+function cardHTML(c, callLabel, enquireLabel){
   return `
   <div class="card">
     <div class="card-img">
-      <img src="${c.img}" alt="${c.title}">
+      <img src="${c.img}" alt="${c.title}" onerror="this.style.opacity='0'">
       <div class="card-icon">${ICONS[c.icon]||ICONS.star}</div>
       <div class="price-tag">${c.price}<small>${c.unit}</small></div>
     </div>
     <div class="card-body">
       <h3>${c.title}</h3>
       <p>${c.desc}</p>
-      <div class="tags">${c.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+      <div class="tags">${c.tags.map(tg=>`<span>${tg}</span>`).join('')}</div>
       <div class="card-actions">
-        <a href="tel:${DATA.phone1.replace(/\s/g,'')}" class="btn btn-call">${icon('phone',14)} Call to ${actionLabel}</a>
-        <a href="#contact" class="btn btn-outline">Enquire</a>
+        <a href="tel:${DATA.phone1.replace(/\s/g,'')}" class="btn btn-call">${icon('phone',14)} ${callLabel||tr('btn_call_book')}</a>
+        <a href="#contact" class="btn btn-outline">${enquireLabel||tr('btn_enquire')}</a>
       </div>
       <div class="partners">
         <a href="https://www.makemytrip.com" target="_blank">MakeMyTrip</a>
