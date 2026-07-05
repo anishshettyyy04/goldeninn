@@ -213,6 +213,7 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
     <div class="nav-item" data-panel="location"><span class="ndot"></span><span>Location</span></div>
     <div class="nav-item" data-panel="contact"><span class="ndot"></span><span>Contact</span></div>
     <div class="nav-item" data-panel="media"><span class="ndot"></span><span>Media Library</span></div>
+    <div class="nav-item" data-panel="languages"><span class="ndot"></span><span>Languages</span></div>
     <div class="nav-item" data-panel="settings"><span class="ndot"></span><span>Settings</span></div>
     <div class="nav-item" data-panel="messages"><span class="ndot"></span><span>Messages <span id="msgCount" style="background:var(--r2);color:#fff;border-radius:20px;padding:1px 7px;font-size:.65rem;margin-left:4px;display:none;"></span></span></div>
     <div class="s-footer">
@@ -313,6 +314,28 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
       </div>
       <div class="media-grid" id="mediaGrid"></div>
       <p class="note">To free Cloudinary storage: after removing unused records here, also delete the files in your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gl);">Cloudinary Media Library</a>.</p>
+    </div>
+
+    <div class="panel" id="panel-languages">
+      <div class="ph"><h1>Languages</h1><p>Edit translations for each language. Changes save to Firebase and go live instantly on the public site.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;" id="langTabs">
+        <button class="btn btn-gold btn-sm" data-ltab="en" onclick="switchLangTab('en')">🇬🇧 English</button>
+        <button class="btn btn-outline btn-sm" data-ltab="kn" onclick="switchLangTab('kn')">🇮🇳 ಕನ್ನಡ</button>
+        <button class="btn btn-outline btn-sm" data-ltab="ta" onclick="switchLangTab('ta')">🇮🇳 தமிழ்</button>
+        <button class="btn btn-outline btn-sm" data-ltab="te" onclick="switchLangTab('te')">🇮🇳 తెలుగు</button>
+        <button class="btn btn-outline btn-sm" data-ltab="hi" onclick="switchLangTab('hi')">🇮🇳 हिंदी</button>
+        <button class="btn btn-outline btn-sm" data-ltab="ml" onclick="switchLangTab('ml')">🇮🇳 മലയാളം</button>
+      </div>
+      <div class="block">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div class="block-title" style="margin:0;" id="langTabTitle">English Translations</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline btn-sm" onclick="resetLangToDefault()">Reset to Default</button>
+            <button class="btn btn-gold btn-sm" onclick="saveLang()">Save Language</button>
+          </div>
+        </div>
+        <div id="langFields"></div>
+      </div>
     </div>
 
     <div class="panel" id="panel-settings">
@@ -1107,6 +1130,85 @@ async function deleteMsg(id) {
 function esc(s) {
   return (s||'').toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+/* ─── LANGUAGES ──────────────────────────────────────── */
+var currentLangTab = 'en';
+var langData = {};
+
+async function switchLangTab(lang){
+  currentLangTab = lang;
+  document.querySelectorAll('[data-ltab]').forEach(function(btn){
+    btn.className = btn.dataset.ltab===lang ? 'btn btn-gold btn-sm' : 'btn btn-outline btn-sm';
+  });
+  var names = {en:'English',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिंदी',ml:'മലയാളം'};
+  document.getElementById('langTabTitle').textContent = (names[lang]||lang) + ' Translations';
+  // Load from Firestore, fallback to defaults
+  try {
+    var snap = await db.collection('translations').doc(lang).get();
+    var defaults = DEFAULT_TRANSLATIONS[lang] || DEFAULT_TRANSLATIONS.en;
+    langData = snap.exists ? Object.assign({}, defaults, snap.data()) : Object.assign({}, defaults);
+  } catch(e) {
+    langData = Object.assign({}, DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en);
+  }
+  renderLangFields();
+}
+
+function renderLangFields(){
+  var el = document.getElementById('langFields');
+  var groups = [
+    {title:'Navigation', keys:['nav_home','nav_rooms','nav_hall','nav_amenities','nav_explore','nav_location','nav_contact','nav_call']},
+    {title:'Hero Section', keys:['hero_eyebrow','hero_subtitle','hero_btn_rooms','hero_btn_call','scroll_label']},
+    {title:'Rooms Section', keys:['rooms_kicker','rooms_title_a','rooms_title_b','rooms_desc']},
+    {title:'Party Hall Section', keys:['hall_kicker','hall_title_a','hall_title_b','hall_desc']},
+    {title:'Amenities Section', keys:['amen_kicker','amen_title_a','amen_title_b']},
+    {title:'Explore Bangalore', keys:['explore_kicker','explore_title_a','explore_title_b','explore_desc']},
+    {title:'Location Section', keys:['loc_kicker','loc_title_a','loc_title_b','loc_getting']},
+    {title:'Contact Section', keys:['contact_kicker','contact_title_a','contact_title_b']},
+    {title:'Form', keys:['form_name','form_phone','form_email','form_msg','form_send']},
+    {title:'Buttons', keys:['btn_directions','btn_call_book','btn_enquire','btn_book_online']},
+  ];
+  el.innerHTML = groups.map(function(g){
+    return '<div style="margin-bottom:20px;">' +
+      '<div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:10px;font-weight:600;">' + g.title + '</div>' +
+      '<div class="g2">' + g.keys.map(function(k){
+        var lbl = TRANS_KEYS[k] || k;
+        var val = esc(langData[k]||'');
+        var isLong = k==='hero_subtitle'||k==='rooms_desc'||k==='hall_desc'||k==='explore_desc';
+        return '<div class="field" ' + (isLong?'style="grid-column:1/-1;"':'') + '>' +
+          '<label>' + lbl.split(': ').pop() + '</label>' +
+          (isLong
+            ? '<textarea data-langkey="' + k + '" rows="2">' + val + '</textarea>'
+            : '<input value="' + val + '" data-langkey="' + k + '">') +
+        '</div>';
+      }).join('') +
+      '</div></div>';
+  }).join('');
+
+  el.querySelectorAll('[data-langkey]').forEach(function(inp){
+    inp.addEventListener('input', function(){ langData[inp.dataset.langkey] = inp.value; });
+  });
+}
+
+async function saveLang(){
+  try {
+    await db.collection('translations').doc(currentLangTab).set(langData);
+    toast('Language saved — live on the site', 'ok');
+  } catch(e) {
+    toast('Save failed: ' + e.message, 'er');
+  }
+}
+
+function resetLangToDefault(){
+  if(!confirm('Reset all translations for this language to the built-in defaults?')) return;
+  langData = Object.assign({}, DEFAULT_TRANSLATIONS[currentLangTab]||DEFAULT_TRANSLATIONS.en);
+  renderLangFields();
+  toast('Reset to defaults — click Save Language to apply', '');
+}
+
+// Load languages panel when nav item clicked
+document.querySelectorAll('.nav-item[data-panel="languages"]').forEach(function(item){
+  item.addEventListener('click', function(){ switchLangTab('en'); });
+});
 </script>
 </body>
 </html>
