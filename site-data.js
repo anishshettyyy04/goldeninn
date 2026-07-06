@@ -111,10 +111,10 @@ async function loadFromFirestore(){
       const remote   = snap.data();
       // Shallow merge remote into defaults
       const data = Object.assign(defaults, remote);
-      // For array fields: if remote gave us an empty array, restore the default
-      // so the site never shows blank sections due to an accidental empty save
+      // For array fields: only restore defaults if remote array is truly empty
+      // (don't restore if admin intentionally has [], they'll add via admin panel)
       ['slides','rooms','hall','amenities','places','transport','social'].forEach(function(key){
-        if(!data[key] || !Array.isArray(data[key]) || data[key].length === 0){
+        if(!data[key] || !Array.isArray(data[key])){
           data[key] = JSON.parse(JSON.stringify(DEFAULTS[key]));
         }
       });
@@ -384,14 +384,14 @@ const DEFAULTS = {
   heroEyebrow:"Electronic City · Bangalore",
   heroTitle:"Golden Inn",
   heroSub:"A boutique address for rest and celebration — refined rooms, a grand banquet hall and an in-house pub, on Hosur Road, Electronic City.",
-  slides:["assets/room1.png","assets/room2.png","assets/room3.png","assets/room4.png","assets/room5.png"],
+  slides:[],
   rooms:[
-    {img:"assets/room6.png",icon:"bed",title:"Single Bed Room",price:"₹1,299",unit:"/ night",desc:"A refined single room with premium bedding, soft ambient lighting and warm wood-and-gold accents — built for the focused solo traveller.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned"]},
-    {img:"assets/room7.png",icon:"bed",title:"Double Bed Room",price:"₹1,899",unit:"/ night",desc:"A spacious double room finished in our signature black-and-gold palette, designed for couples and friends travelling together.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned","Room Service"]},
-    {img:"assets/room8.png",icon:"bed",title:"Deluxe Twin Room",price:"₹2,299",unit:"/ night",desc:"Two separate beds, extra floor space and elevated finishes — our most requested room for relaxed, longer stays.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned","Laundry"]}
+    {img:"",icon:"bed",title:"Single Bed Room",price:"₹1,299",unit:"/ night",desc:"A refined single room with premium bedding, soft ambient lighting and warm wood-and-gold accents — built for the focused solo traveller.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned"]},
+    {img:"",icon:"bed",title:"Double Bed Room",price:"₹1,899",unit:"/ night",desc:"A spacious double room finished in our signature black-and-gold palette, designed for couples and friends travelling together.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned","Room Service"]},
+    {img:"",icon:"bed",title:"Deluxe Twin Room",price:"₹2,299",unit:"/ night",desc:"Two separate beds, extra floor space and elevated finishes — our most requested room for relaxed, longer stays.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned","Laundry"]}
   ],
   hall:[
-    {img:"assets/room12.png",icon:"party",title:"Samarambha Party Hall",price:"₹35,000",unit:"/ event",desc:"An elegant banquet space for weddings, milestone birthdays and corporate gatherings, with full décor and catering support on request.",tags:["Capacity 200+","Sound System","Catering Available","Valet Parking"]}
+    {img:"",icon:"party",title:"Samarambha Party Hall",price:"₹35,000",unit:"/ event",desc:"An elegant banquet space for weddings, milestone birthdays and corporate gatherings, with full décor and catering support on request.",tags:["Capacity 200+","Sound System","Catering Available","Valet Parking"]}
   ],
   amenities:[
     {iconKey:"wifi",title:"Free Wi-Fi"},{iconKey:"breakfast",title:"Free Breakfast"},
@@ -400,10 +400,10 @@ const DEFAULTS = {
     {iconKey:"party",title:"Party Hall"},{iconKey:"pub",title:"In-house Pub"}
   ],
   places:[
-    {img:"assets/room9.png",title:"Wonderla Amusement Park",dist:"~12 km away",desc:"One of Bangalore's largest amusement and water parks.",lat:12.8755,lng:77.6066},
-    {img:"assets/room10.png",title:"Lalbagh Botanical Garden",dist:"~18 km away",desc:"A 240-acre botanical garden with a glasshouse and a historic rock formation.",lat:12.9507,lng:77.5848},
-    {img:"assets/room11.png",title:"Electronic City IT Hub",dist:"Walking distance",desc:"Bangalore's major tech park district.",lat:12.8452,lng:77.6602},
-    {img:"assets/room13.png",title:"Bannerghatta National Park",dist:"~15 km away",desc:"A wildlife park with zoo, safari and butterfly enclosure.",lat:12.7999,lng:77.5774}
+    {img:"",title:"Wonderla Amusement Park",dist:"~12 km away",desc:"One of Bangalore's largest amusement and water parks.",lat:12.8755,lng:77.6066},
+    {img:"",title:"Lalbagh Botanical Garden",dist:"~18 km away",desc:"A 240-acre botanical garden with a glasshouse and a historic rock formation.",lat:12.9507,lng:77.5848},
+    {img:"",title:"Electronic City IT Hub",dist:"Walking distance",desc:"Bangalore's major tech park district.",lat:12.8452,lng:77.6602},
+    {img:"",title:"Bannerghatta National Park",dist:"~15 km away",desc:"A wildlife park with zoo, safari and butterfly enclosure.",lat:12.7999,lng:77.5774}
   ],
   address:"396/48, Hosur Rd, Dadi Reddy Layout, Veer Sandra, Electronic City, Hebbagodi, Karnataka 560100",
   transport:[
@@ -423,3 +423,23 @@ const DEFAULTS = {
     {iconKey:"youtube",label:"YouTube",url:"https://youtube.com/@goldeninnbangalore"}
   ]
 };
+
+/* ── Translation Firestore collection ─────────────────── */
+const TRANS_COL = (typeof db !== 'undefined') ? db.collection("translations") : null;
+
+async function loadTranslations(lang){
+  var defaults = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang] || DEFAULT_TRANSLATIONS.en));
+  if(!TRANS_COL) return defaults;
+  try{
+    var snap = await TRANS_COL.doc(lang).get();
+    if(snap.exists && snap.data() && Object.keys(snap.data()).length > 0){
+      return Object.assign(defaults, snap.data());
+    }
+  }catch(e){ console.warn('Translation load failed:', e); }
+  return defaults;
+}
+
+async function saveTranslations(lang, data){
+  if(!TRANS_COL) throw new Error('Firestore not initialized');
+  await TRANS_COL.doc(lang).set(data);
+}
