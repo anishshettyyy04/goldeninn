@@ -30,7 +30,7 @@ const CLOUDINARY_PRESET = "goldeninn media";
 const CLOUDINARY_URL    = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/upload`;
 
 /** Upload a File to Cloudinary, save metadata to Firestore /media.
- *  onProgress(pct) is called with 0–100 during upload. */
+ * onProgress(pct) is called with 0–100 during upload. */
 async function uploadMediaFile(file, onProgress){
   const type = file.type.startsWith('video') ? 'video' : 'image';
   const fd   = new FormData();
@@ -73,8 +73,7 @@ async function loadAllMedia(){
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/** Remove media item from Firestore catalogue only.
- *  Cloudinary files can be bulk-removed via the Cloudinary dashboard. */
+/** Remove media item from Firestore catalogue only. */
 async function deleteMediaItem(item){
   await MEDIA_COL.doc(item.id).delete();
 }
@@ -112,7 +111,6 @@ async function loadFromFirestore(){
       // Shallow merge remote into defaults
       const data = Object.assign(defaults, remote);
       // For array fields: only restore defaults if remote array is truly empty
-      // (don't restore if admin intentionally has [], they'll add via admin panel)
       ['slides','rooms','hall','amenities','places','transport','social'].forEach(function(key){
         if(!data[key] || !Array.isArray(data[key])){
           data[key] = JSON.parse(JSON.stringify(DEFAULTS[key]));
@@ -239,7 +237,7 @@ const DEFAULT_TRANSLATIONS = {
     loc_kicker:"ನಮ್ಮನ್ನು ಹುಡುಕಿ",loc_title_a:"ಸ್ಥಳ &",loc_title_b:"ತಲುಪುವ ವಿಧಾನ",loc_getting:"ತಲುಪುವ ವಿಧಾನ",
     contact_kicker:"ಸಂಪರ್ಕಿಸಿ",contact_title_a:"ನಮ್ಮನ್ನು",contact_title_b:"ಸಂಪರ್ಕಿಸಿ",
     form_name:"ನಿಮ್ಮ ಹೆಸರು",form_phone:"ಫೋನ್ ಸಂಖ್ಯೆ",form_email:"ಇಮೇಲ್ ವಿಳಾಸ",
-    form_msg:"ನಿಮ್ಮ ಸಂದೇಶ / ಬುಕಿಂಗ್ ವಿಚಾರಣೆ",form_send:"ಸಂದೇಶ ಕಳಿಸಿ",
+    form_msg:"ನಿಮ್ಮ ಸಂದೇಶ / ಬುಕಿಂಗ್ ವಿಚಾರಣೆ",form_send:"ಸندೇಶ ಕಳಿಸಿ",
     btn_directions:"ದಿಕ್ಕುಗಳನ್ನು ಪಡೆಯಿರಿ",btn_call_book:"ಕರೆ ಮಾಡಿ ಬುಕ್ ಮಾಡಿ",
     btn_enquire:"ವಿಚಾರಿಸಿ",btn_book_online:"ಆನ್‌ಲೈನ್ ಬುಕ್ ಮಾಡಿ",scroll_label:"ಸ್ಕ್ರಾಲ್",
   },
@@ -248,7 +246,7 @@ const DEFAULT_TRANSLATIONS = {
     nav_amenities:"வசதிகள்",nav_explore:"ஆராயுங்கள்",
     nav_location:"இடம்",nav_contact:"தொடர்பு",nav_call:"இப்போது அழைக்கவும்",
     hero_eyebrow:"எலக்ட்ரானிக் சிட்டி · பெங்களூரு",
-    hero_subtitle:"ஓய்வு மற்றும் கொண்டாட்டத்திற்கான ஒரு சிறந்த முகவரி — நேர்த்தியான அறைகள், ஒரு பிரமாண்ட விழா மண்டபம் மற்றும் இன்-ஹவுஸ் பப், ஹொசூர் சாலை, எலக்ட்ரானிக் சிட்டி.",
+    hero_subtitle:"ஓய்வு மற்றும் கொண்டாட்டத்திற்கான ஒரு சிறந்த முகவரி — நேர்த்தியான அறைகள், ஒரு பிரமாண்ட விழா மண்டபம் மற்றும் இன்-ஹவுஸ் பับ, ஹொசூர் சாலை, எலக்ட்ரானிக் சிட்டி.",
     hero_btn_rooms:"அறைகளை காணுங்கள்",hero_btn_call:"அழைத்து பதிவு செய்யுங்கள்",
     rooms_kicker:"எங்களுடன் தங்குங்கள்",rooms_title_a:"எங்கள்",rooms_title_b:"அறைகள்",
     rooms_desc:"அழகான அலங்காரம், ஆரோக்கியமான படுக்கைகள் மற்றும் இலவச காலை உணவு — உங்கள் பயணத்திற்கு ஏற்ற அறையை தேர்ந்தெடுங்கள்.",
@@ -322,7 +320,7 @@ const DEFAULT_TRANSLATIONS = {
     explore_desc:"ഞങ്ങളിൽ താമസിക്കുമ്പോൾ ബെംഗളൂരുവിലെ പ്രധാന സ്ഥലങ്ങളിലേക്ക് എളുപ്പത്തിൽ പോകാം.",
     loc_kicker:"ഞങ്ങളെ കണ്ടെത്തൂ",loc_title_a:"സ്ഥലവും &",loc_title_b:"എത്തിച്ചേരാനുള്ള വഴിയും",loc_getting:"എങ്ങനെ എത്തും",
     contact_kicker:"ബന്ധപ്പെടൂ",contact_title_a:"ഞങ്ങളെ",contact_title_b:"ബന്ധപ്പെടൂ",
-    form_name:"നിങ്ങളുടെ പേര്",form_phone:"ഫോൺ നമ്പർ",form_email:"ഇമെയിൽ വിലാസം",
+    form_name:"നിങ്ങളുടെ പേര്",form_phone:"ഫോൺ നമ്പർ",form_email:"ഇമേൽ വിലാസം",
     form_msg:"നിങ്ങളുടെ സന്ദേശം / ബുക്കിംഗ് അന്വേഷണം",form_send:"സന്ദേശം അയക്കൂ",
     btn_directions:"വഴി കണ്ടെത്തൂ",btn_call_book:"വിളിച്ച് ബുക്ക് ചെയ്യൂ",
     btn_enquire:"അന്വേഷിക്കൂ",btn_book_online:"ഓൺലൈൻ ബുക്ക് ചെയ്യൂ",scroll_label:"സ്ക്രോൾ",
@@ -362,7 +360,7 @@ const ICONS = {
   star:`<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.7 1.5 6.8L12 17l-6.1 3.5 1.5-6.8L2.2 9l6.9-.7z"/></svg>`,
   instagram:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r=".8" fill="currentColor" stroke="none"/></svg>`,
   facebook:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9V7a1.5 1.5 0 0 1 1.5-1.5H17V3h-2.2A4 4 0 0 0 10.8 7v2H8.5v3H10.8v9h3V12H17l.6-3h-3.6z"/></svg>`,
-  whatsapp:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19l1.1-3.3A8 8 0 1 1 9.4 18z"/><path d="M9 9.2c0 3 2.8 5.8 5.8 5.8.6 0 1-.5.8-1l-.6-1.4a.8.8 0 0 0-.9-.4l-1 .3a4.6 4.6 0 0 1-2.6-2.6l.3-1a.8.8 0 0 0-.4-.9L9 7.4c-.5-.2-1 .2-1 .8z"/></svg>`,
+  whatsapp:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19l1.1-3.3A8 8 0 1 1 9.4 18z"/><path d="M9 9.2c0 3 2.8 5.8 5.8 5.8.6 0 1-.5.8-1 l-.6-1.4a.8.8 0 0 0-.9-.4l-1 .3a4.6 4.6 0 0 1-2.6-2.6l.3-1a.8.8 0 0 0-.4-.9L9 7.4c-.5-.2-1 .2-1 .8z"/></svg>`,
   youtube:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="6" width="19" height="12" rx="4"/><path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>`,
   twitter:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3l8 9.5L3.5 21h2.2L12.4 14l4.9 7h3.2l-8.4-10L20.5 3h-2.2l-6 6.9L7.2 3z"/></svg>`,
   menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>`,
