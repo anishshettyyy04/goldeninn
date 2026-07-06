@@ -6,7 +6,7 @@
 <title>Golden Inn — Admin</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="site-data.js"></script>
@@ -26,8 +26,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--cream);font
 h1,h2,h3{font-family:'Playfair Display',serif;}
 button,input,textarea,select{font-family:inherit;}
 
-/* LOGIN */
-#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 40% 30%,#1a120a,var(--bg) 65%);z-index:100;}
+#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 40% 30%,#1a120a,#080706 65%);z-index:100;}
 .login-box{width:100%;max-width:350px;background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:40px 34px;}
 .login-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gl);margin-bottom:4px;}
 .login-sub{font-size:.8rem;color:var(--muted);margin-bottom:26px;}
@@ -35,7 +34,6 @@ button,input,textarea,select{font-family:inherit;}
 .fi:focus{outline:none;border-color:var(--gold);}
 .err-msg{font-size:.75rem;color:#e05252;margin-top:8px;display:none;}
 
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:5px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:.2s;white-space:nowrap;}
 .btn-gold{background:linear-gradient(135deg,var(--gl),var(--gold) 60%,var(--gd));color:#1a1305;}
 .btn-gold:hover{filter:brightness(1.08);}
@@ -45,7 +43,6 @@ button,input,textarea,select{font-family:inherit;}
 .btn-green{background:linear-gradient(135deg,#3a9e60,#256640);color:#fff;}
 .btn-sm{padding:7px 13px;font-size:.74rem;}
 
-/* APP SHELL */
 #app{display:none;height:100vh;overflow:hidden;}
 .sidebar{width:210px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 10px;height:100vh;}
 .s-logo{display:flex;align-items:center;gap:10px;padding:0 8px 22px;}
@@ -66,17 +63,14 @@ button,input,textarea,select{font-family:inherit;}
 .ph h1{font-size:1.7rem;margin-bottom:4px;}
 .ph p{color:var(--muted);font-size:.84rem;}
 
-/* TOAST */
 #toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-size:.8rem;opacity:0;transform:translateY(8px);transition:.22s;pointer-events:none;max-width:320px;}
 #toast.on{opacity:1;transform:none;}
 #toast.ok{border-color:var(--ok);}
 #toast.er{border-color:var(--err);}
 
-/* BLOCK */
 .block{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;}
 .block-title{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:14px;font-weight:600;}
 
-/* FIELDS */
 .field{margin-bottom:12px;}
 .field label,.fl{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
 .field input,.field textarea,.field select,
@@ -86,14 +80,13 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
-/* CARD ROW */
 .card-row{background:var(--sf2);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;}
 .card-top{display:flex;align-items:center;gap:12px;padding:12px 15px;cursor:pointer;}
 .card-top:hover{background:var(--sf3);border-radius:10px 10px 0 0;}
 .card-thumb{width:50px;height:38px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--sf3);}
 .card-info{flex:1;min-width:0;}
 .card-title{font-size:.88rem;font-weight:600;color:var(--cream);}
-.card-meta{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.card-meta覆{font-size:.72rem;color:var(--muted);margin-top:2px;}
 .card-acts{display:flex;gap:6px;flex-shrink:0;}
 .card-body{display:none;padding:16px;border-top:1px solid var(--line);}
 .card-body.open{display:block;}
@@ -101,7 +94,6 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
 .rbtn:hover:not(:disabled){border-color:var(--gold);color:var(--gl);}
 .rbtn:disabled{opacity:.3;cursor:default;}
 
-/* IMAGE UPLOAD ZONE */
 .img-zone{position:relative;border:1px dashed var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--sf3);transition:.2s;}
 .img-zone:hover{border-color:var(--gold);}
 .img-zone img{width:100%;height:150px;object-fit:cover;display:block;}
@@ -113,17 +105,14 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
 .up-bar-bg{height:3px;background:var(--sf3);}
 .up-bar{height:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
 
-/* SIMPLE ROW (amenities, transport, social) */
 .simple-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--sf2);border:1px solid var(--line);border-radius:8px;margin-bottom:7px;}
 .simple-row select{width:105px;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 8px;color:var(--cream);font-size:.82rem;}
 .simple-row input{flex:1;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 9px;color:var(--cream);font-size:.82rem;}
 .simple-row input:focus,.simple-row select:focus{outline:none;border-color:var(--gold);}
 
-/* ADD ROW */
 .add-row{border:1px dashed var(--line);border-radius:8px;padding:11px;text-align:center;color:var(--muted);font-size:.8rem;cursor:pointer;transition:.18s;margin-bottom:8px;}
 .add-row:hover{border-color:var(--gold);color:var(--gl);}
 
-/* SLIDER GRID */
 .slide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:12px;}
 .slide-item{position:relative;border-radius:8px;overflow:hidden;background:var(--sf3);}
 .slide-item img{width:100%;height:110px;object-fit:cover;display:block;}
@@ -133,7 +122,6 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
 .slide-up-zone{position:relative;border:1px dashed var(--line);border-radius:8px;height:110px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.78rem;background:var(--sf3);}
 .slide-up-zone:hover{border-color:var(--gold);color:var(--gl);}
 
-/* MEDIA GRID */
 .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin:14px 0;}
 .media-card{border-radius:8px;overflow:hidden;background:var(--sf2);border:1px solid var(--line);}
 .media-card img,.media-card video{width:100%;height:90px;object-fit:cover;display:block;}
@@ -144,28 +132,33 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
 .media-btns{display:flex;gap:5px;}
 .media-btns button{flex:1;padding:5px;font-size:.65rem;}
 
-/* PROGRESS */
 .prog-wrap{display:none;margin-top:12px;}
 .prog-wrap.on{display:block;}
 .prog-top{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:4px;}
 .prog-bg{background:var(--sf3);border-radius:3px;height:5px;}
 .prog-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
 
-/* DROPZONE */
 .drop-zone{border:2px dashed var(--line);border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:.18s;}
 .drop-zone:hover,.drop-zone.dg{border-color:var(--gold);background:rgba(205,164,76,.04);}
 .drop-zone svg{width:30px;height:30px;color:var(--gold);margin:0 auto 10px;display:block;opacity:.7;}
 .drop-zone p{color:var(--muted);font-size:.84rem;}
 .drop-zone small{font-size:.7rem;color:var(--muted);opacity:.7;}
 
-/* MAINT */
 .maint-bar{border-radius:10px;padding:16px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
 .maint-off{background:linear-gradient(90deg,#0e2a16,#06180a);border:1px solid var(--ok);}
 .maint-on{background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid var(--err);}
 
-/* SAVE BAR */
 .save-bar{position:fixed;bottom:0;left:210px;right:0;background:rgba(8,7,6,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:13px 38px;display:flex;justify-content:flex-end;gap:10px;z-index:50;}
 .note{font-size:.72rem;color:var(--muted);}
+
+/* PICKER OVERLAY MODAL STYLE */
+#pickerOverlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
+#pickerOverlay.open{display:flex;}
+.picker-box{width:100%;max-width:640px;background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;max-height:85vh;}
+.picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;overflow-y:auto;margin-top:14px;flex:1;padding-right:4px;}
+.picker-item{border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;background:var(--sf2);transition:.15s;}
+.picker-item:hover{border-color:var(--gold);transform:scale(1.02);}
+.picker-item-info{padding:5px;font-size:.65rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 @media(max-width:700px){
   .sidebar{width:58px;padding:14px 6px;}
@@ -179,7 +172,6 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">Golden Inn</div>
@@ -198,8 +190,7 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
   </div>
 </div>
 
-<!-- APP -->
-<div id="app" style="display:flex;">
+<div id="app" style="display:none; flex-direction:row;">
   <div class="sidebar">
     <div class="s-logo">
       <img src="assets/logo.png" alt="">
@@ -223,8 +214,6 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
   </div>
 
   <div class="main">
-
-    <!-- Firestore permission help banner -->
     <div id="firestoreHelp" style="display:none;background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid #b81c39;border-radius:10px;padding:18px 22px;margin-bottom:22px;">
       <div style="font-weight:600;color:#ff8a8a;margin-bottom:8px;">⚠ Firebase Permission Denied</div>
       <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;">Your Firestore security rules are blocking access. Fix it in 30 seconds:</p>
@@ -333,7 +322,6 @@ service cloud.firestore {
         <button class="btn btn-red btn-sm" id="cleanUnusedBtn">Delete Unused Media</button>
       </div>
       <div class="media-grid" id="mediaGrid"></div>
-      <p class="note">To free Cloudinary storage: after removing unused records here, also delete the files in your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gl);">Cloudinary Media Library</a>.</p>
     </div>
 
     <div class="panel" id="panel-languages">
@@ -381,7 +369,6 @@ service cloud.firestore {
       </div>
       <div id="messagesList"><p class="note" style="padding:10px 0;">Loading…</p></div>
     </div>
-
   </div>
 
   <div class="save-bar">
@@ -390,22 +377,37 @@ service cloud.firestore {
   </div>
 </div>
 
+<div id="pickerOverlay">
+  <div class="picker-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h3 style="font-size:1.2rem;">Choose Asset From Library</h3>
+      <button class="btn btn-outline btn-sm" onclick="closePicker()" style="padding:4px 10px;">Close</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:12px;">
+      <input type="text" id="pickerSearch" class="fi" placeholder="Search files by name..." oninput="filterPicker(this.value)" style="margin:0; flex:1;">
+      <button class="btn btn-gold btn-sm" id="pickerUploadBtn">+ Upload New</button>
+      <input type="file" id="pickerFileInput" accept="image/*,video/*" multiple style="display:none;">
+    </div>
+    <div id="pickerProgress" style="display:none; margin-bottom:12px;" class="prog-wrap on">
+      <div class="prog-top"><span id="pickerProgLabel">Uploading...</span></div>
+      <div class="prog-bg"><div class="prog-bar" id="pickerProgBar"></div></div>
+    </div>
+    <span class="note" id="pickerCount">0 file(s)</span>
+    <div class="picker-grid" id="pickerGrid"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-/* ─── CONFIG ─────────────────────────────────────────── */
 const ADMIN_PASSWORD = "golden123";
 const ADMIN_ID       = "goldeninn";
-// CLOUDINARY_CLOUD and CLOUDINARY_PRESET already defined in site-data.js
 
-/* ─── STATE ──────────────────────────────────────────── */
 let DATA = {};
 let mediaItems = [];
 const ICON_KEYS = typeof ICONS !== 'undefined' ? Object.keys(ICONS) : ['bed','party','wifi','breakfast','parking','pin','phone','star'];
 
-/* ─── INIT — runs immediately, no DOMContentLoaded needed ─ */
 (function init() {
-  // If DOM is already ready, run now; otherwise wait
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', run);
   } else {
@@ -442,7 +444,6 @@ function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   badge('loading');
-  // Test Firebase connection
   db.collection('site').doc('content').get()
     .then(function(snap){
       badge('live');
@@ -488,7 +489,6 @@ window.doLogin = function doLogin() {
   }
 }
 
-/* ─── LOGIN ──────────────────────────────────────────── */
 function setupEvents() {
   document.getElementById('loginBtn').addEventListener('click', doLogin);
   document.getElementById('adminId').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('adminPass').focus(); });
@@ -541,7 +541,6 @@ function setupEvents() {
   document.getElementById('maintBtn').addEventListener('click', toggleMaintenance);
   document.getElementById('cleanUnusedBtn').addEventListener('click', cleanUnused);
 
-  // Media upload
   var dz = document.getElementById('mediaDropZone');
   var fi = document.getElementById('mediaFileInput');
   dz.addEventListener('click', function(e) { if (e.target !== fi) fi.click(); });
@@ -551,7 +550,6 @@ function setupEvents() {
   fi.addEventListener('change', function() { uploadMediaFiles(fi.files); });
 }
 
-/* ─── NAV ────────────────────────────────────────────── */
 function setupNav() {
   document.querySelectorAll('.nav-item').forEach(function(item) {
     item.addEventListener('click', function() {
@@ -564,7 +562,6 @@ function setupNav() {
   });
 }
 
-/* ─── TOAST ──────────────────────────────────────────── */
 var toastTimer;
 function toast(msg, type) {
   var el = document.getElementById('toast');
@@ -574,7 +571,6 @@ function toast(msg, type) {
   toastTimer = setTimeout(function() { el.classList.remove('on'); }, 3200);
 }
 
-/* ─── SYNC BADGE ─────────────────────────────────────── */
 function badge(state) {
   var el = document.getElementById('syncBadge');
   var map = {
@@ -591,7 +587,6 @@ function badge(state) {
   el.style.borderColor = s.c;
 }
 
-/* ─── RENDER ALL ─────────────────────────────────────── */
 function renderAll() {
   renderHero();
   renderCards('rooms', 'roomsList');
@@ -604,7 +599,6 @@ function renderAll() {
   renderMaintBanner();
 }
 
-/* ─── HERO ───────────────────────────────────────────── */
 function renderHero() {
   document.getElementById('h_eyebrow').value = DATA.heroEyebrow || '';
   document.getElementById('h_title').value   = DATA.heroTitle   || '';
@@ -656,7 +650,6 @@ function renderSlides() {
   });
 }
 
-/* ─── CARDS (Rooms / Hall) ───────────────────────────── */
 function iconOptions(current) {
   return ICON_KEYS.map(function(k) {
     return '<option value="' + k + '"' + (k === current ? ' selected' : '') + '>' + k + '</option>';
@@ -708,7 +701,6 @@ function renderCards(section, listId) {
     '</div>';
   }).join('');
 
-  // Toggle expand
   el.querySelectorAll('.card-top').forEach(function(top) {
     top.addEventListener('click', function(e) {
       if (e.target.closest('.card-acts')) return;
@@ -718,7 +710,6 @@ function renderCards(section, listId) {
     });
   });
 
-  // Move
   el.querySelectorAll('[data-move]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -730,7 +721,6 @@ function renderCards(section, listId) {
     });
   });
 
-  // Remove
   el.querySelectorAll('[data-remove]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -741,7 +731,6 @@ function renderCards(section, listId) {
     });
   });
 
-  // Inline image upload
   el.querySelectorAll('.card-img-input').forEach(function(inp) {
     inp.addEventListener('change', function() {
       var sec = inp.dataset.sec, i = parseInt(inp.dataset.idx), file = inp.files[0];
@@ -753,16 +742,13 @@ function renderCards(section, listId) {
     });
   });
 
-  // Live field binding
   el.querySelectorAll('[data-field]').forEach(function(inp) {
-    inp.addEventListener('change', function() {
+    var updateState = function() {
       var parts = inp.dataset.field.split('.');
       DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
-    });
-    inp.addEventListener('input', function() {
-      var parts = inp.dataset.field.split('.');
-      DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
-    });
+    };
+    inp.addEventListener('change', updateState);
+    inp.addEventListener('input', updateState);
   });
   el.querySelectorAll('[data-tags]').forEach(function(inp) {
     inp.addEventListener('change', function() {
@@ -772,7 +758,6 @@ function renderCards(section, listId) {
   });
 }
 
-/* ─── AMENITIES ──────────────────────────────────────── */
 function renderAmenities() {
   var el = document.getElementById('amenList');
   var items = DATA.amenities || [];
@@ -803,7 +788,6 @@ function renderAmenities() {
   });
 }
 
-/* ─── PLACES ─────────────────────────────────────────── */
 function renderPlaces() {
   var el = document.getElementById('placesList');
   var places = DATA.places || [];
@@ -897,7 +881,6 @@ async function autoFetchDist(i, title) {
   } else { if (s) s.textContent = '— enter manually'; }
 }
 
-/* ─── TRANSPORT ──────────────────────────────────────── */
 function renderTransport() {
   var el = document.getElementById('transportList');
   var items = DATA.transport || [];
@@ -918,7 +901,6 @@ function renderTransport() {
   el.querySelectorAll('[data-tr-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.transport.splice(parseInt(btn.dataset.trDel),1);renderTransport();});});
 }
 
-/* ─── CONTACT / SOCIAL ───────────────────────────────── */
 function renderContact() {
   document.getElementById('c_phone1').value  = DATA.phone1  || '';
   document.getElementById('c_phone2').value  = DATA.phone2  || '';
@@ -943,7 +925,6 @@ function renderSocial() {
   el.querySelectorAll('[data-soc-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.social.splice(parseInt(btn.dataset.socDel),1);renderSocial();});});
 }
 
-/* ─── SETTINGS ───────────────────────────────────────── */
 function renderMaintBanner() {
   var bar   = document.getElementById('maintBar');
   var btn   = document.getElementById('maintBtn');
@@ -974,7 +955,6 @@ async function toggleMaintenance() {
   } catch(e) { badge('error'); toast('Save failed','er'); }
 }
 
-/* ─── CLOUDINARY UPLOAD ──────────────────────────────── */
 function cloudinaryUpload(file, onProgress) {
   return new Promise(function(resolve) {
     var resourceType = file.type.startsWith('video') ? 'video' : 'image';
@@ -993,13 +973,7 @@ function cloudinaryUpload(file, onProgress) {
         if (xhr.status === 200) { resolve(res.secure_url); }
         else {
           var msg = res.error ? res.error.message : ('status ' + xhr.status);
-          if(xhr.status === 400 && msg.indexOf('preset') !== -1){
-            toast('Cloudinary: preset "goldeninn media" not found or not Unsigned. Check cloudinary.com → Settings → Upload Presets', 'er');
-          } else if(xhr.status === 401){
-            toast('Cloudinary: unauthorised. Make sure preset is set to Unsigned mode.', 'er');
-          } else {
-            toast('Upload failed: ' + msg, 'er');
-          }
+          toast('Upload failed: ' + msg, 'er');
           resolve(null);
         }
       } catch(e) { toast('Upload error: ' + e.message, 'er'); resolve(null); }
@@ -1009,7 +983,6 @@ function cloudinaryUpload(file, onProgress) {
   });
 }
 
-/* ─── MEDIA LIBRARY ──────────────────────────────────── */
 async function loadMediaLibrary() {
   try {
     var items = await loadAllMedia();
@@ -1098,7 +1071,6 @@ async function uploadMediaFiles(files) {
   renderMediaGrid();
 }
 
-/* ─── SAVE ALL ───────────────────────────────────────── */
 async function saveAll() {
   DATA.heroEyebrow    = document.getElementById('h_eyebrow').value;
   DATA.heroTitle      = document.getElementById('h_title').value;
@@ -1123,11 +1095,10 @@ async function saveAll() {
   }
 }
 
-/* ─── MESSAGES ───────────────────────────────────────── */
 async function loadMessages() {
   var el = document.getElementById('messagesList');
   var stats = document.getElementById('msgStats');
-  var badge = document.getElementById('msgCount');
+  var badgeCount = document.getElementById('msgCount');
   if (!el) return;
   el.innerHTML = '<p class="note" style="padding:10px 0;">Loading…</p>';
   try {
@@ -1135,8 +1106,8 @@ async function loadMessages() {
     var msgs = snap.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
     var unread = msgs.filter(function(m) { return !m.read; }).length;
     stats.textContent = msgs.length + ' message(s) · ' + unread + ' unread';
-    if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline'; }
-    else { badge.style.display = 'none'; }
+    if (unread > 0) { badgeCount.textContent = unread; badgeCount.style.display = 'inline'; }
+    else { badgeCount.style.display = 'none'; }
     if (!msgs.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No messages yet. Messages from the contact form will appear here.</p>'; return; }
     el.innerHTML = msgs.map(function(m) {
       var d = new Date(m.sentAt);
@@ -1173,7 +1144,6 @@ async function deleteMsg(id) {
   toast('Message deleted', 'ok');
 }
 
-/* ─── UTILS ──────────────────────────────────────────── */
 function setCardImg(sec, i, url){
   if(!DATA[sec] || !DATA[sec][i]) return;
   DATA[sec][i].img = url;
@@ -1190,7 +1160,6 @@ function esc(s) {
   return (s||'').toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-/* ─── LANGUAGES ──────────────────────────────────────── */
 var currentLangTab = 'en';
 var langData = {};
 
@@ -1201,7 +1170,6 @@ async function switchLangTab(lang){
   });
   var names = {en:'English',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिंदी',ml:'മലയാളം'};
   document.getElementById('langTabTitle').textContent = (names[lang]||lang) + ' Translations';
-  // Load from Firestore, fallback to defaults
   try {
     var snap = await db.collection('translations').doc(lang).get();
     var defaults = DEFAULT_TRANSLATIONS[lang] || DEFAULT_TRANSLATIONS.en;
@@ -1264,12 +1232,11 @@ function resetLangToDefault(){
   toast('Reset to defaults — click Save Language to apply', '');
 }
 
-// Load languages panel when nav item clicked
 document.querySelectorAll('.nav-item[data-panel="languages"]').forEach(function(item){
   item.addEventListener('click', function(){ switchLangTab('en'); });
 });
 
-/* ─── MEDIA PICKER ───────────────────────────────────── */
+/* ── MEDIA PICKER FUNCTIONS ─────────────────────────── */
 var pickerCallback = null;
 var pickerAllMedia = [];
 
@@ -1316,7 +1283,6 @@ function selectFromPicker(url){
   closePicker();
 }
 
-// Wire upload button in picker
 (function(){
   var upBtn = document.getElementById('pickerUploadBtn');
   var upInput = document.getElementById('pickerFileInput');
