@@ -6,7 +6,7 @@
    localStorage        → instant-paint cache only
    ========================================================= */
 
-const STORE_KEY = "golden_inn_site_data_v2";
+const STORE_KEY = "golden_inn_site_data_v3";
 const HOTEL_LAT = 12.8385;
 const HOTEL_LNG = 77.6770;
 
