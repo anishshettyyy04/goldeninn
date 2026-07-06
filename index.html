@@ -72,7 +72,7 @@ nav a:hover::after{width:100%;}
   .nav-call-text{display:none;}
 }
 
-.hero{position:relative;height:100svh;min-height:560px;max-height:980px;overflow:hidden;}
+.hero{position:relative;height:100svh;min-height:560px;max-height:980px;overflow:hidden;background:radial-gradient(ellipse at 30% 60%, rgba(140,16,41,.35), transparent 55%), radial-gradient(ellipse at 70% 20%, rgba(205,164,76,.12), transparent 50%), linear-gradient(160deg,#0f0c08,#070605);}
 .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;}
 .slide.active{opacity:1;}
 .slide img{width:100%;height:100%;object-fit:cover;}
@@ -451,10 +451,23 @@ window.setLang = async function(lang){
   LANG = lang;
   localStorage.setItem('golden_inn_lang', lang);
   closeLangMenu();
-  try{ T = await loadTranslations(lang); }
-  catch(e){ T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en)); }
-  render(); // render() calls applyTranslations() at the end
+  if(typeof loadTranslations === 'function'){
+    try{ T = await loadTranslations(lang); }
+    catch(e){ T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en)); }
+  } else {
+    T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en));
+  }
+  render();
 };
+
+// Clear stale cache that may have old broken asset paths
+(function clearStaleCache(){
+  var raw = localStorage.getItem(STORE_KEY);
+  if(raw && raw.indexOf('assets/room') !== -1){
+    localStorage.removeItem(STORE_KEY);
+    DATA = loadData(); // reload clean defaults
+  }
+})();
 
 if(DATA.maintenance && !BYPASS){
   document.getElementById('siteRoot').style.display = 'none';
@@ -464,21 +477,21 @@ if(DATA.maintenance && !BYPASS){
   ms.querySelector('.btn-call').innerHTML = icon('phone',16) + ' Call ' + DATA.phone1;
   ms.querySelector('.btn-call').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
 } else {
-  render(); // render() calls applyTranslations() internally
+  render();
   curSlide = 0; startSlider();
-  // Load fresh Firestore content
-  loadFromFirestore().then(fresh => {
+  // Load fresh data from Firestore — always takes priority over cache
+  loadFromFirestore().then(function(fresh){
     if(fresh){
       DATA = fresh;
       if(fresh.maintenance && !BYPASS){ location.reload(); }
       else { render(); curSlide = 0; startSlider(); }
     }
-  });
-  // Load saved language
-  if(LANG !== 'en'){
-    loadTranslations(LANG).then(trans => {
-      T = trans; applyTranslations(); render();
-    }).catch(()=>{});
+  }).catch(function(e){ console.warn('Firestore load error:', e); });
+  // Load saved language translations
+  if(LANG !== 'en' && typeof loadTranslations === 'function'){
+    loadTranslations(LANG).then(function(trans){
+      T = trans; render();
+    }).catch(function(){});
   }
 }
 
