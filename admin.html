@@ -224,6 +224,26 @@ input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px so
 
   <div class="main">
 
+    <!-- Firestore permission help banner -->
+    <div id="firestoreHelp" style="display:none;background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid #b81c39;border-radius:10px;padding:18px 22px;margin-bottom:22px;">
+      <div style="font-weight:600;color:#ff8a8a;margin-bottom:8px;">⚠ Firebase Permission Denied</div>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;">Your Firestore security rules are blocking access. Fix it in 30 seconds:</p>
+      <ol style="color:var(--muted);font-size:.83rem;padding-left:18px;line-height:2;">
+        <li>Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gl);">console.firebase.google.com</a> → your <b>golden-inn</b> project</li>
+        <li>Click <b>Firestore Database</b> → <b>Rules</b> tab</li>
+        <li>Replace everything with the code below and click <b>Publish</b></li>
+      </ol>
+      <pre style="background:var(--sf3);border:1px solid var(--line);border-radius:6px;padding:12px;font-size:.78rem;color:var(--gl);margin-top:10px;overflow-x:auto;">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}</pre>
+      <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="location.reload()">Retry Connection</button>
+    </div>
+
     <div class="panel active" id="panel-hero">
       <div class="ph"><h1>Hero & Slider</h1><p>The full-screen opening section visitors see first.</p></div>
       <div class="block">
@@ -422,21 +442,33 @@ function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   badge('loading');
-  try {
-    DATA = loadData();
-    renderAll();
-  } catch(e) {
-    DATA = JSON.parse(JSON.stringify(typeof DEFAULTS !== 'undefined' ? DEFAULTS : {}));
-    renderAll();
-  }
-  if (typeof loadFromFirestore === 'function') {
-    loadFromFirestore().then(function(fresh) {
-      if (fresh) { DATA = fresh; renderAll(); badge('live'); }
-      else { badge('offline'); }
-    }).catch(function() { badge('offline'); });
-  }
-  if (typeof loadMediaLibrary === 'function') loadMediaLibrary();
-  loadMessages();
+  // Test Firebase connection
+  db.collection('site').doc('content').get()
+    .then(function(snap){
+      badge('live');
+      DATA = snap.exists && snap.data() && Object.keys(snap.data()).length > 0
+        ? Object.assign(JSON.parse(JSON.stringify(typeof DEFAULTS!=='undefined'?DEFAULTS:{})), snap.data())
+        : loadData();
+      renderAll();
+      loadMediaLibrary();
+      loadMessages();
+    })
+    .catch(function(err){
+      if(err.code === 'permission-denied'){
+        badge('error');
+        showFirestoreHelp();
+      } else {
+        badge('offline');
+        DATA = loadData();
+        renderAll();
+        loadMediaLibrary();
+      }
+    });
+}
+
+function showFirestoreHelp(){
+  var el = document.getElementById('firestoreHelp');
+  if(el) el.style.display = 'block';
 }
 
 window.doLogin = function doLogin() {
@@ -959,8 +991,18 @@ function cloudinaryUpload(file, onProgress) {
       try {
         var res = JSON.parse(xhr.responseText);
         if (xhr.status === 200) { resolve(res.secure_url); }
-        else { toast('Upload failed: ' + (res.error ? res.error.message : 'error'), 'er'); resolve(null); }
-      } catch(e) { toast('Upload error', 'er'); resolve(null); }
+        else {
+          var msg = res.error ? res.error.message : ('status ' + xhr.status);
+          if(xhr.status === 400 && msg.indexOf('preset') !== -1){
+            toast('Cloudinary: preset "goldeninn media" not found or not Unsigned. Check cloudinary.com → Settings → Upload Presets', 'er');
+          } else if(xhr.status === 401){
+            toast('Cloudinary: unauthorised. Make sure preset is set to Unsigned mode.', 'er');
+          } else {
+            toast('Upload failed: ' + msg, 'er');
+          }
+          resolve(null);
+        }
+      } catch(e) { toast('Upload error: ' + e.message, 'er'); resolve(null); }
     };
     xhr.onerror = function() { toast('Network error', 'er'); resolve(null); };
     xhr.send(fd);

@@ -24,7 +24,7 @@ const db       = firebase.firestore();
 const CONTENT_REF = db.collection("site").doc("content");
 const MEDIA_COL   = db.collection("media");
 
-/* ── Cloudinary config (media files — free, no card) ───── */
+/* ── Cloudinary config ───────────────────────────────── */
 const CLOUDINARY_CLOUD  = "egokdwtb";
 const CLOUDINARY_PRESET = "goldeninn media";
 const CLOUDINARY_URL    = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/upload`;
@@ -423,23 +423,3 @@ const DEFAULTS = {
     {iconKey:"youtube",label:"YouTube",url:"https://youtube.com/@goldeninnbangalore"}
   ]
 };
-
-/* ── Translation Firestore collection ─────────────────── */
-const TRANS_COL = (typeof db !== 'undefined') ? db.collection("translations") : null;
-
-async function loadTranslations(lang){
-  var defaults = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang] || DEFAULT_TRANSLATIONS.en));
-  if(!TRANS_COL) return defaults;
-  try{
-    var snap = await TRANS_COL.doc(lang).get();
-    if(snap.exists && snap.data() && Object.keys(snap.data()).length > 0){
-      return Object.assign(defaults, snap.data());
-    }
-  }catch(e){ console.warn('Translation load failed:', e); }
-  return defaults;
-}
-
-async function saveTranslations(lang, data){
-  if(!TRANS_COL) throw new Error('Firestore not initialized');
-  await TRANS_COL.doc(lang).set(data);
-}
