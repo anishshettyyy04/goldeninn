@@ -3,1212 +3,644 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Golden Inn — Admin</title>
-<meta name="robots" content="noindex,nofollow">
+<title>Golden Inn — Luxury Rooms · Samarambha Party Hall · Pub | Electronic City, Bangalore</title>
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#070605;
+  --black2:#120e0a;
+  --black3:#1a140e;
+  --gold:#cda44c;
+  --gold-light:#f1d98a;
+  --gold-deep:#a9802f;
+  --maroon:#5c0e1f;
+  --red:#8c1029;
+  --red2:#b81c39;
+  --cream:#f4ecd8;
+  --muted:#a99b80;
+  --line:rgba(205,164,76,.16);
+  --radius:14px;
+  --container:1360px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--cream);line-height:1.7;overflow-x:hidden;font-size:16px;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--gold);color:#1a1305;}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:.2px;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
+.gold-text{background:linear-gradient(100deg,var(--gold-light) 0%,var(--gold) 45%,var(--gold-deep) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ic-wrap svg{width:100%;height:100%;display:block;}
+.section{padding:clamp(60px,9vw,120px) 6vw;position:relative;max-width:var(--container);margin:0 auto;}
+.kicker{display:flex;align-items:center;gap:12px;color:var(--gold);text-transform:uppercase;letter-spacing:4px;font-size:.74rem;font-weight:600;margin-bottom:16px;}
+.kicker::before{content:'';width:30px;height:1px;background:var(--gold);}
+.section-title{font-size:clamp(1.9rem,3.6vw,3.1rem);margin-bottom:18px;font-weight:700;}
+.section-desc{color:var(--muted);max-width:620px;margin-bottom:48px;font-size:1.02rem;font-weight:300;}
+
+.btn{display:inline-flex;align-items:center;gap:9px;padding:14px 30px;border-radius:3px;font-weight:600;cursor:pointer;border:1px solid var(--gold);transition:.3s cubic-bezier(.2,.8,.2,1);font-size:.86rem;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold) 55%,var(--gold-deep));color:#1a1305;border:none;box-shadow:0 8px 24px -8px rgba(205,164,76,.5);}
+.btn-gold:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(205,164,76,.6);}
+.btn-outline{background:transparent;color:var(--gold-light);}
+.btn-outline:hover{background:rgba(205,164,76,.08);border-color:var(--gold-light);}
+.btn-call{background:linear-gradient(135deg,var(--red2),var(--maroon));color:#fff;border:none;box-shadow:0 8px 22px -8px rgba(184,28,57,.55);}
+.btn-call:hover{filter:brightness(1.12);transform:translateY(-2px);}
+.btn svg{width:16px;height:16px;}
+
+header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:linear-gradient(180deg,rgba(7,6,5,.95),rgba(7,6,5,.65));backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:.4s cubic-bezier(.2,.8,.2,1);}
+header.nav-hidden{transform:translateY(-110%);}
+.nav-inner{max-width:var(--container);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:16px 6vw;}
+.brand{display:flex;align-items:center;gap:13px;}
+.brand img{height:44px;width:44px;border-radius:50%;box-shadow:0 0 0 1px var(--line);}
+.brand .names{display:flex;flex-direction:column;line-height:1.1;}
+.brand .names b{font-family:'Playfair Display',serif;font-size:1.28rem;color:var(--gold-light);letter-spacing:.5px;}
+.brand .names small{font-size:.6rem;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+nav ul{display:flex;gap:34px;list-style:none;}
+nav a{font-size:.84rem;letter-spacing:.4px;text-transform:uppercase;font-weight:500;color:var(--cream);position:relative;padding-bottom:5px;}
+nav a:hover{color:var(--gold-light);}
+nav a::after{content:'';position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--gold);transition:.3s;}
+nav a:hover::after{width:100%;}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.burger{display:none;cursor:pointer;color:var(--gold-light);width:26px;height:26px;}
+@media(max-width:980px){
+  nav{position:fixed;top:0;right:-100%;height:100vh;width:min(78vw,320px);background:linear-gradient(165deg,var(--black3),var(--black));border-left:1px solid var(--line);transition:.35s;padding:90px 30px;z-index:999;}
+  nav.open{right:0;}
+  nav ul{flex-direction:column;gap:26px;}
+  .burger{display:flex;}
+  .nav-call-text{display:none;}
+}
+
+.hero{position:relative;height:100svh;min-height:560px;max-height:980px;overflow:hidden;background:radial-gradient(ellipse at 30% 60%, rgba(140,16,41,.35), transparent 55%), radial-gradient(ellipse at 70% 20%, rgba(205,164,76,.12), transparent 50%), linear-gradient(160deg,#0f0c08,#070605);}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;}
+.slide.active{opacity:1;}
+.slide img{width:100%;height:100%;object-fit:cover;}
+.slide::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 100%,rgba(184,28,57,.32),transparent 55%),linear-gradient(180deg,rgba(7,6,5,.72) 0%,rgba(7,6,5,.5) 38%,rgba(7,6,5,.98) 100%);}
+.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:5;padding:0 20px;text-shadow:0 4px 24px rgba(0,0,0,.65);}
+.hero-content .eyebrow{display:flex;align-items:center;gap:14px;color:var(--gold-light);letter-spacing:5px;text-transform:uppercase;font-size:.78rem;margin-bottom:22px;font-weight:500;}
+.hero-content .eyebrow::before,.hero-content .eyebrow::after{content:'';width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
+.hero-content .eyebrow::after{background:linear-gradient(90deg,var(--gold),transparent);}
+.hero-content h1{font-size:clamp(2.8rem,8vw,6.2rem);line-height:1.02;font-weight:800;}
+.hero-content p{max-width:580px;margin:22px 0 36px;color:var(--muted);font-size:clamp(.92rem,2.5vw,1.12rem);font-weight:300;}
+.hero-btns{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
+.dots{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:6;}
+.dots span{width:8px;height:8px;border-radius:50%;background:rgba(244,236,216,.3);cursor:pointer;transition:.3s;}
+.dots span.active{background:var(--gold);width:28px;border-radius:5px;}
+.scroll-cue{position:absolute;bottom:34px;right:6vw;color:var(--muted);font-size:.68rem;letter-spacing:2px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:6;}
+.scroll-cue .line{width:1px;height:38px;background:linear-gradient(180deg,var(--gold),transparent);animation:cue 2s infinite;}
+@keyframes cue{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent);opacity:.35;max-width:var(--container);margin:0 auto;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:30px;}
+.card{background:linear-gradient(165deg,var(--black3),var(--black2) 75%);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative;transition:.4s cubic-bezier(.2,.8,.2,1);}
+.card:hover{transform:translateY(-7px);border-color:rgba(205,164,76,.45);box-shadow:0 26px 48px -16px rgba(0,0,0,.6);}
+.card-img{height:225px;overflow:hidden;position:relative;}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:.7s cubic-bezier(.2,.8,.2,1);}
+.card:hover .card-img img{transform:scale(1.07);}
+.card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(7,6,5,.7));}
+.price-tag{position:absolute;top:16px;right:16px;z-index:2;background:rgba(7,6,5,.75);backdrop-filter:blur(6px);border:1px solid var(--gold);color:var(--gold-light);padding:8px 16px;border-radius:3px;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;}
+.price-tag small{font-family:'Inter',sans-serif;font-weight:400;font-size:.66rem;color:var(--muted);display:block;letter-spacing:.5px;}
+.card-icon{position:absolute;top:16px;left:16px;z-index:2;width:38px;height:38px;background:rgba(7,6,5,.75);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold-light);}
+.card-icon svg{width:18px;height:18px;}
+.card-body{padding:26px 24px 24px;}
+.card-body h3{color:var(--gold-light);font-size:1.32rem;margin-bottom:10px;}
+.card-body p{color:var(--muted);font-size:.92rem;margin-bottom:18px;font-weight:300;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.tags span{font-size:.7rem;border:1px solid var(--line);color:var(--gold-light);padding:5px 12px;border-radius:20px;letter-spacing:.3px;}
+.card-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.card-actions a{flex:1;justify-content:center;font-size:.74rem;padding:11px 10px;}
+.partners{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.partners a{font-size:.72rem;color:var(--muted);border:1px solid var(--line);padding:7px 13px;border-radius:4px;letter-spacing:.3px;transition:.25s;}
+.partners a:hover{color:var(--gold-light);border-color:var(--gold);}
+
+.amen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px;}
+.amen{background:linear-gradient(165deg,var(--black3),var(--black2));border:1px solid var(--line);border-radius:var(--radius);padding:30px 22px;text-align:center;transition:.3s;}
+.amen:hover{border-color:rgba(205,164,76,.4);transform:translateY(-4px);}
+.amen .ic-wrap{width:30px;height:30px;color:var(--gold);margin:0 auto 14px;}
+.amen h4{font-family:'Inter',sans-serif;color:var(--cream);font-size:.92rem;font-weight:500;}
+
+.place-card .card-img{height:185px;}
+.dist{display:inline-flex;align-items:center;gap:6px;color:var(--gold-light);font-size:.76rem;font-weight:600;letter-spacing:.3px;margin-bottom:4px;}
+.dist svg{width:13px;height:13px;}
+
+.loc-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:start;}
+.addr-box{background:linear-gradient(165deg,var(--black3),var(--black2));border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-bottom:26px;}
+.addr-box h4{color:var(--gold-light);margin-bottom:10px;font-size:1.05rem;display:flex;align-items:center;gap:10px;}
+.addr-box h4 .ic-wrap{width:18px;height:18px;color:var(--gold);}
+.transport-list{list-style:none;}
+.transport-list li{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+.transport-list li .ic-wrap{width:22px;height:22px;color:var(--gold);flex-shrink:0;margin-top:2px;}
+.transport-list li span:last-child{color:var(--muted);font-size:.92rem;font-weight:300;}
+.map-frame{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);}
+iframe{border:0;width:100%;height:430px;filter:grayscale(.3) invert(.92) contrast(.92);display:block;}
+
+.contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;}
+.form input,.form textarea{width:100%;padding:15px 16px;margin-bottom:16px;background:var(--black3);border:1px solid var(--line);border-radius:4px;color:var(--cream);font-family:inherit;font-size:.92rem;}
+.form input:focus,.form textarea:focus{outline:none;border-color:var(--gold);}
+.form textarea{min-height:130px;resize:vertical;}
+.contact-card{background:linear-gradient(165deg,var(--black3),var(--black2));border:1px solid var(--line);border-radius:var(--radius);padding:34px;}
+.contact-card .row{display:flex;gap:16px;padding:17px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+.contact-card .row:last-child{border-bottom:none;}
+.contact-card .row .ic-wrap{width:22px;height:22px;color:var(--gold);flex-shrink:0;margin-top:3px;}
+.contact-card .row strong{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--gold-light);margin-bottom:4px;font-weight:600;}
+.contact-card .row a,.contact-card .row span{color:var(--muted);font-size:.94rem;}
+.contact-card .row a:hover{color:var(--gold-light);}
+.social-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;}
+.social-row a{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gold-light);transition:.3s;}
+.social-row a svg{width:18px;height:18px;}
+.social-row a:hover{border-color:var(--gold);background:rgba(205,164,76,.1);transform:translateY(-3px);}
+
+footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var(--black));border-top:1px solid var(--line);}
+.foot-inner{max-width:var(--container);margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:30px;padding-bottom:30px;border-bottom:1px solid var(--line);}
+.foot-brand{display:flex;align-items:center;gap:12px;}
+.foot-brand img{height:38px;width:38px;border-radius:50%;}
+.foot-brand b{font-family:'Playfair Display',serif;color:var(--gold-light);font-size:1.2rem;}
+.foot-social{display:flex;gap:12px;}
+.foot-social a{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.3s;}
+.foot-social a svg{width:16px;height:16px;}
+.foot-social a:hover{color:var(--gold-light);border-color:var(--gold);}
+.foot-bottom{max-width:var(--container);margin:24px auto 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:.78rem;}
+
+@media(max-width:880px){
+  .loc-wrap,.contact-wrap{grid-template-columns:1fr;}
+  .contact-card{padding:22px;}
+  iframe{height:320px;}
+}
+@media(max-width:680px){
+  /* NAV */
+  .nav-right .btn span.nav-call-text{display:none;}
+  /* HERO */
+  .hero-content p{font-size:.95rem;margin:14px 0 26px;}
+  .hero-content .eyebrow{letter-spacing:3px;font-size:.7rem;gap:10px;}
+  .hero-content .eyebrow::before,.hero-content .eyebrow::after{width:22px;}
+  .hero-btns{gap:12px;}
+  .hero-btns .btn{padding:11px 18px;font-size:.78rem;}
+  .scroll-cue{display:none;}
+  /* SECTIONS */
+  .section{padding:48px 5vw;}
+  .section-title{font-size:1.65rem;}
+  .section-desc{margin-bottom:28px;font-size:.95rem;}
+  /* GRID — single column on phones */
+  .grid{grid-template-columns:1fr;gap:20px;}
+  /* AMENITIES — 2 col on phone */
+  .amen-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .amen{padding:20px 14px;}
+  /* CARDS */
+  .card-actions{flex-direction:column;}
+  .card-actions a{width:100%;justify-content:center;}
+  .card-body{padding:18px 16px 16px;}
+  .card-body h3{font-size:1.12rem;}
+  .partners{gap:6px;}
+  .partners a{font-size:.7rem;padding:6px 10px;}
+  /* LOCATION */
+  .loc-wrap{gap:24px;}
+  .addr-box{padding:18px;}
+  iframe{height:280px;}
+  /* CONTACT */
+  .contact-card{padding:18px;}
+  .form input,.form textarea{padding:12px 13px;}
+  /* FOOTER */
+  .foot-inner{flex-direction:column;align-items:flex-start;gap:20px;}
+  .foot-bottom{flex-direction:column;gap:6px;font-size:.74rem;}
+}
+@media(max-width:400px){
+  .hero-content h1{font-size:2.3rem;}
+  .amen-grid{grid-template-columns:repeat(2,1fr);}
+  .section{padding:40px 4vw;}
+  .nav-inner{padding:13px 4vw;}
+}
+@media(min-width:1600px){:root{--container:1560px;}body{font-size:17.5px;}}
+@media(min-width:2200px){:root{--container:1820px;}body{font-size:19px;}}
+
+#maintenanceScreen{position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,#1a120a,#070605 70%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px;}
+#maintenanceScreen img{height:80px;width:80px;border-radius:50%;margin-bottom:26px;}
+#maintenanceScreen h1{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:16px;}
+#maintenanceScreen p{max-width:480px;color:var(--muted);margin-bottom:26px;font-weight:300;}
+/* LANGUAGE SWITCHER */
+.lang-switcher{position:relative;}
+.lang-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:4px;background:transparent;border:1px solid var(--line);color:var(--cream);cursor:pointer;font-size:.78rem;font-weight:500;letter-spacing:.3px;transition:.2s;white-space:nowrap;}
+.lang-btn:hover{border-color:var(--gold);color:var(--gold-light);}
+.lang-btn svg{width:15px;height:15px;}
+.lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--black2);border:1px solid var(--line);border-radius:8px;min-width:170px;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-6px);transition:.22s;z-index:200;}
+.lang-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.lang-menu a{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.84rem;color:var(--muted);cursor:pointer;transition:.15s;text-decoration:none;}
+.lang-menu a:hover{background:rgba(205,164,76,.08);color:var(--gold-light);}
+.lang-menu a.active{color:var(--gold-light);font-weight:600;}
+.lang-flag{font-size:1.1rem;line-height:1;}
+</style>
+<body>
+
+<div id="maintenanceScreen" style="display:none;">
+  <img src="assets/logo.png" alt="Golden Inn">
+  <h1 class="gold-text">We'll be right back</h1>
+  <p id="maintText"></p>
+  <a href="tel:+918746834131" class="btn btn-call">Call Us</a>
+</div>
+
+<div id="siteRoot">
+
+<header id="siteHeader">
+  <div class="nav-inner">
+    <a class="brand" href="#home">
+      <img src="assets/logo.png" alt="Golden Inn logo">
+      <span class="names"><b>Golden Inn</b><small>Rooms · Hall · Pub</small></span>
+    </a>
+    <nav id="navList">
+      <ul>
+        <li><a href="#home" data-i18n="nav_home">Home</a></li>
+        <li><a href="#rooms" data-i18n="nav_rooms">Rooms</a></li>
+        <li><a href="#partyhall" data-i18n="nav_hall">Party Hall</a></li>
+        <li><a href="#amenities" data-i18n="nav_amenities">Amenities</a></li>
+        <li><a href="#explore" data-i18n="nav_explore">Explore</a></li>
+        <li><a href="#location" data-i18n="nav_location">Location</a></li>
+        <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-btn" id="langBtn" onclick="toggleLangMenu(event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18A14 14 0 0 1 12 3z"/></svg>
+          <span id="langLabel">EN</span>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <a onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</a>
+          <a onclick="setLang('kn')"><span class="lang-flag">🇮🇳</span> ಕನ್ನಡ</a>
+          <a onclick="setLang('ta')"><span class="lang-flag">🇮🇳</span> தமிழ்</a>
+          <a onclick="setLang('te')"><span class="lang-flag">🇮🇳</span> తెలుగు</a>
+          <a onclick="setLang('hi')"><span class="lang-flag">🇮🇳</span> हिंदी</a>
+          <a onclick="setLang('ml')"><span class="lang-flag">🇮🇳</span> മലയാളം</a>
+        </div>
+      </div>
+      <a id="navCallBtn" href="tel:+918746834131" class="btn btn-call"><span class="ic-wrap"></span><span class="nav-call-text" id="navCallText">Call Now</span></a>
+      <div class="burger" id="burger"></div>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div id="sliderWrap"></div>
+  <div class="hero-content">
+    <div class="eyebrow" id="heroEyebrow"></div>
+    <h1 class="gold-text" id="heroTitle">Golden Inn</h1>
+    <p id="heroSub"></p>
+    <div class="hero-btns">
+      <a href="#rooms" class="btn btn-gold" data-i18n="hero_btn_rooms">Explore Rooms</a>
+      <a id="heroCallBtn" href="tel:+918746834131" class="btn btn-outline"></a>
+    </div>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="scroll-cue"><span data-i18n="scroll_label">Scroll</span><span class="line"></span></div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="rooms">
+  <div class="kicker" data-i18n="rooms_kicker">Stay With Us</div>
+  <h2 class="section-title"><span data-i18n="rooms_title_a">Our</span> <span class="gold-text" data-i18n="rooms_title_b">Rooms</span></h2>
+  <p class="section-desc" data-i18n="rooms_desc">Considered interiors, restful beds and a complimentary morning breakfast with every stay — choose the room that suits your trip.</p>
+  <div class="grid" id="roomsGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="partyhall">
+  <div class="kicker" data-i18n="hall_kicker">Celebrate With Us</div>
+  <h2 class="section-title"><span data-i18n="hall_title_a">Samarambha</span> <span class="gold-text" data-i18n="hall_title_b">Party Hall</span></h2>
+  <p class="section-desc" data-i18n="hall_desc">A grand banquet space for weddings, milestone birthdays and corporate events — fully equipped, centrally located.</p>
+  <div class="grid" id="hallGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="amenities">
+  <div class="kicker" data-i18n="amen_kicker">Hotel Details</div>
+  <h2 class="section-title"><span data-i18n="amen_title_a">Amenities &</span> <span class="gold-text" data-i18n="amen_title_b">Facilities</span></h2>
+  <div class="amen-grid" id="amenGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="explore">
+  <div class="kicker" data-i18n="explore_kicker">Around Golden Inn</div>
+  <h2 class="section-title"><span data-i18n="explore_title_a">Explore</span> <span class="gold-text" data-i18n="explore_title_b">Bangalore</span></h2>
+  <p class="section-desc" data-i18n="explore_desc">Staying with us puts you close to some of Bangalore's most loved destinations — ideal for a day trip during your visit.</p>
+  <div class="grid" id="placesGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="location">
+  <div class="kicker" data-i18n="loc_kicker">Find Us</div>
+  <h2 class="section-title"><span data-i18n="loc_title_a">Location &</span> <span class="gold-text" data-i18n="loc_title_b">How To Reach</span></h2>
+  <div class="loc-wrap">
+    <div class="loc-info">
+      <div class="addr-box">
+        <h4></h4>
+        <p id="hotelAddress" style="color:var(--muted);font-weight:300;margin-bottom:18px;"></p>
+        <a id="directionsBtn" href="#" target="_blank" class="btn btn-gold" data-i18n="btn_directions">Get Directions</a>
+      </div>
+      <h4 style="color:var(--gold-light);margin-bottom:6px;" id="gettingHereLabel" data-i18n="loc_getting">Getting Here</h4>
+      <ul class="transport-list" id="transportList"></ul>
+    </div>
+    <div class="map-frame">
+      <iframe loading="lazy" id="mapFrame"></iframe>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="contact">
+  <div class="kicker" data-i18n="contact_kicker">Get In Touch</div>
+  <h2 class="section-title"><span data-i18n="contact_title_a">Contact</span> <span class="gold-text" data-i18n="contact_title_b">Us</span></h2>
+  <div class="contact-wrap">
+    <form class="form" id="contactForm" onsubmit="submitContact(event)">
+      <input type="text" id="fi_name" placeholder="Your Name" required data-i18n-ph="form_name">
+      <input type="tel" id="fi_phone" placeholder="Phone Number" required data-i18n-ph="form_phone">
+      <input type="email" id="fi_email" placeholder="Email Address" data-i18n-ph="form_email">
+      <textarea id="fi_msg" placeholder="Your Message / Booking Query" data-i18n-ph="form_msg"></textarea>
+      <button class="btn btn-gold" type="submit" id="fi_send" style="width:100%;border:none;cursor:pointer;justify-content:center;" data-i18n="form_send">Send Message</button>
+    </form>
+    <div class="contact-card">
+      <div class="row"><span class="ic-wrap"></span><div><strong>Call Us</strong><a id="cPhone1" href="#"></a><br><a id="cPhone2" href="#"></a></div></div>
+      <div class="row"><span class="ic-wrap"></span><div><strong>Email</strong><a id="cEmail" href="#"></a></div></div>
+      <div class="row"><span class="ic-wrap"></span><div><strong>Website</strong><a id="cWebsite" href="#" target="_blank"></a></div></div>
+      <div class="row"><span class="ic-wrap"></span><div><strong>Address</strong><span id="cAddress" style="color:var(--muted);"></span></div></div>
+      <div class="social-row" id="socialRow"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand"><img src="assets/logo.png" alt="Golden Inn"><b>Golden Inn</b></div>
+    <div class="foot-social" id="footSocial"></div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Golden Inn — Rooms · Samarambha Party Hall · Pub, Electronic City, Bangalore.</span>
+    <span>All rights reserved.</span>
+  </div>
+</footer>
+
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="site-data.js"></script>
-<style>
-:root{
-  --bg:#080706;--sf:#111009;--sf2:#1a1610;--sf3:#221e14;
-  --gold:#cda44c;--gl:#f1d98a;--gd:#a9802f;
-  --red:#8c1029;--r2:#b81c39;
-  --cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.15);
-  --ok:#3a9e60;--err:#a8132d;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--cream);font-size:14px;-webkit-font-smoothing:antialiased;}
-::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--sf);}
-::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
-h1,h2,h3{font-family:'Playfair Display',serif;}
-button,input,textarea,select{font-family:inherit;}
-
-/* LOGIN */
-#loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 40% 30%,#1a120a,var(--bg) 65%);z-index:100;}
-.login-box{width:100%;max-width:350px;background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:40px 34px;}
-.login-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gl);margin-bottom:4px;}
-.login-sub{font-size:.8rem;color:var(--muted);margin-bottom:26px;}
-.fi{width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:6px;padding:11px 13px;color:var(--cream);font-size:.9rem;margin-bottom:12px;}
-.fi:focus{outline:none;border-color:var(--gold);}
-.err-msg{font-size:.75rem;color:#e05252;margin-top:8px;display:none;}
-
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:5px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:.2s;white-space:nowrap;}
-.btn-gold{background:linear-gradient(135deg,var(--gl),var(--gold) 60%,var(--gd));color:#1a1305;}
-.btn-gold:hover{filter:brightness(1.08);}
-.btn-outline{background:transparent;border:1px solid var(--line);color:var(--muted);}
-.btn-outline:hover{border-color:var(--gold);color:var(--gl);}
-.btn-red{background:linear-gradient(135deg,var(--r2),var(--red));color:#fff;}
-.btn-green{background:linear-gradient(135deg,#3a9e60,#256640);color:#fff;}
-.btn-sm{padding:7px 13px;font-size:.74rem;}
-
-/* APP SHELL */
-#app{display:none;height:100vh;overflow:hidden;}
-.sidebar{width:210px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 10px;height:100vh;}
-.s-logo{display:flex;align-items:center;gap:10px;padding:0 8px 22px;}
-.s-logo img{height:34px;width:34px;border-radius:50%;}
-.s-logo b{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gl);}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;font-size:.82rem;color:var(--muted);cursor:pointer;margin-bottom:2px;transition:.15s;}
-.nav-item:hover{background:var(--sf2);color:var(--cream);}
-.nav-item.active{background:var(--sf3);color:var(--gl);}
-.ndot{width:6px;height:6px;border-radius:50%;background:var(--line);flex-shrink:0;transition:.15s;}
-.nav-item.active .ndot{background:var(--gold);}
-.s-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);}
-#syncBadge{font-size:.66rem;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted);display:block;margin:0 6px 10px;text-align:center;}
-
-.main{flex:1;overflow-y:auto;padding:30px 38px 100px;}
-.panel{display:none;max-width:860px;}
-.panel.active{display:block;}
-.ph{margin-bottom:26px;}
-.ph h1{font-size:1.7rem;margin-bottom:4px;}
-.ph p{color:var(--muted);font-size:.84rem;}
-
-/* TOAST */
-#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-size:.8rem;opacity:0;transform:translateY(8px);transition:.22s;pointer-events:none;max-width:320px;}
-#toast.on{opacity:1;transform:none;}
-#toast.ok{border-color:var(--ok);}
-#toast.er{border-color:var(--err);}
-
-/* BLOCK */
-.block{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;}
-.block-title{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:14px;font-weight:600;}
-
-/* FIELDS */
-.field{margin-bottom:12px;}
-.field label,.fl{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.field input,.field textarea,.field select,
-input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:5px;padding:9px 11px;color:var(--cream);font-size:.87rem;}
-.field textarea{resize:vertical;min-height:70px;}
-.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--gold);}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-
-/* CARD ROW */
-.card-row{background:var(--sf2);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;}
-.card-top{display:flex;align-items:center;gap:12px;padding:12px 15px;cursor:pointer;}
-.card-top:hover{background:var(--sf3);border-radius:10px 10px 0 0;}
-.card-thumb{width:50px;height:38px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--sf3);}
-.card-info{flex:1;min-width:0;}
-.card-title{font-size:.88rem;font-weight:600;color:var(--cream);}
-.card-meta{font-size:.72rem;color:var(--muted);margin-top:2px;}
-.card-acts{display:flex;gap:6px;flex-shrink:0;}
-.card-body{display:none;padding:16px;border-top:1px solid var(--line);}
-.card-body.open{display:block;}
-.rbtn{width:28px;height:28px;border-radius:5px;background:var(--sf3);border:1px solid var(--line);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.84rem;transition:.15s;}
-.rbtn:hover:not(:disabled){border-color:var(--gold);color:var(--gl);}
-.rbtn:disabled{opacity:.3;cursor:default;}
-
-/* IMAGE UPLOAD ZONE */
-.img-zone{position:relative;border:1px dashed var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--sf3);transition:.2s;}
-.img-zone:hover{border-color:var(--gold);}
-.img-zone img{width:100%;height:150px;object-fit:cover;display:block;}
-.img-placeholder{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:.78rem;}
-.img-placeholder svg{width:26px;height:26px;opacity:.5;}
-.img-overlay{position:absolute;inset:0;background:rgba(7,6,5,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;}
-.img-zone:hover .img-overlay{opacity:1;}
-.img-overlay span{color:var(--gl);font-size:.76rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
-.up-bar-bg{height:3px;background:var(--sf3);}
-.up-bar{height:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
-
-/* SIMPLE ROW (amenities, transport, social) */
-.simple-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--sf2);border:1px solid var(--line);border-radius:8px;margin-bottom:7px;}
-.simple-row select{width:105px;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 8px;color:var(--cream);font-size:.82rem;}
-.simple-row input{flex:1;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 9px;color:var(--cream);font-size:.82rem;}
-.simple-row input:focus,.simple-row select:focus{outline:none;border-color:var(--gold);}
-
-/* ADD ROW */
-.add-row{border:1px dashed var(--line);border-radius:8px;padding:11px;text-align:center;color:var(--muted);font-size:.8rem;cursor:pointer;transition:.18s;margin-bottom:8px;}
-.add-row:hover{border-color:var(--gold);color:var(--gl);}
-
-/* SLIDER GRID */
-.slide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:12px;}
-.slide-item{position:relative;border-radius:8px;overflow:hidden;background:var(--sf3);}
-.slide-item img{width:100%;height:110px;object-fit:cover;display:block;}
-.slide-num{position:absolute;top:6px;left:6px;background:rgba(7,6,5,.8);color:var(--gl);font-size:.65rem;padding:2px 7px;border-radius:4px;}
-.slide-del{position:absolute;top:6px;right:6px;background:rgba(7,6,5,.8);border:none;color:#fff;width:21px;height:21px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;}
-.slide-del:hover{background:var(--red);}
-.slide-up-zone{position:relative;border:1px dashed var(--line);border-radius:8px;height:110px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.78rem;background:var(--sf3);}
-.slide-up-zone:hover{border-color:var(--gold);color:var(--gl);}
-
-/* MEDIA GRID */
-.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin:14px 0;}
-.media-card{border-radius:8px;overflow:hidden;background:var(--sf2);border:1px solid var(--line);}
-.media-card img,.media-card video{width:100%;height:90px;object-fit:cover;display:block;}
-.media-card-info{padding:8px 9px;}
-.used-badge{font-size:.64rem;font-weight:600;margin-bottom:5px;}
-.used-badge.yes{color:var(--ok);}
-.used-badge.no{color:#e07b39;}
-.media-btns{display:flex;gap:5px;}
-.media-btns button{flex:1;padding:5px;font-size:.65rem;}
-
-/* PROGRESS */
-.prog-wrap{display:none;margin-top:12px;}
-.prog-wrap.on{display:block;}
-.prog-top{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:4px;}
-.prog-bg{background:var(--sf3);border-radius:3px;height:5px;}
-.prog-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
-
-/* DROPZONE */
-.drop-zone{border:2px dashed var(--line);border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:.18s;}
-.drop-zone:hover,.drop-zone.dg{border-color:var(--gold);background:rgba(205,164,76,.04);}
-.drop-zone svg{width:30px;height:30px;color:var(--gold);margin:0 auto 10px;display:block;opacity:.7;}
-.drop-zone p{color:var(--muted);font-size:.84rem;}
-.drop-zone small{font-size:.7rem;color:var(--muted);opacity:.7;}
-
-/* MAINT */
-.maint-bar{border-radius:10px;padding:16px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
-.maint-off{background:linear-gradient(90deg,#0e2a16,#06180a);border:1px solid var(--ok);}
-.maint-on{background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid var(--err);}
-
-/* SAVE BAR */
-.save-bar{position:fixed;bottom:0;left:210px;right:0;background:rgba(8,7,6,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:13px 38px;display:flex;justify-content:flex-end;gap:10px;z-index:50;}
-.note{font-size:.72rem;color:var(--muted);}
-
-@media(max-width:700px){
-  .sidebar{width:58px;padding:14px 6px;}
-  .s-logo b,.nav-item span:not(.ndot),#syncBadge,.s-footer .btn{display:none;}
-  .nav-item{justify-content:center;}
-  .main{padding:18px 14px 90px;}
-  .save-bar{left:58px;}
-  .g2,.g3{grid-template-columns:1fr;}
-}
-</style>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div id="loginScreen">
-  <div class="login-box">
-    <div class="login-logo">Golden Inn</div>
-    <div class="login-sub">Admin Panel — sign in to manage site content</div>
-    <label class="fl">Admin ID</label>
-    <input class="fi" type="text" id="adminId" placeholder="Enter admin ID" autocomplete="username">
-    <label class="fl">Password</label>
-    <div style="position:relative;margin-bottom:12px;">
-      <input class="fi" type="password" id="adminPass" placeholder="Enter password" autocomplete="current-password" style="margin-bottom:0;padding-right:44px;">
-      <button id="eyeBtn" type="button" onclick="togglePassVis()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:0;display:flex;align-items:center;">
-        <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-      </button>
-    </div>
-    <button class="btn btn-gold" style="width:100%;margin-top:2px;" id="loginBtn" onclick="doLogin()">Sign In</button>
-    <div class="err-msg" id="loginErr" style="display:none;margin-top:10px;font-size:.78rem;color:#e05252;"></div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app" style="display:flex;">
-  <div class="sidebar">
-    <div class="s-logo">
-      <img src="assets/logo.png" alt="">
-      <b>Golden Inn</b>
-    </div>
-    <div class="nav-item active" data-panel="hero"><span class="ndot"></span><span>Hero & Slider</span></div>
-    <div class="nav-item" data-panel="rooms"><span class="ndot"></span><span>Rooms</span></div>
-    <div class="nav-item" data-panel="hall"><span class="ndot"></span><span>Party Hall</span></div>
-    <div class="nav-item" data-panel="amenities"><span class="ndot"></span><span>Amenities</span></div>
-    <div class="nav-item" data-panel="explore"><span class="ndot"></span><span>Explore BLR</span></div>
-    <div class="nav-item" data-panel="location"><span class="ndot"></span><span>Location</span></div>
-    <div class="nav-item" data-panel="contact"><span class="ndot"></span><span>Contact</span></div>
-    <div class="nav-item" data-panel="media"><span class="ndot"></span><span>Media Library</span></div>
-    <div class="nav-item" data-panel="languages"><span class="ndot"></span><span>Languages</span></div>
-    <div class="nav-item" data-panel="settings"><span class="ndot"></span><span>Settings</span></div>
-    <div class="nav-item" data-panel="messages"><span class="ndot"></span><span>Messages <span id="msgCount" style="background:var(--r2);color:#fff;border-radius:20px;padding:1px 7px;font-size:.65rem;margin-left:4px;display:none;"></span></span></div>
-    <div class="s-footer">
-      <span id="syncBadge">Not connected</span>
-      <button class="btn btn-outline btn-sm" style="width:100%;" id="logoutBtn">Sign Out</button>
-    </div>
-  </div>
-
-  <div class="main">
-
-    <div class="panel active" id="panel-hero">
-      <div class="ph"><h1>Hero & Slider</h1><p>The full-screen opening section visitors see first.</p></div>
-      <div class="block">
-        <div class="block-title">Text Content</div>
-        <div class="field"><label>Eyebrow Text</label><input id="h_eyebrow"></div>
-        <div class="field"><label>Main Title</label><input id="h_title"></div>
-        <div class="field"><label>Subtitle</label><textarea id="h_sub"></textarea></div>
-      </div>
-      <div class="block">
-        <div class="block-title">Slider Images <span class="note">— click any image to swap it, click × to remove</span></div>
-        <div class="slide-grid" id="slideGrid"></div>
-        <div class="add-row" id="addSlideBtn">+ Add Slide</div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-rooms">
-      <div class="ph"><h1>Rooms</h1><p>Click a card to expand and edit. Upload images directly on each card.</p></div>
-      <div id="roomsList"></div>
-      <div class="add-row" id="addRoomBtn">+ Add Room</div>
-    </div>
-
-    <div class="panel" id="panel-hall">
-      <div class="ph"><h1>Party Hall</h1><p>Samarambha Party Hall packages.</p></div>
-      <div id="hallList"></div>
-      <div class="add-row" id="addHallBtn">+ Add Hall Package</div>
-    </div>
-
-    <div class="panel" id="panel-amenities">
-      <div class="ph"><h1>Amenities</h1><p>Icons and labels shown in the facilities grid.</p></div>
-      <div id="amenList"></div>
-      <div class="add-row" id="addAmenBtn">+ Add Amenity</div>
-    </div>
-
-    <div class="panel" id="panel-explore">
-      <div class="ph"><h1>Explore Bangalore</h1><p>Places near Golden Inn — distance auto-fetches when you type the name.</p></div>
-      <div id="placesList"></div>
-      <div class="add-row" id="addPlaceBtn">+ Add Place</div>
-    </div>
-
-    <div class="panel" id="panel-location">
-      <div class="ph"><h1>Location & Transport</h1></div>
-      <div class="block">
-        <div class="block-title">Address</div>
-        <div class="field"><label>Hotel Address</label><textarea id="l_address" rows="3"></textarea></div>
-      </div>
-      <div class="block">
-        <div class="block-title">How To Reach — Transport Options</div>
-        <div id="transportList"></div>
-        <div class="add-row" id="addTransportBtn">+ Add Transport Option</div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-contact">
-      <div class="ph"><h1>Contact & Social</h1></div>
-      <div class="block">
-        <div class="block-title">Contact Details</div>
-        <div class="g2">
-          <div class="field"><label>Primary Phone</label><input id="c_phone1"></div>
-          <div class="field"><label>Secondary Phone</label><input id="c_phone2"></div>
-          <div class="field"><label>Email</label><input id="c_email"></div>
-          <div class="field"><label>Website</label><input id="c_website"></div>
-        </div>
-      </div>
-      <div class="block">
-        <div class="block-title">Social Media</div>
-        <div id="socialList"></div>
-        <div class="add-row" id="addSocialBtn">+ Add Social Handle</div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-media">
-      <div class="ph"><h1>Media Library</h1><p>Files stored on Cloudinary (free · 25 GB). Copy any URL and paste into an image field.</p></div>
-      <div class="block">
-        <div class="drop-zone" id="mediaDropZone">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <p>Drag & drop images or videos here, or click to browse</p>
-          <small>JPG · PNG · WebP · MP4 · MOV — uploaded directly to Cloudinary</small>
-          <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display:none">
-        </div>
-        <div class="prog-wrap" id="mediaProgress">
-          <div class="prog-top"><span id="mediaProgLabel">Uploading…</span><span id="mediaProgPct">0%</span></div>
-          <div class="prog-bg"><div class="prog-bar" id="mediaProgBar"></div></div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <span class="note" id="mediaStats">Loading…</span>
-        <button class="btn btn-red btn-sm" id="cleanUnusedBtn">Delete Unused Media</button>
-      </div>
-      <div class="media-grid" id="mediaGrid"></div>
-      <p class="note">To free Cloudinary storage: after removing unused records here, also delete the files in your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gl);">Cloudinary Media Library</a>.</p>
-    </div>
-
-    <div class="panel" id="panel-languages">
-      <div class="ph"><h1>Languages</h1><p>Edit translations for each language. Changes save to Firebase and go live instantly on the public site.</p></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;" id="langTabs">
-        <button class="btn btn-gold btn-sm" data-ltab="en" onclick="switchLangTab('en')">🇬🇧 English</button>
-        <button class="btn btn-outline btn-sm" data-ltab="kn" onclick="switchLangTab('kn')">🇮🇳 ಕನ್ನಡ</button>
-        <button class="btn btn-outline btn-sm" data-ltab="ta" onclick="switchLangTab('ta')">🇮🇳 தமிழ்</button>
-        <button class="btn btn-outline btn-sm" data-ltab="te" onclick="switchLangTab('te')">🇮🇳 తెలుగు</button>
-        <button class="btn btn-outline btn-sm" data-ltab="hi" onclick="switchLangTab('hi')">🇮🇳 हिंदी</button>
-        <button class="btn btn-outline btn-sm" data-ltab="ml" onclick="switchLangTab('ml')">🇮🇳 മലയാളം</button>
-      </div>
-      <div class="block">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-          <div class="block-title" style="margin:0;" id="langTabTitle">English Translations</div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline btn-sm" onclick="resetLangToDefault()">Reset to Default</button>
-            <button class="btn btn-gold btn-sm" onclick="saveLang()">Save Language</button>
-          </div>
-        </div>
-        <div id="langFields"></div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-settings">
-      <div class="ph"><h1>Settings</h1></div>
-      <div class="maint-bar maint-off" id="maintBar">
-        <div>
-          <div style="font-weight:600;margin-bottom:3px;" id="maintTitle">Maintenance Mode: OFF</div>
-          <div class="note" id="maintSub">The live site is visible to all visitors.</div>
-        </div>
-        <button class="btn btn-red btn-sm" id="maintBtn">Turn On</button>
-      </div>
-      <div class="block">
-        <div class="block-title">Maintenance Message</div>
-        <div class="field"><label>Shown to visitors while maintenance mode is ON</label><textarea id="s_maintMsg"></textarea></div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-messages">
-      <div class="ph"><h1>Messages</h1><p>Enquiries sent from the contact form on the main site.</p></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-        <span class="note" id="msgStats"></span>
-        <button class="btn btn-outline btn-sm" onclick="loadMessages()">Refresh</button>
-      </div>
-      <div id="messagesList"><p class="note" style="padding:10px 0;">Loading…</p></div>
-    </div>
-
-  </div>
-
-  <div class="save-bar">
-    <button class="btn btn-outline btn-sm" id="discardBtn">Discard Changes</button>
-    <button class="btn btn-gold" id="saveBtn">Save All Changes</button>
-  </div>
-</div>
-
-<div id="toast"></div>
-
 <script>
-/* ─── CONFIG ─────────────────────────────────────────── */
-const ADMIN_PASSWORD = "golden123";
-const ADMIN_ID       = "goldeninn";
-// CLOUDINARY_CLOUD and CLOUDINARY_PRESET already defined in site-data.js
+let DATA = loadData();
+const BYPASS = new URLSearchParams(location.search).has('preview');
 
-/* ─── STATE ──────────────────────────────────────────── */
-let DATA = {};
-let mediaItems = [];
-const ICON_KEYS = typeof ICONS !== 'undefined' ? Object.keys(ICONS) : ['bed','party','wifi','breakfast','parking','pin','phone','star'];
+/* ── LANGUAGE SYSTEM ─────────────────────────────────── */
+let LANG = localStorage.getItem('golden_inn_lang') || 'en';
+let T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[LANG]||DEFAULT_TRANSLATIONS.en));
+function tr(key){ return T[key] || (DEFAULT_TRANSLATIONS.en[key]) || key; }
 
-/* ─── INIT — runs immediately, no DOMContentLoaded needed ─ */
-(function init() {
-  // If DOM is already ready, run now; otherwise wait
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run);
+function applyTranslations(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k = el.getAttribute('data-i18n');
+    var val = T[k];
+    if(!val) return;
+    // Only set textContent if element has no child elements (no SVG icons etc.)
+    if(el.children.length === 0){ el.textContent = val; }
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+    var k = el.getAttribute('data-i18n-ph');
+    if(T[k]) el.placeholder = T[k];
+  });
+  // Update hero content (always from DATA for English, from T for other languages)
+  var eyebrow = document.getElementById('heroEyebrow');
+  var sub = document.getElementById('heroSub');
+  if(LANG === 'en'){
+    if(eyebrow) eyebrow.textContent = DATA.heroEyebrow || T['hero_eyebrow'] || '';
+    if(sub) sub.textContent = DATA.heroSub || T['hero_subtitle'] || '';
   } else {
-    run();
+    if(eyebrow) eyebrow.textContent = T['hero_eyebrow'] || DATA.heroEyebrow || '';
+    if(sub) sub.textContent = T['hero_subtitle'] || DATA.heroSub || '';
   }
-  function run() {
-    try { showLogin(); } catch(e) { console.warn('showLogin error:', e); }
-    try { setupNav(); }   catch(e) { console.warn('setupNav error:', e); }
-    try { setupEvents(); } catch(e) { console.warn('setupEvents error:', e); }
+  // Update nav call button text (has icon, can't use textContent on parent)
+  var navCallText = document.getElementById('navCallText');
+  if(navCallText && T['nav_call']) navCallText.textContent = T['nav_call'];
+  // Update heroCallBtn preserving the icon
+  var callBtn = document.getElementById('heroCallBtn');
+  if(callBtn) callBtn.innerHTML = icon('phone',16) + ' ' + (T['hero_btn_call'] || 'Call to Book');
+  // Update lang label and active state
+  var labels={en:'EN',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिं',ml:'മലʼ};
+  var lbl = document.getElementById('langLabel');
+  if(lbl) lbl.textContent = labels[LANG] || LANG.toUpperCase();
+  document.querySelectorAll('#langMenu a').forEach(function(a,i){
+    a.classList.toggle('active', ['en','kn','ta','te','hi','ml'][i]===LANG);
+  });
+}
+
+window.toggleLangMenu = function(e){
+  if(e) e.stopPropagation();
+  var m = document.getElementById('langMenu');
+  if(m) m.classList.toggle('open');
+};
+window.closeLangMenu = function(){
+  var m = document.getElementById('langMenu');
+  if(m) m.classList.remove('open');
+};
+document.addEventListener('click', function(e){
+  if(!e.target.closest('#langSwitcher')) closeLangMenu();
+});
+window.setLang = async function(lang){
+  LANG = lang;
+  localStorage.setItem('golden_inn_lang', lang);
+  closeLangMenu();
+  if(typeof loadTranslations === 'function'){
+    try{ T = await loadTranslations(lang); }
+    catch(e){ T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en)); }
+  } else {
+    T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en));
+  }
+  render();
+};
+
+// Clear stale cache that may have old broken asset paths
+(function clearStaleCache(){
+  var raw = localStorage.getItem(STORE_KEY);
+  if(raw && raw.indexOf('assets/room') !== -1){
+    localStorage.removeItem(STORE_KEY);
+    DATA = loadData(); // reload clean defaults
   }
 })();
 
-window.togglePassVis = function togglePassVis() {
-  var inp = document.getElementById('adminPass');
-  var icon = document.getElementById('eyeIcon');
-  if (inp.type === 'password') {
-    inp.type = 'text';
-    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
-  } else {
-    inp.type = 'password';
-    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-  }
-}
-
-function showLogin() {
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('adminId').value = '';
-  document.getElementById('adminPass').value = '';
-  document.getElementById('loginErr').style.display = 'none';
-}
-
-function showApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  badge('loading');
-  try {
-    DATA = loadData();
-    renderAll();
-  } catch(e) {
-    DATA = JSON.parse(JSON.stringify(typeof DEFAULTS !== 'undefined' ? DEFAULTS : {}));
-    renderAll();
-  }
-  if (typeof loadFromFirestore === 'function') {
-    loadFromFirestore().then(function(fresh) {
-      if (fresh) { DATA = fresh; renderAll(); badge('live'); }
-      else { badge('offline'); }
-    }).catch(function() { badge('offline'); });
-  }
-  if (typeof loadMediaLibrary === 'function') loadMediaLibrary();
-  loadMessages();
-}
-
-window.doLogin = function doLogin() {
-  var id   = (document.getElementById('adminId').value   || '').trim();
-  var pass = (document.getElementById('adminPass').value || '').trim();
-  var err  = document.getElementById('loginErr');
-  err.style.display = 'none';
-  if (!id) { err.textContent = 'Please enter your Admin ID.'; err.style.display = 'block'; return; }
-  if (!pass) { err.textContent = 'Please enter your password.'; err.style.display = 'block'; return; }
-  if (id === ADMIN_ID && pass === ADMIN_PASSWORD) {
-    showApp();
-  } else {
-    err.textContent = 'Incorrect Admin ID or password. Try again.';
-    err.style.display = 'block';
-    document.getElementById('adminPass').value = '';
-    document.getElementById('adminPass').focus();
-  }
-}
-
-/* ─── LOGIN ──────────────────────────────────────────── */
-function setupEvents() {
-  document.getElementById('loginBtn').addEventListener('click', doLogin);
-  document.getElementById('adminId').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('adminPass').focus(); });
-  document.getElementById('adminPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
-  document.getElementById('logoutBtn').addEventListener('click', function() { showLogin(); });
-  document.getElementById('saveBtn').addEventListener('click', saveAll);
-  document.getElementById('discardBtn').addEventListener('click', function() {
-    loadFromFirestore().then(function(fresh) {
-      if (fresh) DATA = fresh;
-      else DATA = loadData();
-      renderAll();
-      toast('Changes discarded', '');
-    });
-  });
-  document.getElementById('addSlideBtn').addEventListener('click', function() {
-    if (!DATA.slides) DATA.slides = [];
-    DATA.slides.push('assets/room1.png');
-    renderSlides();
-  });
-  document.getElementById('addRoomBtn').addEventListener('click', function() {
-    if (!DATA.rooms) DATA.rooms = [];
-    DATA.rooms.push({img:'assets/room1.png',icon:'bed',title:'New Room',price:'₹0',unit:'/ night',desc:'',tags:[]});
-    renderCards('rooms', 'roomsList');
-  });
-  document.getElementById('addHallBtn').addEventListener('click', function() {
-    if (!DATA.hall) DATA.hall = [];
-    DATA.hall.push({img:'assets/room12.png',icon:'party',title:'New Package',price:'₹0',unit:'/ event',desc:'',tags:[]});
-    renderCards('hall', 'hallList');
-  });
-  document.getElementById('addAmenBtn').addEventListener('click', function() {
-    if (!DATA.amenities) DATA.amenities = [];
-    DATA.amenities.push({iconKey:'star',title:'New Amenity'});
-    renderAmenities();
-  });
-  document.getElementById('addPlaceBtn').addEventListener('click', function() {
-    if (!DATA.places) DATA.places = [];
-    DATA.places.push({img:'assets/room9.png',title:'New Place',dist:'',desc:'',lat:null,lng:null});
-    renderPlaces();
-  });
-  document.getElementById('addTransportBtn').addEventListener('click', function() {
-    if (!DATA.transport) DATA.transport = [];
-    DATA.transport.push({iconKey:'taxi',text:'New transport option.'});
-    renderTransport();
-  });
-  document.getElementById('addSocialBtn').addEventListener('click', function() {
-    if (!DATA.social) DATA.social = [];
-    DATA.social.push({iconKey:'instagram',label:'',url:'https://'});
-    renderSocial();
-  });
-  document.getElementById('maintBtn').addEventListener('click', toggleMaintenance);
-  document.getElementById('cleanUnusedBtn').addEventListener('click', cleanUnused);
-
-  // Media upload
-  var dz = document.getElementById('mediaDropZone');
-  var fi = document.getElementById('mediaFileInput');
-  dz.addEventListener('click', function(e) { if (e.target !== fi) fi.click(); });
-  dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('dg'); });
-  dz.addEventListener('dragleave', function() { dz.classList.remove('dg'); });
-  dz.addEventListener('drop', function(e) { e.preventDefault(); dz.classList.remove('dg'); uploadMediaFiles(e.dataTransfer.files); });
-  fi.addEventListener('change', function() { uploadMediaFiles(fi.files); });
-}
-
-/* ─── NAV ────────────────────────────────────────────── */
-function setupNav() {
-  document.querySelectorAll('.nav-item').forEach(function(item) {
-    item.addEventListener('click', function() {
-      document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
-      document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-      item.classList.add('active');
-      var panel = document.getElementById('panel-' + item.dataset.panel);
-      if (panel) panel.classList.add('active');
-    });
-  });
-}
-
-/* ─── TOAST ──────────────────────────────────────────── */
-var toastTimer;
-function toast(msg, type) {
-  var el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'on' + (type ? ' ' + type : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { el.classList.remove('on'); }, 3200);
-}
-
-/* ─── SYNC BADGE ─────────────────────────────────────── */
-function badge(state) {
-  var el = document.getElementById('syncBadge');
-  var map = {
-    loading: {t:'Connecting…',     c:'var(--muted)'},
-    live:    {t:'Firebase Live',    c:'#4caf7d'},
-    saving:  {t:'Saving…',         c:'var(--gold)'},
-    saved:   {t:'Saved — Live',     c:'#4caf7d'},
-    offline: {t:'Offline (cache)', c:'#e07b39'},
-    error:   {t:'Save Failed',      c:'#e05252'},
-  };
-  var s = map[state] || map.offline;
-  el.textContent = s.t;
-  el.style.color = s.c;
-  el.style.borderColor = s.c;
-}
-
-/* ─── RENDER ALL ─────────────────────────────────────── */
-function renderAll() {
-  renderHero();
-  renderCards('rooms', 'roomsList');
-  renderCards('hall', 'hallList');
-  renderAmenities();
-  renderPlaces();
-  renderTransport();
-  renderContact();
-  renderSocial();
-  renderMaintBanner();
-}
-
-/* ─── HERO ───────────────────────────────────────────── */
-function renderHero() {
-  document.getElementById('h_eyebrow').value = DATA.heroEyebrow || '';
-  document.getElementById('h_title').value   = DATA.heroTitle   || '';
-  document.getElementById('h_sub').value     = DATA.heroSub     || '';
-  renderSlides();
-}
-function renderSlides() {
-  var grid = document.getElementById('slideGrid');
-  var slides = DATA.slides || [];
-  var html = slides.map(function(src, i) {
-    return '<div class="slide-item">' +
-      '<img src="' + esc(src) + '" onerror="this.src=\'assets/room1.png\'">' +
-      '<span class="slide-num">' + (i+1) + '</span>' +
-      '<button class="slide-del" data-del="' + i + '">×</button>' +
-      '<label style="display:block;cursor:pointer;margin:0;">' +
-        '<input type="file" accept="image/*,video/*" data-slide="' + i + '" style="display:none" class="slide-file-input">' +
-        '<div style="background:var(--sf3);text-align:center;font-size:.68rem;color:var(--muted);padding:4px;">Click to swap</div>' +
-      '</label>' +
-    '</div>';
-  }).join('');
-  grid.innerHTML = html;
-  grid.querySelectorAll('[data-del]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      DATA.slides.splice(parseInt(btn.dataset.del), 1);
-      renderSlides();
-    });
-  });
-  grid.querySelectorAll('.slide-file-input').forEach(function(inp) {
-    inp.addEventListener('change', function() {
-      var idx = parseInt(inp.dataset.slide);
-      var file = inp.files[0];
-      if (!file) return;
-      cloudinaryUpload(file, null).then(function(url) {
-        if (url) { DATA.slides[idx] = url; renderSlides(); toast('Slide image updated', 'ok'); }
-      });
-    });
-  });
-}
-
-/* ─── CARDS (Rooms / Hall) ───────────────────────────── */
-function iconOptions(current) {
-  return ICON_KEYS.map(function(k) {
-    return '<option value="' + k + '"' + (k === current ? ' selected' : '') + '>' + k + '</option>';
-  }).join('');
-}
-
-function renderCards(section, listId) {
-  var el = document.getElementById(listId);
-  var cards = DATA[section] || [];
-  if (!cards.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No items yet — add one below.</p>'; return; }
-  el.innerHTML = cards.map(function(c, i) {
-    return '<div class="card-row" id="cr_' + section + '_' + i + '">' +
-      '<div class="card-top" data-toggle="cr_' + section + '_' + i + '">' +
-        '<img class="card-thumb" src="' + esc(c.img || 'assets/room1.png') + '" onerror="this.src=\'assets/room1.png\'" id="thumb_' + section + '_' + i + '">' +
-        '<div class="card-info">' +
-          '<div class="card-title">' + esc(c.title || 'Untitled') + '</div>' +
-          '<div class="card-meta">' + esc((c.price || '') + (c.unit ? ' ' + c.unit : '')) + '</div>' +
-        '</div>' +
-        '<div class="card-acts">' +
-          '<button class="rbtn" data-move="' + section + '" data-idx="' + i + '" data-dir="-1"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
-          '<button class="rbtn" data-move="' + section + '" data-idx="' + i + '" data-dir="1"' + (i === cards.length - 1 ? ' disabled' : '') + '>↓</button>' +
-          '<button class="btn btn-red btn-sm" data-remove="' + section + '" data-idx="' + i + '">Remove</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card-body" id="body_' + section + '_' + i + '">' +
-        '<div class="g2" style="margin-bottom:12px;">' +
-          '<div>' +
-            '<label class="fl" style="margin-bottom:6px;">Image — click to upload</label>' +
-            '<label style="display:block;cursor:pointer;" class="img-zone">' +
-              '<img src="' + esc(c.img || 'assets/room1.png') + '" id="img_' + section + '_' + i + '">' +
-              '<div class="img-overlay"><span>Upload New Image</span></div>' +
-              '<div class="up-bar-bg"><div class="up-bar" id="bar_' + section + '_' + i + '"></div></div>' +
-              '<input type="file" accept="image/*,video/*" style="display:none" class="card-img-input" data-sec="' + section + '" data-idx="' + i + '">' +
-            '</label>' +
-          '</div>' +
-          '<div>' +
-            '<div class="field"><label>Icon</label><select data-field="' + section + '.' + i + '.icon">' + iconOptions(c.icon) + '</select></div>' +
-            '<div class="field"><label>Title</label><input value="' + esc(c.title) + '" data-field="' + section + '.' + i + '.title"></div>' +
-            '<div class="g2">' +
-              '<div class="field"><label>Price</label><input value="' + esc(c.price) + '" data-field="' + section + '.' + i + '.price"></div>' +
-              '<div class="field"><label>Unit</label><input value="' + esc(c.unit) + '" data-field="' + section + '.' + i + '.unit" placeholder="/ night"></div>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="field"><label>Description</label><textarea data-field="' + section + '.' + i + '.desc">' + esc(c.desc) + '</textarea></div>' +
-        '<div class="field"><label>Tags (comma separated)</label><input value="' + esc((c.tags || []).join(', ')) + '" data-tags="' + section + '.' + i + '"></div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-
-  // Toggle expand
-  el.querySelectorAll('.card-top').forEach(function(top) {
-    top.addEventListener('click', function(e) {
-      if (e.target.closest('.card-acts')) return;
-      var id = top.dataset.toggle;
-      var body = document.getElementById('body_' + id.replace('cr_',''));
-      if (body) body.classList.toggle('open');
-    });
-  });
-
-  // Move
-  el.querySelectorAll('[data-move]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var sec = btn.dataset.move, i = parseInt(btn.dataset.idx), dir = parseInt(btn.dataset.dir);
-      var arr = DATA[sec], j = i + dir;
-      if (j < 0 || j >= arr.length) return;
-      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
-      renderCards(sec, sec === 'rooms' ? 'roomsList' : 'hallList');
-    });
-  });
-
-  // Remove
-  el.querySelectorAll('[data-remove]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (!confirm('Remove this card?')) return;
-      var sec = btn.dataset.remove, i = parseInt(btn.dataset.idx);
-      DATA[sec].splice(i, 1);
-      renderCards(sec, sec === 'rooms' ? 'roomsList' : 'hallList');
-    });
-  });
-
-  // Inline image upload
-  el.querySelectorAll('.card-img-input').forEach(function(inp) {
-    inp.addEventListener('change', function() {
-      var sec = inp.dataset.sec, i = parseInt(inp.dataset.idx), file = inp.files[0];
-      if (!file) return;
-      var bar = document.getElementById('bar_' + sec + '_' + i);
-      cloudinaryUpload(file, function(pct) { if (bar) bar.style.width = pct + '%'; }).then(function(url) {
-        if (url) {
-          DATA[sec][i].img = url;
-          var imgEl = document.getElementById('img_' + sec + '_' + i);
-          var thumb = document.getElementById('thumb_' + sec + '_' + i);
-          if (imgEl) imgEl.src = url;
-          if (thumb) thumb.src = url;
-          if (bar) setTimeout(function() { bar.style.width = '0'; }, 500);
-          toast('Image updated', 'ok');
-        }
-      });
-    });
-  });
-
-  // Live field binding
-  el.querySelectorAll('[data-field]').forEach(function(inp) {
-    inp.addEventListener('change', function() {
-      var parts = inp.dataset.field.split('.');
-      DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
-    });
-    inp.addEventListener('input', function() {
-      var parts = inp.dataset.field.split('.');
-      DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
-    });
-  });
-  el.querySelectorAll('[data-tags]').forEach(function(inp) {
-    inp.addEventListener('change', function() {
-      var parts = inp.dataset.tags.split('.');
-      DATA[parts[0]][parseInt(parts[1])].tags = inp.value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
-    });
-  });
-}
-
-/* ─── AMENITIES ──────────────────────────────────────── */
-function renderAmenities() {
-  var el = document.getElementById('amenList');
-  var items = DATA.amenities || [];
-  el.innerHTML = items.map(function(a, i) {
-    return '<div class="simple-row">' +
-      '<select data-amen-icon="' + i + '">' + iconOptions(a.iconKey) + '</select>' +
-      '<input value="' + esc(a.title) + '" data-amen-title="' + i + '">' +
-      '<button class="rbtn" data-amen-up="' + i + '"' + (i===0?' disabled':'') + '>↑</button>' +
-      '<button class="rbtn" data-amen-dn="' + i + '"' + (i===items.length-1?' disabled':'') + '>↓</button>' +
-      '<button class="btn btn-red btn-sm" data-amen-del="' + i + '">×</button>' +
-    '</div>';
-  }).join('') || '<p class="note" style="padding:10px 0;">No amenities yet.</p>';
-
-  el.querySelectorAll('[data-amen-icon]').forEach(function(sel) {
-    sel.addEventListener('change', function() { DATA.amenities[parseInt(sel.dataset.amenIcon)].iconKey = sel.value; });
-  });
-  el.querySelectorAll('[data-amen-title]').forEach(function(inp) {
-    inp.addEventListener('input', function() { DATA.amenities[parseInt(inp.dataset.amenTitle)].title = inp.value; });
-  });
-  el.querySelectorAll('[data-amen-up]').forEach(function(btn) {
-    btn.addEventListener('click', function() { var i=parseInt(btn.dataset.amenUp); if(i>0){var a=DATA.amenities;var t=a[i];a[i]=a[i-1];a[i-1]=t;renderAmenities();} });
-  });
-  el.querySelectorAll('[data-amen-dn]').forEach(function(btn) {
-    btn.addEventListener('click', function() { var i=parseInt(btn.dataset.amenDn),a=DATA.amenities; if(i<a.length-1){var t=a[i];a[i]=a[i+1];a[i+1]=t;renderAmenities();} });
-  });
-  el.querySelectorAll('[data-amen-del]').forEach(function(btn) {
-    btn.addEventListener('click', function() { DATA.amenities.splice(parseInt(btn.dataset.amenDel),1); renderAmenities(); });
-  });
-}
-
-/* ─── PLACES ─────────────────────────────────────────── */
-function renderPlaces() {
-  var el = document.getElementById('placesList');
-  var places = DATA.places || [];
-  if (!places.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No places yet.</p>'; return; }
-  el.innerHTML = places.map(function(p, i) {
-    return '<div class="card-row">' +
-      '<div class="card-top" data-ptoggle="place_' + i + '">' +
-        '<img class="card-thumb" src="' + esc(p.img || 'assets/room9.png') + '" onerror="this.src=\'assets/room9.png\'" id="pthumb_' + i + '">' +
-        '<div class="card-info"><div class="card-title">' + esc(p.title || 'Untitled') + '</div><div class="card-meta">' + esc(p.dist || '') + '</div></div>' +
-        '<div class="card-acts">' +
-          '<button class="rbtn" data-pmove="' + i + '" data-pdir="-1"' + (i===0?' disabled':'') + '>↑</button>' +
-          '<button class="rbtn" data-pmove="' + i + '" data-pdir="1"' + (i===places.length-1?' disabled':'') + '>↓</button>' +
-          '<button class="btn btn-red btn-sm" data-pdel="' + i + '">Remove</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card-body" id="place_' + i + '">' +
-        '<div class="g2" style="margin-bottom:12px;">' +
-          '<div>' +
-            '<label class="fl" style="margin-bottom:6px;">Image — click to upload</label>' +
-            '<label style="display:block;cursor:pointer;" class="img-zone">' +
-              '<img src="' + esc(p.img || 'assets/room9.png') + '" id="pimg_' + i + '">' +
-              '<div class="img-overlay"><span>Upload New Image</span></div>' +
-              '<div class="up-bar-bg"><div class="up-bar" id="pbar_' + i + '"></div></div>' +
-              '<input type="file" accept="image/*,video/*" style="display:none" class="place-img-inp" data-idx="' + i + '">' +
-            '</label>' +
-          '</div>' +
-          '<div>' +
-            '<div class="field"><label>Place Name <span class="note" id="pdist_status_' + i + '"></span></label><input value="' + esc(p.title) + '" id="ptitle_' + i + '" data-pidx="' + i + '" class="place-title-inp"></div>' +
-            '<div class="field"><label>Distance</label><input value="' + esc(p.dist) + '" id="pdist_' + i + '" data-pidx="' + i + '" class="place-dist-inp"></div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="field"><label>Description</label><textarea class="place-desc-inp" data-idx="' + i + '">' + esc(p.desc) + '</textarea></div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-
-  el.querySelectorAll('[data-ptoggle]').forEach(function(top) {
-    top.addEventListener('click', function(e) {
-      if (e.target.closest('.card-acts')) return;
-      var body = document.getElementById(top.dataset.ptoggle);
-      if (body) body.classList.toggle('open');
-    });
-  });
-  el.querySelectorAll('[data-pmove]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var i=parseInt(btn.dataset.pmove), dir=parseInt(btn.dataset.pdir), a=DATA.places, j=i+dir;
-      if(j<0||j>=a.length) return;
-      var t=a[i];a[i]=a[j];a[j]=t;renderPlaces();
-    });
-  });
-  el.querySelectorAll('[data-pdel]').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      if(!confirm('Remove this place?')) return;
-      DATA.places.splice(parseInt(btn.dataset.pdel),1); renderPlaces();
-    });
-  });
-  el.querySelectorAll('.place-img-inp').forEach(function(inp) {
-    inp.addEventListener('change', function() {
-      var i=parseInt(inp.dataset.idx), file=inp.files[0];
-      if(!file) return;
-      var bar=document.getElementById('pbar_'+i);
-      cloudinaryUpload(file, function(pct){if(bar)bar.style.width=pct+'%';}).then(function(url){
-        if(url){DATA.places[i].img=url;var ig=document.getElementById('pimg_'+i);var th=document.getElementById('pthumb_'+i);if(ig)ig.src=url;if(th)th.src=url;if(bar)setTimeout(function(){bar.style.width='0';},500);toast('Image updated','ok');}
-      });
-    });
-  });
-  el.querySelectorAll('.place-title-inp').forEach(function(inp) {
-    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.pidx)].title = inp.value; });
-    inp.addEventListener('blur', function() { autoFetchDist(parseInt(inp.dataset.pidx), inp.value); });
-  });
-  el.querySelectorAll('.place-dist-inp').forEach(function(inp) {
-    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.pidx)].dist = inp.value; });
-  });
-  el.querySelectorAll('.place-desc-inp').forEach(function(inp) {
-    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.idx)].desc = inp.value; });
-  });
-}
-
-async function autoFetchDist(i, title) {
-  if (!title || typeof geocodePlace === 'undefined') return;
-  var s = document.getElementById('pdist_status_' + i);
-  if (s) s.textContent = '— fetching…';
-  var result = await geocodePlace(title);
-  if (result) {
-    DATA.places[i].lat = result.lat; DATA.places[i].lng = result.lng;
-    DATA.places[i].dist = '~' + result.distKm + ' km away';
-    var d = document.getElementById('pdist_' + i); if (d) d.value = DATA.places[i].dist;
-    if (s) s.textContent = '— auto-fetched ✓';
-  } else { if (s) s.textContent = '— enter manually'; }
-}
-
-/* ─── TRANSPORT ──────────────────────────────────────── */
-function renderTransport() {
-  var el = document.getElementById('transportList');
-  var items = DATA.transport || [];
-  el.innerHTML = items.map(function(t, i) {
-    return '<div class="simple-row">' +
-      '<select data-tr-icon="' + i + '">' + iconOptions(t.iconKey) + '</select>' +
-      '<input value="' + esc(t.text) + '" data-tr-text="' + i + '">' +
-      '<button class="rbtn" data-tr-up="' + i + '"' + (i===0?' disabled':'') + '>↑</button>' +
-      '<button class="rbtn" data-tr-dn="' + i + '"' + (i===items.length-1?' disabled':'') + '>↓</button>' +
-      '<button class="btn btn-red btn-sm" data-tr-del="' + i + '">×</button>' +
-    '</div>';
-  }).join('') || '<p class="note" style="padding:10px 0;">No transport options yet.</p>';
-
-  el.querySelectorAll('[data-tr-icon]').forEach(function(sel){sel.addEventListener('change',function(){DATA.transport[parseInt(sel.dataset.trIcon)].iconKey=sel.value;});});
-  el.querySelectorAll('[data-tr-text]').forEach(function(inp){inp.addEventListener('input',function(){DATA.transport[parseInt(inp.dataset.trText)].text=inp.value;});});
-  el.querySelectorAll('[data-tr-up]').forEach(function(btn){btn.addEventListener('click',function(){var i=parseInt(btn.dataset.trUp),a=DATA.transport;if(i>0){var t=a[i];a[i]=a[i-1];a[i-1]=t;renderTransport();}});});
-  el.querySelectorAll('[data-tr-dn]').forEach(function(btn){btn.addEventListener('click',function(){var i=parseInt(btn.dataset.trDn),a=DATA.transport;if(i<a.length-1){var t=a[i];a[i]=a[i+1];a[i+1]=t;renderTransport();}});});
-  el.querySelectorAll('[data-tr-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.transport.splice(parseInt(btn.dataset.trDel),1);renderTransport();});});
-}
-
-/* ─── CONTACT / SOCIAL ───────────────────────────────── */
-function renderContact() {
-  document.getElementById('c_phone1').value  = DATA.phone1  || '';
-  document.getElementById('c_phone2').value  = DATA.phone2  || '';
-  document.getElementById('c_email').value   = DATA.email   || '';
-  document.getElementById('c_website').value = DATA.website || '';
-}
-function renderSocial() {
-  var el = document.getElementById('socialList');
-  var items = DATA.social || [];
-  el.innerHTML = items.map(function(s, i) {
-    return '<div class="simple-row">' +
-      '<select data-soc-icon="' + i + '" style="width:110px;">' + iconOptions(s.iconKey) + '</select>' +
-      '<input value="' + esc(s.label) + '" data-soc-label="' + i + '" style="width:110px;flex:none;" placeholder="Label">' +
-      '<input value="' + esc(s.url) + '" data-soc-url="' + i + '" placeholder="https://...">' +
-      '<button class="btn btn-red btn-sm" data-soc-del="' + i + '">×</button>' +
-    '</div>';
-  }).join('') || '<p class="note" style="padding:10px 0;">No social handles yet.</p>';
-
-  el.querySelectorAll('[data-soc-icon]').forEach(function(sel){sel.addEventListener('change',function(){DATA.social[parseInt(sel.dataset.socIcon)].iconKey=sel.value;});});
-  el.querySelectorAll('[data-soc-label]').forEach(function(inp){inp.addEventListener('input',function(){DATA.social[parseInt(inp.dataset.socLabel)].label=inp.value;});});
-  el.querySelectorAll('[data-soc-url]').forEach(function(inp){inp.addEventListener('input',function(){DATA.social[parseInt(inp.dataset.socUrl)].url=inp.value;});});
-  el.querySelectorAll('[data-soc-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.social.splice(parseInt(btn.dataset.socDel),1);renderSocial();});});
-}
-
-/* ─── SETTINGS ───────────────────────────────────────── */
-function renderMaintBanner() {
-  var bar   = document.getElementById('maintBar');
-  var btn   = document.getElementById('maintBtn');
-  var title = document.getElementById('maintTitle');
-  var sub   = document.getElementById('maintSub');
-  document.getElementById('s_maintMsg').value = DATA.maintenanceMsg || '';
-  if (DATA.maintenance) {
-    bar.className = 'maint-bar maint-on';
-    btn.className = 'btn btn-green btn-sm'; btn.textContent = 'Turn Off — Go Live';
-    title.textContent = 'Maintenance Mode: ON';
-    sub.textContent = 'Visitors see a "back soon" screen.';
-  } else {
-    bar.className = 'maint-bar maint-off';
-    btn.className = 'btn btn-red btn-sm'; btn.textContent = 'Turn On';
-    title.textContent = 'Maintenance Mode: OFF';
-    sub.textContent = 'The live site is visible to all visitors.';
-  }
-}
-async function toggleMaintenance() {
-  DATA.maintenance = !DATA.maintenance;
-  DATA.maintenanceMsg = document.getElementById('s_maintMsg').value;
-  renderMaintBanner();
-  badge('saving');
-  try {
-    await saveToFirestore(DATA);
-    badge('saved'); setTimeout(function(){badge('live');},3000);
-    toast('Maintenance ' + (DATA.maintenance?'ON':'OFF'), 'ok');
-  } catch(e) { badge('error'); toast('Save failed','er'); }
-}
-
-/* ─── CLOUDINARY UPLOAD ──────────────────────────────── */
-function cloudinaryUpload(file, onProgress) {
-  return new Promise(function(resolve) {
-    var resourceType = file.type.startsWith('video') ? 'video' : 'image';
-    var fd = new FormData();
-    fd.append('file', file);
-    fd.append('upload_preset', CLOUDINARY_PRESET);
-    fd.append('folder', 'goldeninn');
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload');
-    xhr.upload.onprogress = function(e) {
-      if (e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100));
-    };
-    xhr.onload = function() {
-      try {
-        var res = JSON.parse(xhr.responseText);
-        if (xhr.status === 200) { resolve(res.secure_url); }
-        else { toast('Upload failed: ' + (res.error ? res.error.message : 'error'), 'er'); resolve(null); }
-      } catch(e) { toast('Upload error', 'er'); resolve(null); }
-    };
-    xhr.onerror = function() { toast('Network error', 'er'); resolve(null); };
-    xhr.send(fd);
-  });
-}
-
-/* ─── MEDIA LIBRARY ──────────────────────────────────── */
-async function loadMediaLibrary() {
-  try {
-    var items = await loadAllMedia();
-    mediaItems = items;
-    renderMediaGrid();
-  } catch(e) { document.getElementById('mediaStats').textContent = 'Could not load media.'; }
-}
-function renderMediaGrid() {
-  var used = collectUsedImageUrls(DATA);
-  var grid = document.getElementById('mediaGrid');
-  var total = mediaItems.reduce(function(s,m){return s+(m.size||0);},0);
-  var unusedCt = mediaItems.filter(function(m){return !used.has(m.url);}).length;
-  document.getElementById('mediaStats').textContent = mediaItems.length + ' file(s) · ' + formatBytes(total) + ' · ' + unusedCt + ' unused';
-  if (!mediaItems.length) { grid.innerHTML = '<p class="note">No media uploaded yet.</p>'; return; }
-  grid.innerHTML = mediaItems.map(function(m) {
-    var isUsed = used.has(m.url);
-    var preview = m.type==='video'
-      ? '<video src="' + esc(m.url) + '" style="width:100%;height:90px;object-fit:cover;" muted></video>'
-      : '<img src="' + esc(m.url) + '" style="width:100%;height:90px;object-fit:cover;" loading="lazy">';
-    return '<div class="media-card">' + preview +
-      '<div class="media-card-info">' +
-        '<div class="used-badge ' + (isUsed?'yes':'no') + '">' + (isUsed?'✓ In use':'⚠ Unused') + ' · ' + formatBytes(m.size) + '</div>' +
-        '<div class="media-btns">' +
-          '<button class="btn btn-outline btn-sm" data-copy="' + esc(m.url) + '">Copy URL</button>' +
-          '<button class="btn btn-red btn-sm" data-mdel="' + m.id + '" data-mname="' + esc(m.name) + '">Del</button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-  grid.querySelectorAll('[data-copy]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      navigator.clipboard.writeText(btn.dataset.copy).then(function(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy URL';},2000);});
-    });
-  });
-  grid.querySelectorAll('[data-mdel]').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      if (!confirm('Remove "' + btn.dataset.mname + '" from catalogue?')) return;
-      MEDIA_COL.doc(btn.dataset.mdel).delete().then(function(){
-        mediaItems = mediaItems.filter(function(m){return m.id!==btn.dataset.mdel;});
-        renderMediaGrid(); toast('Removed from catalogue','ok');
-      });
-    });
-  });
-}
-async function cleanUnused() {
-  if (!confirm('Remove all unused media records from the catalogue?')) return;
-  var used = collectUsedImageUrls(DATA);
-  var unused = mediaItems.filter(function(m){return !used.has(m.url);});
-  await Promise.all(unused.map(function(m){return MEDIA_COL.doc(m.id).delete();}));
-  mediaItems = mediaItems.filter(function(m){return used.has(m.url);});
-  renderMediaGrid();
-  toast(unused.length ? 'Removed ' + unused.length + ' unused record(s)' : 'No unused media found', 'ok');
-}
-async function uploadMediaFiles(files) {
-  if (!files || !files.length) return;
-  var arr = Array.from(files);
-  var prog  = document.getElementById('mediaProgress');
-  var bar   = document.getElementById('mediaProgBar');
-  var label = document.getElementById('mediaProgLabel');
-  var pct   = document.getElementById('mediaProgPct');
-  prog.classList.add('on');
-  for (var i = 0; i < arr.length; i++) {
-    var file = arr[i];
-    label.textContent = 'Uploading ' + file.name + ' (' + (i+1) + '/' + arr.length + ')…';
-    bar.style.width = '0%'; pct.textContent = '0%';
-    var resourceType = file.type.startsWith('video') ? 'video' : 'image';
-    var fd = new FormData();
-    fd.append('file', file); fd.append('upload_preset', CLOUDINARY_PRESET); fd.append('folder','goldeninn');
-    var result = await new Promise(function(resolve) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/'+resourceType+'/upload');
-      xhr.upload.onprogress = function(e){if(e.lengthComputable){var p=Math.round(e.loaded/e.total*100);bar.style.width=p+'%';pct.textContent=p+'%';}};
-      xhr.onload = function(){try{var r=JSON.parse(xhr.responseText);if(xhr.status===200)resolve(r);else{toast('Upload failed: '+(r.error?r.error.message:'error'),'er');resolve(null);}}catch(e){resolve(null);}};
-      xhr.onerror=function(){toast('Network error','er');resolve(null);};
-      xhr.send(fd);
-    });
-    if (result) {
-      var item = {name:file.name,url:result.secure_url,size:result.bytes||file.size,type:resourceType,added:Date.now()};
-      var ref = await MEDIA_COL.add(item);
-      mediaItems.unshift(Object.assign({id:ref.id},item));
-      toast('Uploaded: ' + file.name, 'ok');
+if(DATA.maintenance && !BYPASS){
+  document.getElementById('siteRoot').style.display = 'none';
+  const ms = document.getElementById('maintenanceScreen');
+  ms.style.display = 'flex';
+  document.getElementById('maintText').textContent = DATA.maintenanceMsg;
+  ms.querySelector('.btn-call').innerHTML = icon('phone',16) + ' Call ' + DATA.phone1;
+  ms.querySelector('.btn-call').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
+} else {
+  render();
+  curSlide = 0; startSlider();
+  // Load fresh data from Firestore — always takes priority over cache
+  loadFromFirestore().then(function(fresh){
+    if(fresh){
+      DATA = fresh;
+      if(fresh.maintenance && !BYPASS){ location.reload(); }
+      else { render(); curSlide = 0; startSlider(); }
     }
-  }
-  prog.classList.remove('on');
-  document.getElementById('mediaFileInput').value = '';
-  renderMediaGrid();
-}
-
-/* ─── SAVE ALL ───────────────────────────────────────── */
-async function saveAll() {
-  DATA.heroEyebrow    = document.getElementById('h_eyebrow').value;
-  DATA.heroTitle      = document.getElementById('h_title').value;
-  DATA.heroSub        = document.getElementById('h_sub').value;
-  DATA.address        = document.getElementById('l_address').value;
-  DATA.phone1         = document.getElementById('c_phone1').value;
-  DATA.phone2         = document.getElementById('c_phone2').value;
-  DATA.email          = document.getElementById('c_email').value;
-  DATA.website        = document.getElementById('c_website').value;
-  DATA.maintenanceMsg = document.getElementById('s_maintMsg').value;
-  badge('saving');
-  try {
-    await saveToFirestore(DATA);
-    badge('saved');
-    setTimeout(function(){badge('live');}, 3000);
-    toast('Saved — changes are live for everyone', 'ok');
-    renderMediaGrid();
-  } catch(e) {
-    badge('error');
-    saveData(DATA);
-    toast('Firebase error — saved locally. ' + e.message, 'er');
+  }).catch(function(e){ console.warn('Firestore load error:', e); });
+  // Load saved language translations
+  if(LANG !== 'en' && typeof loadTranslations === 'function'){
+    loadTranslations(LANG).then(function(trans){
+      T = trans; render();
+    }).catch(function(){});
   }
 }
 
-/* ─── MESSAGES ───────────────────────────────────────── */
-async function loadMessages() {
-  var el = document.getElementById('messagesList');
-  var stats = document.getElementById('msgStats');
-  var badge = document.getElementById('msgCount');
-  if (!el) return;
-  el.innerHTML = '<p class="note" style="padding:10px 0;">Loading…</p>';
-  try {
-    var snap = await db.collection('messages').orderBy('sentAt','desc').get();
-    var msgs = snap.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
-    var unread = msgs.filter(function(m) { return !m.read; }).length;
-    stats.textContent = msgs.length + ' message(s) · ' + unread + ' unread';
-    if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline'; }
-    else { badge.style.display = 'none'; }
-    if (!msgs.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No messages yet. Messages from the contact form will appear here.</p>'; return; }
-    el.innerHTML = msgs.map(function(m) {
-      var d = new Date(m.sentAt);
-      var dateStr = d.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-      return '<div style="background:' + (m.read ? 'var(--sf2)' : 'var(--sf3)') + ';border:1px solid ' + (m.read ? 'var(--line)' : 'var(--gold)') + ';border-radius:10px;padding:18px 20px;margin-bottom:12px;">' +
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;flex-wrap:wrap;">' +
-          '<div>' +
-            '<div style="font-weight:600;font-size:.95rem;">' + esc(m.name || 'Unknown') + (m.read ? '' : ' <span style="background:var(--r2);color:#fff;border-radius:10px;padding:2px 8px;font-size:.65rem;font-weight:600;margin-left:6px;">NEW</span>') + '</div>' +
-            '<div style="font-size:.76rem;color:var(--muted);margin-top:3px;">' + esc(m.phone || '') + (m.email ? ' · ' + esc(m.email) : '') + '</div>' +
-          '</div>' +
-          '<div style="font-size:.72rem;color:var(--muted);white-space:nowrap;">' + dateStr + '</div>' +
-        '</div>' +
-        '<div style="color:var(--cream);font-size:.88rem;line-height:1.6;margin-bottom:14px;white-space:pre-wrap;">' + esc(m.message || '') + '</div>' +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
-          (m.phone ? '<a href="tel:' + esc(m.phone) + '" class="btn btn-green btn-sm">Call Back</a>' : '') +
-          (m.email ? '<a href="mailto:' + esc(m.email) + '" class="btn btn-outline btn-sm">Reply by Email</a>' : '') +
-          (!m.read ? '<button class="btn btn-outline btn-sm" onclick="markRead(\'' + m.id + '\')">Mark as Read</button>' : '') +
-          '<button class="btn btn-red btn-sm" onclick="deleteMsg(\'' + m.id + '\')">Delete</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  } catch(e) {
-    el.innerHTML = '<p class="note" style="color:#e05252;">Could not load messages. Check Firestore rules.</p>';
-  }
-}
-async function markRead(id) {
-  await db.collection('messages').doc(id).update({read: true});
-  loadMessages();
-}
-async function deleteMsg(id) {
-  if (!confirm('Delete this message permanently?')) return;
-  await db.collection('messages').doc(id).delete();
-  loadMessages();
-  toast('Message deleted', 'ok');
-}
+function render(){
+  document.getElementById('heroTitle').textContent = DATA.heroTitle || 'Golden Inn';
+  // Hero eyebrow and subtitle — from DATA for English, translations for others
+  var eyEl = document.getElementById('heroEyebrow');
+  var subEl = document.getElementById('heroSub');
+  if(eyEl) eyEl.textContent = (LANG==='en' ? DATA.heroEyebrow : T['hero_eyebrow']) || DATA.heroEyebrow || 'Electronic City · Bangalore';
+  if(subEl) subEl.textContent = (LANG==='en' ? DATA.heroSub : T['hero_subtitle']) || DATA.heroSub || '';
 
-/* ─── UTILS ──────────────────────────────────────────── */
-function esc(s) {
-  return (s||'').toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+  document.getElementById('hotelAddress').textContent = DATA.address;
+  document.getElementById('cAddress').textContent = DATA.address;
+  document.querySelector('.addr-box h4').innerHTML = icon('pin',18) + ' Address';
 
-/* ─── LANGUAGES ──────────────────────────────────────── */
-var currentLangTab = 'en';
-var langData = {};
+  document.getElementById('navCallBtn').querySelector('.ic-wrap').innerHTML = ICONS.phone;
+  document.getElementById('navCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
+  // heroCallBtn — set innerHTML here, applyTranslations will NOT overwrite (no data-i18n on it)
+  document.getElementById('heroCallBtn').innerHTML = icon('phone',16) + ' ' + tr('hero_btn_call');
+  document.getElementById('heroCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
 
-async function switchLangTab(lang){
-  currentLangTab = lang;
-  document.querySelectorAll('[data-ltab]').forEach(function(btn){
-    btn.className = btn.dataset.ltab===lang ? 'btn btn-gold btn-sm' : 'btn btn-outline btn-sm';
+  document.getElementById('cPhone1').textContent = DATA.phone1;
+  document.getElementById('cPhone1').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
+  document.getElementById('cPhone2').textContent = DATA.phone2;
+  document.getElementById('cPhone2').href = 'tel:'+DATA.phone2.replace(/\s/g,'');
+  document.getElementById('cEmail').textContent = DATA.email;
+  document.getElementById('cEmail').href = 'mailto:'+DATA.email;
+  document.getElementById('cWebsite').textContent = DATA.website;
+  document.getElementById('cWebsite').href = 'https://'+DATA.website.replace(/^https?:\/\//,'');
+  const rows = document.querySelectorAll('.contact-card .row .ic-wrap');
+  rows[0].innerHTML=ICONS.phone; rows[1].innerHTML=ICONS.mail; rows[2].innerHTML=ICONS.globe; rows[3].innerHTML=ICONS.pin;
+
+  const sw = document.getElementById('sliderWrap'); const dots = document.getElementById('dots');
+  sw.innerHTML=''; dots.innerHTML=''; curSlide=0;
+  DATA.slides.forEach((src,i)=>{
+    const d=document.createElement('div'); d.className='slide'+(i===0?' active':'');
+    const img = document.createElement('img');
+    img.src = src; img.alt = 'Golden Inn';
+    img.onerror = function(){ this.closest('.slide').style.display='none'; };
+    d.appendChild(img); sw.appendChild(d);
+    const dot=document.createElement('span'); dot.className=i===0?'active':''; dot.onclick=()=>showSlide(i); dots.appendChild(dot);
   });
-  var names = {en:'English',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिंदी',ml:'മലയാളം'};
-  document.getElementById('langTabTitle').textContent = (names[lang]||lang) + ' Translations';
-  // Load from Firestore, fallback to defaults
-  try {
-    var snap = await db.collection('translations').doc(lang).get();
-    var defaults = DEFAULT_TRANSLATIONS[lang] || DEFAULT_TRANSLATIONS.en;
-    langData = snap.exists ? Object.assign({}, defaults, snap.data()) : Object.assign({}, defaults);
-  } catch(e) {
-    langData = Object.assign({}, DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en);
+
+  document.getElementById('roomsGrid').innerHTML = DATA.rooms.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
+  document.getElementById('hallGrid').innerHTML = DATA.hall.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
+  document.getElementById('amenGrid').innerHTML = DATA.amenities.map(a=>`<div class="amen">${icon(a.iconKey,30)}<h4>${a.title}</h4></div>`).join('');
+  document.getElementById('placesGrid').innerHTML = DATA.places.map(p=>`
+    <div class="card place-card">
+      <div class="card-img"><img src="${p.img}" alt="${p.title}" onerror="this.style.display='none'"></div>
+      <div class="card-body">
+        <h3>${p.title}</h3>
+        <div class="dist">${icon('pin',13)} ${p.dist}</div>
+        <p style="margin-top:8px;">${p.desc}</p>
+        <a href="${directionsUrl(p.lat,p.lng,p.title)}" target="_blank" class="btn btn-outline" style="margin-top:18px;width:100%;justify-content:center;">${icon('direction',14)} ${tr('btn_directions')}</a>
+      </div>
+    </div>`).join('');
+  document.getElementById('transportList').innerHTML = DATA.transport.map(t=>`<li>${icon(t.iconKey,22)}<span>${t.text}</span></li>`).join('');
+  document.getElementById('mapFrame').src = "https://www.google.com/maps?q="+encodeURIComponent(DATA.address)+"&output=embed";
+  document.getElementById('directionsBtn').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(DATA.address)}`;
+  const socialHTML = DATA.social.map(s=>`<a href="${s.url}" target="_blank" title="${s.label}">${icon(s.iconKey,18)}</a>`).join('');
+  document.getElementById('socialRow').innerHTML = socialHTML;
+  document.getElementById('footSocial').innerHTML = socialHTML;
+  applyTranslations();
+}
+
+function cardHTML(c, callLabel, enquireLabel){
+  return `
+  <div class="card">
+    <div class="card-img">
+      <img src="${c.img}" alt="${c.title}" onerror="this.style.opacity='0'">
+      <div class="card-icon">${ICONS[c.icon]||ICONS.star}</div>
+      <div class="price-tag">${c.price}<small>${c.unit}</small></div>
+    </div>
+    <div class="card-body">
+      <h3>${c.title}</h3>
+      <p>${c.desc}</p>
+      <div class="tags">${c.tags.map(tg=>`<span>${tg}</span>`).join('')}</div>
+      <div class="card-actions">
+        <a href="tel:${DATA.phone1.replace(/\s/g,'')}" class="btn btn-call">${icon('phone',14)} ${callLabel||tr('btn_call_book')}</a>
+        <a href="#contact" class="btn btn-outline">${enquireLabel||tr('btn_enquire')}</a>
+      </div>
+      <div class="partners">
+        <a href="https://www.makemytrip.com" target="_blank">MakeMyTrip</a>
+        <a href="https://www.goibibo.com" target="_blank">Goibibo</a>
+        <a href="https://www.booking.com" target="_blank">Booking.com</a>
+        <a href="https://www.oyorooms.com" target="_blank">OYO</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+let curSlide=0, slideTimer;
+function showSlide(i){
+  const slides=document.querySelectorAll('.slide'); const dots=document.querySelectorAll('.dots span');
+  if(!slides.length) return;
+  slides[curSlide].classList.remove('active'); dots[curSlide].classList.remove('active');
+  curSlide=(i+slides.length)%slides.length;
+  slides[curSlide].classList.add('active'); dots[curSlide].classList.add('active');
+}
+function startSlider(){ clearInterval(slideTimer); slideTimer=setInterval(()=>showSlide(curSlide+1),5000); }
+
+let lastScroll = 0;
+const headerEl = document.getElementById('siteHeader');
+window.addEventListener('scroll',()=>{
+  const y = window.scrollY;
+  headerEl.style.background = y>40
+    ? 'linear-gradient(180deg,rgba(7,6,5,.98),rgba(7,6,5,.9))'
+    : 'linear-gradient(180deg,rgba(7,6,5,.95),rgba(7,6,5,.65))';
+  if(y > lastScroll && y > 140 && !document.getElementById('navList').classList.contains('open')){
+    headerEl.classList.add('nav-hidden');
+  } else {
+    headerEl.classList.remove('nav-hidden');
   }
-  renderLangFields();
-}
-
-function renderLangFields(){
-  var el = document.getElementById('langFields');
-  var groups = [
-    {title:'Navigation', keys:['nav_home','nav_rooms','nav_hall','nav_amenities','nav_explore','nav_location','nav_contact','nav_call']},
-    {title:'Hero Section', keys:['hero_eyebrow','hero_subtitle','hero_btn_rooms','hero_btn_call','scroll_label']},
-    {title:'Rooms Section', keys:['rooms_kicker','rooms_title_a','rooms_title_b','rooms_desc']},
-    {title:'Party Hall Section', keys:['hall_kicker','hall_title_a','hall_title_b','hall_desc']},
-    {title:'Amenities Section', keys:['amen_kicker','amen_title_a','amen_title_b']},
-    {title:'Explore Bangalore', keys:['explore_kicker','explore_title_a','explore_title_b','explore_desc']},
-    {title:'Location Section', keys:['loc_kicker','loc_title_a','loc_title_b','loc_getting']},
-    {title:'Contact Section', keys:['contact_kicker','contact_title_a','contact_title_b']},
-    {title:'Form', keys:['form_name','form_phone','form_email','form_msg','form_send']},
-    {title:'Buttons', keys:['btn_directions','btn_call_book','btn_enquire','btn_book_online']},
-  ];
-  el.innerHTML = groups.map(function(g){
-    return '<div style="margin-bottom:20px;">' +
-      '<div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:10px;font-weight:600;">' + g.title + '</div>' +
-      '<div class="g2">' + g.keys.map(function(k){
-        var lbl = TRANS_KEYS[k] || k;
-        var val = esc(langData[k]||'');
-        var isLong = k==='hero_subtitle'||k==='rooms_desc'||k==='hall_desc'||k==='explore_desc';
-        return '<div class="field" ' + (isLong?'style="grid-column:1/-1;"':'') + '>' +
-          '<label>' + lbl.split(': ').pop() + '</label>' +
-          (isLong
-            ? '<textarea data-langkey="' + k + '" rows="2">' + val + '</textarea>'
-            : '<input value="' + val + '" data-langkey="' + k + '">') +
-        '</div>';
-      }).join('') +
-      '</div></div>';
-  }).join('');
-
-  el.querySelectorAll('[data-langkey]').forEach(function(inp){
-    inp.addEventListener('input', function(){ langData[inp.dataset.langkey] = inp.value; });
-  });
-}
-
-async function saveLang(){
-  try {
-    await db.collection('translations').doc(currentLangTab).set(langData);
-    toast('Language saved — live on the site', 'ok');
-  } catch(e) {
-    toast('Save failed: ' + e.message, 'er');
-  }
-}
-
-function resetLangToDefault(){
-  if(!confirm('Reset all translations for this language to the built-in defaults?')) return;
-  langData = Object.assign({}, DEFAULT_TRANSLATIONS[currentLangTab]||DEFAULT_TRANSLATIONS.en);
-  renderLangFields();
-  toast('Reset to defaults — click Save Language to apply', '');
-}
-
-// Load languages panel when nav item clicked
-document.querySelectorAll('.nav-item[data-panel="languages"]').forEach(function(item){
-  item.addEventListener('click', function(){ switchLangTab('en'); });
+  lastScroll = y;
 });
+const burger = document.getElementById('burger');
+burger.innerHTML = ICONS.menu;
+burger.onclick = ()=>{
+  const nav = document.getElementById('navList');
+  nav.classList.toggle('open');
+  burger.innerHTML = nav.classList.contains('open') ? ICONS.close : ICONS.menu;
+};
+document.querySelectorAll('#navList a').forEach(a=>a.onclick=()=>{
+  document.getElementById('navList').classList.remove('open');
+  burger.innerHTML = ICONS.menu;
+});async function submitContact(e){
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('button[type=submit]');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  const msg = {
+    name:    form.querySelector('input[type=text]').value.trim(),
+    phone:   form.querySelector('input[type=tel]').value.trim(),
+    email:   form.querySelector('input[type=email]').value.trim(),
+    message: form.querySelector('textarea').value.trim(),
+    read:    false,
+    sentAt:  new Date().toISOString()
+  };
+  try {
+    await db.collection('messages').add(msg);
+    btn.textContent = 'Message Sent!';
+    btn.style.background = 'linear-gradient(135deg,#3a9e60,#256640)';
+    form.reset();
+    setTimeout(()=>{ btn.textContent='Send Message'; btn.style.background=''; btn.disabled=false; }, 3500);
+  } catch(err) {
+    btn.textContent = 'Send Message'; btn.disabled = false;
+    alert('Could not send — please call us directly at ' + DATA.phone1);
+  }
+}
 </script>
 </body>
 </html>
