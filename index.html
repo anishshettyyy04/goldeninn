@@ -392,9 +392,9 @@ function applyTranslations(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var k = el.getAttribute('data-i18n');
     var val = T[k];
-    if(!val) return;
-    if(el.children.length === 0){ el.textContent = val; }
+    if(val) el.textContent = val;
   });
+  
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
     var k = el.getAttribute('data-i18n-ph');
     if(T[k]) el.placeholder = T[k];
@@ -565,8 +565,8 @@ function render(){
     </div>`).join('');
   document.getElementById('transportList').innerHTML = (DATA.transport || []).map(t=>`<li>${icon(t.iconKey,22)}<span>${t.text}</span></li>`).join('');
   
-  document.getElementById('mapFrame').src = "https://maps.google.com/maps?q=" + encodeURIComponent(DATA.address || '') + "&t=&z=15&ie=UTF8&iwloc=&output=embed";
-  document.getElementById('directionsBtn').href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(DATA.address || '');
+  document.getElementById('mapFrame').src = `https://maps.google.com/maps?q=${encodeURIComponent(DATA.address || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+  document.getElementById('directionsBtn').href = `https://maps.google.com/maps?q=${encodeURIComponent(DATA.address || '')}`;
   
   const socialHTML = (DATA.social || []).map(s=>`<a href="${s.url}" target="_blank" title="${s.label}">${icon(s.iconKey,18)}</a>`).join('');
   document.getElementById('socialRow').innerHTML = socialHTML;
