@@ -1,83 +1,63 @@
 /* =========================================================
-   GOLDEN INN — SHARED DATA STORE
-   Firebase Firestore  → site content (rooms, hall, hero, etc.)
-   Firebase Storage    → uploaded media files (images & videos)
-   Firestore /media    → media metadata catalogue
-   localStorage        → instant-paint cache only
+   GOLDEN INN — SUPABASE DATA STORE
    ========================================================= */
 
-const STORE_KEY = "golden_inn_site_data_v3";
+const STORE_KEY = "golden_inn_site_data_v4"; // Busted cache
 const HOTEL_LAT = 12.8385;
 const HOTEL_LNG = 77.6770;
 
-/* ── Firebase init (Firestore only — content data) ─────── */
-const firebaseConfig = {
-  apiKey:            "AIzaSyBBErAtVo9tzEp0O230RGjOfZICM8IWZug",
-  authDomain:        "golden-inn.firebaseapp.com",
-  projectId:         "golden-inn",
-  storageBucket:     "golden-inn.firebasestorage.app",
-  messagingSenderId: "824227419924",
-  appId:             "1:824227419924:web:60ab53ab53ebdc49429401"
-};
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const db       = firebase.firestore();
-const CONTENT_REF = db.collection("site").doc("content");
-const MEDIA_COL   = db.collection("media");
+/* ── Supabase Init ─────────────────────────────────────── */
+// PASTE YOUR SUPABASE CREDENTIALS HERE:
+const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+const SUPABASE_KEY = "eyJhbG...YOUR_ANON_KEY_HERE...xyz";
 
-/* ── Cloudinary config ───────────────────────────────── */
-const CLOUDINARY_CLOUD  = "egokdwtb";
-const CLOUDINARY_PRESET = "goldeninn media";
-const CLOUDINARY_URL    = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/upload`;
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/* ── Media Storage (Supabase Storage) ──────────────────── */
 async function uploadMediaFile(file, onProgress){
-  const type = file.type.startsWith('video') ? 'video' : 'image';
-  const fd   = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', CLOUDINARY_PRESET);
-  fd.append('folder', 'goldeninn');
+  if(onProgress) onProgress(10); // Fake start progress
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+  const filePath = `uploads/${fileName}`;
 
-  const data = await new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${type}/upload`);
-    xhr.upload.onprogress = e => { if(e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100)); };
-    xhr.onload = () => {
-      const res = JSON.parse(xhr.responseText);
-      if(xhr.status === 200) resolve(res);
-      else reject(new Error(res.error?.message || 'Upload failed'));
-    };
-    xhr.onerror = () => reject(new Error('Network error during upload'));
-    xhr.send(fd);
-  });
+  const { error: uploadError } = await supabase.storage.from('goldeninn-media').upload(filePath, file);
+  if (uploadError) throw new Error(uploadError.message);
+  if(onProgress) onProgress(80);
 
+  const { data: publicUrlData } = supabase.storage.from('goldeninn-media').getPublicUrl(filePath);
+  
   const item = {
-    name:      file.name,
-    url:       data.secure_url,
-    publicId:  data.public_id,
-    size:      data.bytes || file.size,
-    width:     data.width  || null,
-    height:    data.height || null,
-    format:    data.format || null,
-    type,
-    added:     Date.now()
+    name: file.name,
+    url: publicUrlData.publicUrl,
+    size: file.size,
+    type: file.type.startsWith('video') ? 'video' : 'image',
+    added: Date.now()
   };
-  const docRef = await MEDIA_COL.add(item);
-  return { ...item, id: docRef.id };
+
+  const { data, error } = await supabase.from('media').insert(item).select().single();
+  if (error) throw new Error(error.message);
+  if(onProgress) onProgress(100);
+  return data;
 }
 
 async function loadAllMedia(){
-  const snap = await MEDIA_COL.orderBy('added','desc').get();
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const { data, error } = await supabase.from('media').select('*').order('added', { ascending: false });
+  if (error) return [];
+  return data;
 }
 
 async function deleteMediaItem(item){
-  await MEDIA_COL.doc(item.id).delete();
+  await supabase.from('media').delete().eq('id', item.id);
+  // Optional: delete from storage bucket too
+  const filePath = item.url.split('goldeninn-media/')[1];
+  if(filePath) await supabase.storage.from('goldeninn-media').remove([filePath]);
 }
 
 async function deleteUnusedMedia(siteData){
-  const used   = collectUsedImageUrls(siteData);
-  const all    = await loadAllMedia();
+  const used = collectUsedImageUrls(siteData);
+  const all = await loadAllMedia();
   const unused = all.filter(m => !used.has(m.url));
-  await Promise.all(unused.map(m => MEDIA_COL.doc(m.id).delete()));
+  for(let m of unused) await deleteMediaItem(m);
   return { removedCount: unused.length, freedBytes: unused.reduce((s,m)=>s+(m.size||0),0) };
 }
 
@@ -95,13 +75,13 @@ function formatBytes(n){
   return (n/(1024*1024)).toFixed(2)+' MB';
 }
 
-/* ── Site content (Firestore) ──────────────────────────── */
+/* ── Site content (Supabase Database) ──────────────────── */
 async function loadFromFirestore(){
   try{
-    const snap = await CONTENT_REF.get();
-    if(snap.exists && snap.data() && Object.keys(snap.data()).length > 0){
+    const { data: snap, error } = await supabase.from('site_content').select('data').eq('id', 1).single();
+    if(snap && snap.data && Object.keys(snap.data).length > 0){
       const defaults = JSON.parse(JSON.stringify(DEFAULTS));
-      const remote   = snap.data();
+      const remote = snap.data;
       const data = Object.assign(defaults, remote);
       ['slides','rooms','hall','amenities','places','transport','social'].forEach(function(key){
         if(!data[key] || !Array.isArray(data[key])){
@@ -111,11 +91,13 @@ async function loadFromFirestore(){
       localStorage.setItem(STORE_KEY, JSON.stringify(data));
       return data;
     }
-  }catch(e){ console.warn("Firestore load failed, using cache:", e); }
+  }catch(e){ console.warn("Supabase load failed:", e); }
   return null;
 }
+
 async function saveToFirestore(data){
-  await CONTENT_REF.set(data);
+  const { error } = await supabase.from('site_content').upsert({ id: 1, data: data });
+  if (error) throw new Error(error.message);
   localStorage.setItem(STORE_KEY, JSON.stringify(data));
 }
 
@@ -127,7 +109,6 @@ function loadFromCache(){
 }
 function loadData()  { return loadFromCache(); }
 function saveData(d) { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
-function resetData() { localStorage.removeItem(STORE_KEY); }
 
 /* ── Distance helpers ──────────────────────────────────── */
 function haversineKm(lat1,lon1,lat2,lon2){
@@ -147,21 +128,23 @@ async function geocodePlace(query){
   }catch(e){ return null; }
 }
 function directionsUrl(lat,lng,fallbackQuery){
-  if(lat && lng) return `https://www.google.com/maps/dir/?api=1&origin=${HOTEL_LAT},${HOTEL_LNG}&destination=${lat},${lng}`;
-  return `https://www.google.com/maps/dir/?api=1&origin=${HOTEL_LAT},${HOTEL_LNG}&destination=${encodeURIComponent(fallbackQuery)}`;
+  if(lat && lng) return `https://www.google.com/maps/dir/?api=1&origin=$${HOTEL_LAT},${HOTEL_LNG}&destination=${lat},${lng}`;
+  return `https://www.google.com/maps/dir/?api=1&origin=$${HOTEL_LAT},${HOTEL_LNG}&destination=${encodeURIComponent(fallbackQuery)}`;
 }
 
 /* ── Translation helpers ──────────────────────────────── */
-const TRANS_COL = db.collection("translations");
-
-const LANG_META = {
-  en: {label:"English",   flag:"🇬🇧"},
-  kn: {label:"ಕನ್ನಡ",     flag:"🇮🇳"},
-  ta: {label:"தமிழ்",     flag:"🇮🇳"},
-  te: {label:"తెలుగు",    flag:"🇮🇳"},
-  hi: {label:"हिंदी",     flag:"🇮🇳"},
-  ml: {label:"മലയാളം",    flag:"🇮🇳"},
-};
+async function loadTranslations(lang){
+  try{
+    const { data: snap, error } = await supabase.from('translations').select('data').eq('lang', lang).single();
+    if(snap && snap.data && Object.keys(snap.data).length > 0){
+      return Object.assign({}, DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en, snap.data);
+    }
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en));
+}
+async function saveTranslations(lang, data){
+  await supabase.from('translations').upsert({ lang: lang, data: data });
+}
 
 const TRANS_KEYS = {
   nav_home:"Nav: Home",nav_rooms:"Nav: Rooms",nav_hall:"Nav: Party Hall",
@@ -210,126 +193,9 @@ const DEFAULT_TRANSLATIONS = {
     form_msg:"Your Message / Booking Query",form_send:"Send Message",
     btn_directions:"Get Directions",btn_call_book:"Call to Book",
     btn_enquire:"Enquire",btn_book_online:"Book Online",scroll_label:"Scroll",
-  },
-  kn:{
-    nav_home:"ಮುಖಪುಟ",nav_rooms:"ಕೊಠಡಿಗಳು",nav_hall:"ಪಾರ್ಟಿ ಹಾಲ್",
-    nav_amenities:"ಸೌಲಭ್ಯಗಳು",nav_explore:"ಅನ್ವೇಷಿಸಿ",
-    nav_location:"ಸ್ಥಳ",nav_contact:"ಸಂಪರ್ಕ",nav_call:"ಈಗ ಕರೆ ಮಾಡಿ",
-    hero_eyebrow:"ಎಲೆಕ್ಟ್ರಾನಿಕ್ ಸಿಟಿ · ಬೆಂಗಳೂರು",
-    hero_subtitle:"ವಿಶ್ರಾಂತಿ ಮತ್ತು ಸಂಭ್ರಮಕ್ಕಾಗಿ ಒಂದು ಬೌಟಿಕ್ ವಿಳಾಸ — ಅತ್ಯಾಧುನಿಕ ಕೊಠಡಿಗಳು, ಭವ್ಯ ಬ್ಯಾಂಕ್ವೆಟ್ ಹಾಲ್ ಮತ್ತು ಇನ್-ಹೌಸ್ ಪಬ್, ಹೊಸೂರು ರಸ್ತೆ, ಎಲೆಕ್ಟ್ರಾನಿಕ್ ಸಿಟಿ.",
-    hero_btn_rooms:"ಕೊಠಡಿಗಳನ್ನು ನೋಡಿ",hero_btn_call:"ಕರೆ ಮಾಡಿ ಬುಕ್ ಮಾಡಿ",
-    rooms_kicker:"ನಮ್ಮ ಜೊತೆ ತಂಗಿ",rooms_title_a:"ನಮ್ಮ",rooms_title_b:"ಕೊಠಡಿಗಳು",
-    rooms_desc:"ಸುಂದರ ಅಂತರಿಕ, ಆರಾಮದಾಯಕ ಮಂಚ ಮತ್ತು ಉಚಿತ ಬೆಳಗ್ಗಿನ ಉಪಾಹಾರ — ನಿಮ್ಮ ಪ್ರಯಾಣಕ್ಕೆ ಸರಿಹೊಂದುವ ಕೊಠಡಿ ಆಯ್ಕೆ ಮಾಡಿ.",
-    hall_kicker:"ನಮ್ಮೊಂದಿಗೆ ಆಚರಿಸಿ",hall_title_a:"ಸಮಾರಂಭ",hall_title_b:"ಪಾರ್ಟಿ ಹಾಲ್",
-    hall_desc:"ಮದುವೆ, ಹುಟ್ಟುಹಬ್ಬ ಮತ್ತು ಕಾರ್ಪೊರೇಟ್ ಕಾರ್ಯಕ್ರಮಗಳಿಗೆ — ಸಂಪೂರ್ಣ ಸುಸಜ್ಜಿತ ಬ್ಯಾಂಕ್ವೆಟ್ ಹಾಲ್.",
-    amen_kicker:"ಹೋಟೆಲ್ ವಿವರಗಳು",amen_title_a:"ಸೌಲಭ್ಯಗಳು &",amen_title_b:"ಸೇವೆಗಳು",
-    explore_kicker:"ಗೋಲ್ಡನ್ ಇನ್ ಸಮೀಪ",explore_title_a:"ಬೆಂಗಳೂರು",explore_title_b:"ಅನ್ವೇಷಿಸಿ",
-    explore_desc:"ನಮ್ಮ ಜೊತೆ ತಂಗಿದಾಗ ಬೆಂಗಳೂರಿನ ಪ್ರಮುಖ ಸ್ಥಳಗಳಿಗೆ ಸುಲಭ ಪ್ರವೇಶ.",
-    loc_kicker:"ನಮ್ಮನ್ನು ಹುಡುಕಿ",loc_title_a:"ಸ್ಥಳ &",loc_title_b:"ತಲುಪುವ ವಿಧಾನ",loc_getting:"ತಲುಪುವ ವಿಧಾನ",
-    contact_kicker:"ಸಂಪರ್ಕಿಸಿ",contact_title_a:"ನಮ್ಮನ್ನು",contact_title_b:"ಸಂಪರ್ಕಿಸಿ",
-    form_name:"ನಿಮ್ಮ ಹೆಸರು",form_phone:"ಫೋನ್ ಸಂಖ್ಯೆ",form_email:"ಇಮೇಲ್ ವಿಳಾಸ",
-    form_msg:"ನಿಮ್ಮ ಸಂದೇಶ / ಬುಕಿಂಗ್ ವಿಚಾರಣೆ",form_send:"ಸಂದೇಶ ಕಳಿಸಿ",
-    btn_directions:"ದಿಕ್ಕುಗಳನ್ನು ಪಡೆಯಿರಿ",btn_call_book:"ಕರೆ ಮಾಡಿ ಬುಕ್ ಮಾಡಿ",
-    btn_enquire:"ವಿಚಾರಿಸಿ",btn_book_online:"ಆನ್‌ಲೈನ್ ಬುಕ್ ಮಾಡಿ",scroll_label:"ಸ್ಕ್ರಾಲ್",
-  },
-  ta:{
-    nav_home:"முகப்பு",nav_rooms:"அறைகள்",nav_hall:"விழா மண்டபம்",
-    nav_amenities:"வசதிகள்",nav_explore:"ஆராயுங்கள்",
-    nav_location:"இடம்",nav_contact:"தொடர்பு",nav_call:"இப்போது அழைக்கவும்",
-    hero_eyebrow:"எலக்ட்ரானிக் சிட்டி · பெங்களூரு",
-    hero_subtitle:"ஓய்வு மற்றும் கொண்டாட்டத்திற்கான ஒரு சிறந்த முகவரி — நேர்த்தியான அறைகள், ஒரு பிரமாண்ட விழா மண்டபம் மற்றும் இன்-ஹவுஸ் பப், ஹொசூர் சாலை, எலக்ட்ரானிக் சிட்டி.",
-    hero_btn_rooms:"அறைகளை காணுங்கள்",hero_btn_call:"அழைத்து பதிவு செய்யுங்கள்",
-    rooms_kicker:"எங்களுடன் தங்குங்கள்",rooms_title_a:"எங்கள்",rooms_title_b:"அறைகள்",
-    rooms_desc:"அழகான அலங்காரம், ஆரோக்கியமான படுக்கைகள் மற்றும் இலவச காலை உணவு — உங்கள் பயணத்திற்கு ஏற்ற அறையை தேர்ந்தெடுங்கள்.",
-    hall_kicker:"எங்களுடன் கொண்டாடுங்கள்",hall_title_a:"சமாரம்பா",hall_title_b:"விழா மண்டபம்",
-    hall_desc:"திருமணம், பிறந்தநாள் மற்றும் நிறுவன நிகழ்வுகளுக்கு — முழு வசதியுள்ள பண்ணை மண்டபம்.",
-    amen_kicker:"ஹோட்டல் விவரங்கள்",amen_title_a:"வசதிகள் &",amen_title_b:"சேவைகள்",
-    explore_kicker:"கோல்டன் இன் அருகே",explore_title_a:"பெங்களூரை",explore_title_b:"ஆராயுங்கள்",
-    explore_desc:"எங்களுடன் தங்கும்போது பெங்களூரின் முக்கிய இடங்களுக்கு எளிதான அணுகல்.",
-    loc_kicker:"எங்களை கண்டுபிடியுங்கள்",loc_title_a:"இடம் &",loc_title_b:"வழி",loc_getting:"வருவது எப்படி",
-    contact_kicker:"தொடர்பு கொள்ளுங்கள்",contact_title_a:"எங்களை",contact_title_b:"தொடர்பு கொள்ளுங்கள்",
-    form_name:"உங்கள் பெயர்",form_phone:"தொலைபேசி எண்",form_email:"மின்னஞ்சல் முகவரி",
-    form_msg:"உங்கள் செய்தி / பதிவு விசாரணை",form_send:"செய்தி அனுப்புங்கள்",
-    btn_directions:"வழிகாட்டுதல் பெறுங்கள்",btn_call_book:"அழைத்து பதிவு செய்யுங்கள்",
-    btn_enquire:"விசாரியுங்கள்",btn_book_online:"ஆன்லைனில் பதிவு செய்யுங்கள்",scroll_label:"உருட்டுங்கள்",
-  },
-  te:{
-    nav_home:"హోమ్",nav_rooms:"గదులు",nav_hall:"పార్టీ హాల్",
-    nav_amenities:"సౌకర్యాలు",nav_explore:"అన్వేషించండి",
-    nav_location:"స్థానం",nav_contact:"సంప్రదించండి",nav_call:"ఇప్పుడు కాల్ చేయండి",
-    hero_eyebrow:"ఎలక్ట్రానిక్ సిటీ · బెంగళూరు",
-    hero_subtitle:"విశ్రాంతి మరియు వేడుకకు ఒక బుటిక్ చిరునామా — నేర్పైన గదులు, ఒక గ్రాండ్ బ్యాంక్వెట్ హాల్ మరియు ఇన్-హౌస్ పబ్, హోసూర్ రోడ్, ఎలక్ట్రానిక్ సిటీ.",
-    hero_btn_rooms:"గదులు చూడండి",hero_btn_call:"కాల్ చేసి బుక్ చేయండి",
-    rooms_kicker:"మాతో ఉండండి",rooms_title_a:"మా",rooms_title_b:"గదులు",
-    rooms_desc:"అందమైన అంతరంగం, విశ్రాంతి పడకలు మరియు ఉచిత అల్పాహారం — మీ ప్రయాణానికి అనువైన గదిని ఎంచుకోండి.",
-    hall_kicker:"మాతో జరుపుకోండి",hall_title_a:"సమారంభ",hall_title_b:"పార్టీ హాల్",
-    hall_desc:"వివాహాలు, పుట్టినరోజులు మరియు కార్పొరేట్ కార్యక్రమాలకు — సంపూర్ణంగా సజ్జితమైన బ్యాంక్వెట్ హాల్.",
-    amen_kicker:"హోటల్ వివరాలు",amen_title_a:"సౌకర్యాలు &",amen_title_b:"సేవలు",
-    explore_kicker:"గోల్డెన్ ఇన్ సమీపంలో",explore_title_a:"బెంగళూరును",explore_title_b:"అన్వేషించండి",
-    explore_desc:"మాతో ఉన్నప్పుడు బెంగళూరులోని ప్రముఖ ప్రదేశాలకు సులభ ప్రాప్తి.",
-    loc_kicker:"మమ్మల్ని కనుగొనండి",loc_title_a:"స్థానం &",loc_title_b:"చేరుకునే విధానం",loc_getting:"చేరుకునే విధానం",
-    contact_kicker:"సంప్రదించండి",contact_title_a:"మమ్మల్ని",contact_title_b:"సంప్రదించండి",
-    form_name:"మీ పేరు",form_phone:"ఫోన్ నంబర్",form_email:"ఇమెయిల్ చిరునామా",
-    form_msg:"మీ సందేశం / బుకింగ్ విచారణ",form_send:"సందేశం పంపండి",
-    btn_directions:"దిశలు పొందండి",btn_call_book:"కాల్ చేసి బుక్ చేయండి",
-    btn_enquire:"విచారించండి",btn_book_online:"ఆన్‌లైన్‌లో బుక్ చేయండి",scroll_label:"స్క్రోల్",
-  },
-  hi:{
-    nav_home:"होम",nav_rooms:"कमरे",nav_hall:"पार्टी हॉल",
-    nav_amenities:"सुविधाएं",nav_explore:"खोजें",
-    nav_location:"स्थान",nav_contact:"संपर्क",nav_call:"अभी कॉल करें",
-    hero_eyebrow:"इलेक्ट्रॉनिक सिटी · बेंगलुरु",
-    hero_subtitle:"आराम और उत्सव के लिए एक बुटीक पता — परिष्कृत कमरे, एक भव्य बैंक्वेट हॉल और इन-हाउस पब, होसुर रोड, इलेक्ट्रॉनिक सिटी।",
-    hero_btn_rooms:"कमरे देखें",hero_btn_call:"कॉल करके बुक करें",
-    rooms_kicker:"हमारे साथ रहें",rooms_title_a:"हमारे",rooms_title_b:"कमरे",
-    rooms_desc:"सुंदर इंटीरियर, आरामदायक बिस्तर और मुफ्त सुबह का नाश्ता — अपनी यात्रा के लिए उपयुक्त कमरा चुनें।",
-    hall_kicker:"हमारे साथ जश्न मनाएं",hall_title_a:"समारंभ",hall_title_b:"पार्टी हॉल",
-    hall_desc:"शादियों, जन्मदिन और कॉर्पोरेट कार्यक्रमों के लिए — पूरी तरह सुसज्जित बैंक्वेट हॉल।",
-    amen_kicker:"होटल विवरण",amen_title_a:"सुविधाएं &",amen_title_b:"सेवाएं",
-    explore_kicker:"गोल्डन इन के पास",explore_title_a:"बेंगलुरु",explore_title_b:"खोजें",
-    explore_desc:"हमारे साथ रहते हुए बेंगलुरु के प्रमुख स्थानों तक आसान पहुंच।",
-    loc_kicker:"हमें खोजें",loc_title_a:"स्थान &",loc_title_b:"पहुंचने का तरीका",loc_getting:"यहां कैसे पहुंचें",
-    contact_kicker:"संपर्क करें",contact_title_a:"हमसे",contact_title_b:"संपर्क करें",
-    form_name:"आपका नाम",form_phone:"फोन नंबर",form_email:"ईमेल पता",
-    form_msg:"आपका संदेश / बुकिंग जांच",form_send:"संदेश भेजें",
-    btn_directions:"दिशा-निर्देश पाएं",btn_call_book:"कॉल करके बुक करें",
-    btn_enquire:"जांच करें",btn_book_online:"ऑनलाइन बुक करें",scroll_label:"स्क्रॉल",
-  },
-  ml:{
-    nav_home:"ഹോം",nav_rooms:"മുറികൾ",nav_hall:"പാർട്ടി ഹാൾ",
-    nav_amenities:"സൗകര്യങ്ങൾ",nav_explore:"പര്യവേക്ഷണം",
-    nav_location:"സ്ഥലം",nav_contact:"ബന്ധപ്പെടുക",nav_call:"ഇപ്പോൾ വിളിക്കൂ",
-    hero_eyebrow:"ഇലക്ട്രോണിക് സിറ്റി · ബെംഗളൂരു",
-    hero_subtitle:"വിശ്രാന്തിക്കും ആഘോഷത്തിനുമുള്ള ഒരു ബൗട്ടിക് വിലാസം — നേർത്ത മുറികൾ, ഒരു ഗ്രാൻഡ് ബാങ്ക്വെറ്റ് ഹാൾ, ഇൻ-ഹൗസ് പബ്, ഹൊസூர் റോഡ്, ഇലക്ട്രോണിക് സിറ്റി.",
-    hero_btn_rooms:"മുറികൾ കാണുക",hero_btn_call:"വിളിച്ച് ബുക്ക് ചെയ്യൂ",
-    rooms_kicker:"ഞങ്ങളോടൊപ്പം താമസിക്കൂ",rooms_title_a:"ഞങ്ങളുടെ",rooms_title_b:"മുറികൾ",
-    rooms_desc:"മനോഹരമായ ഇന്റീരിയർ, സുഖദായക കിടക്കകൾ, സൗജന്യ പ്രഭാത ഭക്ഷണം — നിങ്ങളുടെ യാത്രയ്ക്ക് അനുയോജ്യമായ മുറി തിരഞ്ഞെടുക്കൂ.",
-    hall_kicker:"ഞങ്ങളോടൊപ്പം ആഘോഷിക്കൂ",hall_title_a:"സമാരംഭ",hall_title_b:"പാർട്ടി ഹാൾ",
-    hall_desc:"വിവാഹം, ജന്മദിനം, കോർപ്പറേറ്റ് പരിപാടികൾക്ക് — പൂർണ്ണമായി സജ്ജീകരിച്ച ബാങ്ക്വെറ്റ് ഹാൾ.",
-    amen_kicker:"ഹോട്ടൽ വിവരങ്ങൾ",amen_title_a:"സൗകര്യങ്ങളും &",amen_title_b:"സേവനങ്ങളും",
-    explore_kicker:"ഗോൾഡൻ ഇന്നിന് സമീപം",explore_title_a:"ബെംഗളൂരു",explore_title_b:"പര്യവേക്ഷണം",
-    explore_desc:"ഞങ്ങളിൽ താമസിക്കുമ്പോൾ ബെംഗളൂരുവിലെ പ്രധാന സ്ഥലങ്ങളിലേക്ക് എളുപ്പത്തിൽ പോകാം.",
-    loc_kicker:"ഞങ്ങളെ കണ്ടെത്തൂ",loc_title_a:"സ്ഥലവും &",loc_title_b:"എത്തിച്ചേരാനുള്ള വഴിയും",loc_getting:"എങ്ങനെ എത്തും",
-    contact_kicker:"ബന്ധപ്പെടൂ",contact_title_a:"ഞങ്ങളെ",contact_title_b:"ബന്ധപ്പെടൂ",
-    form_name:"നിങ്ങളുടെ പേര്",form_phone:"ഫോൺ നമ്പർ",form_email:"ഇമെയിൽ വിലാസം",
-    form_msg:"നിങ്ങളുടെ സന്ദേശം / ബുക്കിംഗ് അന്വേഷണം",form_send:"സന്ദേശം അയക്കൂ",
-    btn_directions:"വഴി കണ്ടെത്തൂ",btn_call_book:"വിളിച്ച് ബുക്ക് ചെയ്യൂ",
-    btn_enquire:"അന്വേഷിക്കൂ",btn_book_online:"ഓൺലൈൻ ബുക്ക് ചെയ്യൂ",scroll_label:"സ്ക്രോൾ",
-  },
+  }
 };
 
-async function loadTranslations(lang){
-  try{
-    const snap = await TRANS_COL.doc(lang).get();
-    if(snap.exists && snap.data() && Object.keys(snap.data()).length > 0){
-      return Object.assign({}, DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en, snap.data());
-    }
-  }catch(e){ console.warn('Translation load failed:', e); }
-  return JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en));
-}
-async function saveTranslations(lang, data){
-  await TRANS_COL.doc(lang).set(data);
-}
 const ICONS = {
   wifi:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8.5a16 16 0 0 1 20 0"/><path d="M5.5 12.5a11 11 0 0 1 13 0"/><path d="M9 16.5a6 6 0 0 1 6 0"/><circle cx="12" cy="20" r="1.1" fill="currentColor" stroke="none"/></svg>`,
   breakfast:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 13h13a3 3 0 0 1 0 6H4z"/><path d="M17 13a3 3 0 0 0 3-3 2 2 0 0 0-2-2 3 3 0 0 0-1 .2"/><path d="M7 13V7M11 13V7M4 7h13"/></svg>`,
@@ -366,7 +232,6 @@ const ICONS = {
 };
 function icon(name,size=22){ return `<span class="ic-wrap" style="width:${size}px;height:${size}px">${ICONS[name]||ICONS.star}</span>`; }
 
-/* ── Default content ───────────────────────────────────── */
 const DEFAULTS = {
   maintenance:false,
   maintenanceMsg:"We're polishing a few things behind the scenes. Golden Inn will be back online shortly — for bookings, please call us directly.",
@@ -375,40 +240,18 @@ const DEFAULTS = {
   heroSub:"A boutique address for rest and celebration — refined rooms, a grand banquet hall and an in-house pub, on Hosur Road, Electronic City.",
   slides:[],
   rooms:[
-    {img:"",icon:"bed",title:"Single Bed Room",price:"₹1,299",unit:"/ night",desc:"A refined single room with premium bedding, soft ambient lighting and warm wood-and-gold accents — built for the focused solo traveller.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned"]},
-    {img:"",icon:"bed",title:"Double Bed Room",price:"₹1,899",unit:"/ night",desc:"A spacious double room finished in our signature black-and-gold palette, designed for couples and friends travelling together.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned","Room Service"]},
-    {img:"",icon:"bed",title:"Deluxe Twin Room",price:"₹2,299",unit:"/ night",desc:"Two separate beds, extra floor space and elevated finishes — our most requested room for relaxed, longer stays.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned","Laundry"]}
+    {img:"",icon:"bed",title:"Single Bed Room",price:"₹1,299",unit:"/ night",desc:"A refined single room with premium bedding, soft ambient lighting and warm wood-and-gold accents — built for the focused solo traveller.",tags:["Free Wi-Fi","Free Breakfast","Air Conditioned"]}
   ],
-  hall:[
-    {img:"",icon:"party",title:"Samarambha Party Hall",price:"₹35,000",unit:"/ event",desc:"An elegant banquet space for weddings, milestone birthdays and corporate gatherings, with full décor and catering support on request.",tags:["Capacity 200+","Sound System","Catering Available","Valet Parking"]}
-  ],
+  hall:[],
   amenities:[
-    {iconKey:"wifi",title:"Free Wi-Fi"},{iconKey:"breakfast",title:"Free Breakfast"},
-    {iconKey:"parking",title:"Free Parking"},{iconKey:"accessible",title:"Accessible"},
-    {iconKey:"laundry",title:"Laundry Service"},{iconKey:"roomservice",title:"Room Service"},
-    {iconKey:"party",title:"Party Hall"},{iconKey:"pub",title:"In-house Pub"}
+    {iconKey:"wifi",title:"Free Wi-Fi"},{iconKey:"breakfast",title:"Free Breakfast"}
   ],
-  places:[
-    {img:"",title:"Wonderla Amusement Park",dist:"~12 km away",desc:"One of Bangalore's largest amusement and water parks.",lat:12.8755,lng:77.6066},
-    {img:"",title:"Lalbagh Botanical Garden",dist:"~18 km away",desc:"A 240-acre botanical garden with a glasshouse and a historic rock formation.",lat:12.9507,lng:77.5848},
-    {img:"",title:"Electronic City IT Hub",dist:"Walking distance",desc:"Bangalore's major tech park district.",lat:12.8452,lng:77.6602},
-    {img:"",title:"Bannerghatta National Park",dist:"~15 km away",desc:"A wildlife park with zoo, safari and butterfly enclosure.",lat:12.7999,lng:77.5774}
-  ],
+  places:[],
   address:"396/48, Hosur Rd, Dadi Reddy Layout, Veer Sandra, Electronic City, Hebbagodi, Karnataka 560100",
-  transport:[
-    {iconKey:"bus",text:"BMTC city buses run regularly along Hosur Road, with a stop close to the hotel."},
-    {iconKey:"taxi",text:"Cabs and autos are readily available — about 5 minutes from Electronic City Toll Gate."},
-    {iconKey:"train",text:"Nearest railway stations: Carmelaram and Heelalige, roughly 6–8 km away."},
-    {iconKey:"plane",text:"Kempegowda International Airport is approx. 55 km — pre-book a cab for smooth transfers."}
-  ],
+  transport:[],
   phone1:"+91 87468 34131",
   phone2:"+91 96321 38985",
   website:"goldeninnbangalore.com",
   email:"info@goldeninnbangalore.com",
-  social:[
-    {iconKey:"instagram",label:"Instagram",url:"https://instagram.com/goldeninnbangalore"},
-    {iconKey:"facebook",label:"Facebook",url:"https://facebook.com/goldeninnbangalore"},
-    {iconKey:"whatsapp",label:"WhatsApp",url:"https://wa.me/918746834131"},
-    {iconKey:"youtube",label:"YouTube",url:"https://youtube.com/@goldeninnbangalore"}
-  ]
+  social:[{iconKey:"instagram",label:"Instagram",url:"https://instagram.com/goldeninnbangalore"}]
 };
