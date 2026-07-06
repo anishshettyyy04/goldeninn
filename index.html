@@ -169,39 +169,30 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
   iframe{height:320px;}
 }
 @media(max-width:680px){
-  /* NAV */
   .nav-right .btn span.nav-call-text{display:none;}
-  /* HERO */
   .hero-content p{font-size:.95rem;margin:14px 0 26px;}
   .hero-content .eyebrow{letter-spacing:3px;font-size:.7rem;gap:10px;}
   .hero-content .eyebrow::before,.hero-content .eyebrow::after{width:22px;}
   .hero-btns{gap:12px;}
   .hero-btns .btn{padding:11px 18px;font-size:.78rem;}
   .scroll-cue{display:none;}
-  /* SECTIONS */
   .section{padding:48px 5vw;}
   .section-title{font-size:1.65rem;}
   .section-desc{margin-bottom:28px;font-size:.95rem;}
-  /* GRID — single column on phones */
   .grid{grid-template-columns:1fr;gap:20px;}
-  /* AMENITIES — 2 col on phone */
   .amen-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
   .amen{padding:20px 14px;}
-  /* CARDS */
   .card-actions{flex-direction:column;}
   .card-actions a{width:100%;justify-content:center;}
   .card-body{padding:18px 16px 16px;}
   .card-body h3{font-size:1.12rem;}
   .partners{gap:6px;}
   .partners a{font-size:.7rem;padding:6px 10px;}
-  /* LOCATION */
   .loc-wrap{gap:24px;}
   .addr-box{padding:18px;}
   iframe{height:280px;}
-  /* CONTACT */
   .contact-card{padding:18px;}
   .form input,.form textarea{padding:12px 13px;}
-  /* FOOTER */
   .foot-inner{flex-direction:column;align-items:flex-start;gap:20px;}
   .foot-bottom{flex-direction:column;gap:6px;font-size:.74rem;}
 }
@@ -218,7 +209,6 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 #maintenanceScreen img{height:80px;width:80px;border-radius:50%;margin-bottom:26px;}
 #maintenanceScreen h1{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:16px;}
 #maintenanceScreen p{max-width:480px;color:var(--muted);margin-bottom:26px;font-weight:300;}
-/* LANGUAGE SWITCHER */
 .lang-switcher{position:relative;}
 .lang-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:4px;background:transparent;border:1px solid var(--line);color:var(--cream);cursor:pointer;font-size:.78rem;font-weight:500;letter-spacing:.3px;transition:.2s;white-space:nowrap;}
 .lang-btn:hover{border-color:var(--gold);color:var(--gold-light);}
@@ -260,7 +250,7 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
     </nav>
     <div class="nav-right">
       <div class="lang-switcher" id="langSwitcher">
-        <button class="lang-btn" id="langBtn" onclick="toggleLangMenu(event)">
+        <button class="lang-btn" id="langBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18A14 14 0 0 1 12 3z"/></svg>
           <span id="langLabel">EN</span>
         </button>
@@ -403,14 +393,13 @@ function applyTranslations(){
     var k = el.getAttribute('data-i18n');
     var val = T[k];
     if(!val) return;
-    // Only set textContent if element has no child elements (no SVG icons etc.)
     if(el.children.length === 0){ el.textContent = val; }
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
     var k = el.getAttribute('data-i18n-ph');
     if(T[k]) el.placeholder = T[k];
   });
-  // Update hero content (always from DATA for English, from T for other languages)
+  
   var eyebrow = document.getElementById('heroEyebrow');
   var sub = document.getElementById('heroSub');
   if(LANG === 'en'){
@@ -420,14 +409,14 @@ function applyTranslations(){
     if(eyebrow) eyebrow.textContent = T['hero_eyebrow'] || DATA.heroEyebrow || '';
     if(sub) sub.textContent = T['hero_subtitle'] || DATA.heroSub || '';
   }
-  // Update nav call button text (has icon, can't use textContent on parent)
+  
   var navCallText = document.getElementById('navCallText');
   if(navCallText && T['nav_call']) navCallText.textContent = T['nav_call'];
-  // Update heroCallBtn preserving the icon
+  
   var callBtn = document.getElementById('heroCallBtn');
   if(callBtn) callBtn.innerHTML = icon('phone',16) + ' ' + (T['hero_btn_call'] || 'Call to Book');
-  // Update lang label and active state
-  var labels={en:'EN',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिं',ml:'മലʼ};
+  
+  var labels={en:'EN',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिं',ml:'മല'};
   var lbl = document.getElementById('langLabel');
   if(lbl) lbl.textContent = labels[LANG] || LANG.toUpperCase();
   document.querySelectorAll('#langMenu a').forEach(function(a,i){
@@ -440,13 +429,18 @@ window.toggleLangMenu = function(e){
   var m = document.getElementById('langMenu');
   if(m) m.classList.toggle('open');
 };
+
+document.getElementById('langBtn').addEventListener('click', window.toggleLangMenu);
+
 window.closeLangMenu = function(){
   var m = document.getElementById('langMenu');
   if(m) m.classList.remove('open');
 };
+
 document.addEventListener('click', function(e){
   if(!e.target.closest('#langSwitcher')) closeLangMenu();
 });
+
 window.setLang = async function(lang){
   LANG = lang;
   localStorage.setItem('golden_inn_lang', lang);
@@ -460,73 +454,94 @@ window.setLang = async function(lang){
   render();
 };
 
-// Clear stale cache that may have old broken asset paths
 (function clearStaleCache(){
   var raw = localStorage.getItem(STORE_KEY);
   if(raw && raw.indexOf('assets/room') !== -1){
     localStorage.removeItem(STORE_KEY);
-    DATA = loadData(); // reload clean defaults
+    DATA = loadData();
   }
 })();
 
-if(DATA.maintenance && !BYPASS){
-  document.getElementById('siteRoot').style.display = 'none';
+function applyMaintenance(data) {
   const ms = document.getElementById('maintenanceScreen');
-  ms.style.display = 'flex';
-  document.getElementById('maintText').textContent = DATA.maintenanceMsg;
-  ms.querySelector('.btn-call').innerHTML = icon('phone',16) + ' Call ' + DATA.phone1;
-  ms.querySelector('.btn-call').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
-} else {
+  const root = document.getElementById('siteRoot');
+  
+  if (data.maintenance && !BYPASS) {
+    root.style.display = 'none';
+    ms.style.display = 'flex';
+    document.getElementById('maintText').textContent = data.maintenanceMsg || '';
+    const callBtn = ms.querySelector('.btn-call');
+    if(callBtn) {
+      callBtn.innerHTML = icon('phone',16) + ' Call ' + (data.phone1 || '');
+      callBtn.href = 'tel:' + (data.phone1 ? data.phone1.replace(/\s/g,'') : '');
+    }
+  } else {
+    root.style.display = 'block';
+    ms.style.display = 'none';
+  }
+}
+
+applyMaintenance(DATA);
+if (!DATA.maintenance || BYPASS) {
   render();
   curSlide = 0; startSlider();
-  // Load fresh data from Firestore — always takes priority over cache
-  loadFromFirestore().then(function(fresh){
-    if(fresh){
-      DATA = fresh;
-      if(fresh.maintenance && !BYPASS){ location.reload(); }
-      else { render(); curSlide = 0; startSlider(); }
+}
+
+loadFromFirestore().then(function(fresh){
+  if(fresh){
+    DATA = fresh;
+    applyMaintenance(DATA);
+    if (!DATA.maintenance || BYPASS) {
+      render();
+      curSlide = 0; startSlider();
     }
-  }).catch(function(e){ console.warn('Firestore load error:', e); });
-  // Load saved language translations
-  if(LANG !== 'en' && typeof loadTranslations === 'function'){
-    loadTranslations(LANG).then(function(trans){
-      T = trans; render();
-    }).catch(function(){});
   }
+}).catch(function(e){ console.warn('Firestore load error:', e); });
+
+if(LANG !== 'en' && typeof loadTranslations === 'function'){
+  loadTranslations(LANG).then(function(trans){
+    T = trans; 
+    if (!DATA.maintenance || BYPASS) render();
+  }).catch(function(){});
 }
 
 function render(){
   document.getElementById('heroTitle').textContent = DATA.heroTitle || 'Golden Inn';
-  // Hero eyebrow and subtitle — from DATA for English, translations for others
+  
   var eyEl = document.getElementById('heroEyebrow');
   var subEl = document.getElementById('heroSub');
   if(eyEl) eyEl.textContent = (LANG==='en' ? DATA.heroEyebrow : T['hero_eyebrow']) || DATA.heroEyebrow || 'Electronic City · Bangalore';
   if(subEl) subEl.textContent = (LANG==='en' ? DATA.heroSub : T['hero_subtitle']) || DATA.heroSub || '';
 
-  document.getElementById('hotelAddress').textContent = DATA.address;
-  document.getElementById('cAddress').textContent = DATA.address;
+  document.getElementById('hotelAddress').textContent = DATA.address || '';
+  document.getElementById('cAddress').textContent = DATA.address || '';
   document.querySelector('.addr-box h4').innerHTML = icon('pin',18) + ' Address';
 
   document.getElementById('navCallBtn').querySelector('.ic-wrap').innerHTML = ICONS.phone;
-  document.getElementById('navCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
-  // heroCallBtn — set innerHTML here, applyTranslations will NOT overwrite (no data-i18n on it)
+  document.getElementById('navCallBtn').href = 'tel:' + (DATA.phone1 || '').replace(/\s/g,'');
+  
   document.getElementById('heroCallBtn').innerHTML = icon('phone',16) + ' ' + tr('hero_btn_call');
-  document.getElementById('heroCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
+  document.getElementById('heroCallBtn').href = 'tel:' + (DATA.phone1 || '').replace(/\s/g,'');
 
-  document.getElementById('cPhone1').textContent = DATA.phone1;
-  document.getElementById('cPhone1').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
-  document.getElementById('cPhone2').textContent = DATA.phone2;
-  document.getElementById('cPhone2').href = 'tel:'+DATA.phone2.replace(/\s/g,'');
-  document.getElementById('cEmail').textContent = DATA.email;
-  document.getElementById('cEmail').href = 'mailto:'+DATA.email;
-  document.getElementById('cWebsite').textContent = DATA.website;
-  document.getElementById('cWebsite').href = 'https://'+DATA.website.replace(/^https?:\/\//,'');
+  document.getElementById('cPhone1').textContent = DATA.phone1 || '';
+  document.getElementById('cPhone1').href = 'tel:' + (DATA.phone1 || '').replace(/\s/g,'');
+  
+  document.getElementById('cPhone2').textContent = DATA.phone2 || '';
+  document.getElementById('cPhone2').href = 'tel:' + (DATA.phone2 || '').replace(/\s/g,'');
+  
+  document.getElementById('cEmail').textContent = DATA.email || '';
+  document.getElementById('cEmail').href = 'mailto:' + (DATA.email || '');
+  
+  document.getElementById('cWebsite').textContent = DATA.website || '';
+  document.getElementById('cWebsite').href = 'https://' + (DATA.website || '').replace(/^https?:\/\//,'');
+  
   const rows = document.querySelectorAll('.contact-card .row .ic-wrap');
   rows[0].innerHTML=ICONS.phone; rows[1].innerHTML=ICONS.mail; rows[2].innerHTML=ICONS.globe; rows[3].innerHTML=ICONS.pin;
 
   const sw = document.getElementById('sliderWrap'); const dots = document.getElementById('dots');
   sw.innerHTML=''; dots.innerHTML=''; curSlide=0;
-  DATA.slides.forEach((src,i)=>{
+  
+  (DATA.slides || []).forEach((src,i)=>{
     const d=document.createElement('div'); d.className='slide'+(i===0?' active':'');
     const img = document.createElement('img');
     img.src = src; img.alt = 'Golden Inn';
@@ -535,10 +550,10 @@ function render(){
     const dot=document.createElement('span'); dot.className=i===0?'active':''; dot.onclick=()=>showSlide(i); dots.appendChild(dot);
   });
 
-  document.getElementById('roomsGrid').innerHTML = DATA.rooms.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
-  document.getElementById('hallGrid').innerHTML = DATA.hall.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
-  document.getElementById('amenGrid').innerHTML = DATA.amenities.map(a=>`<div class="amen">${icon(a.iconKey,30)}<h4>${a.title}</h4></div>`).join('');
-  document.getElementById('placesGrid').innerHTML = DATA.places.map(p=>`
+  document.getElementById('roomsGrid').innerHTML = (DATA.rooms || []).map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
+  document.getElementById('hallGrid').innerHTML = (DATA.hall || []).map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
+  document.getElementById('amenGrid').innerHTML = (DATA.amenities || []).map(a=>`<div class="amen">${icon(a.iconKey,30)}<h4>${a.title}</h4></div>`).join('');
+  document.getElementById('placesGrid').innerHTML = (DATA.places || []).map(p=>`
     <div class="card place-card">
       <div class="card-img"><img src="${p.img}" alt="${p.title}" onerror="this.style.display='none'"></div>
       <div class="card-body">
@@ -548,12 +563,15 @@ function render(){
         <a href="${directionsUrl(p.lat,p.lng,p.title)}" target="_blank" class="btn btn-outline" style="margin-top:18px;width:100%;justify-content:center;">${icon('direction',14)} ${tr('btn_directions')}</a>
       </div>
     </div>`).join('');
-  document.getElementById('transportList').innerHTML = DATA.transport.map(t=>`<li>${icon(t.iconKey,22)}<span>${t.text}</span></li>`).join('');
-  document.getElementById('mapFrame').src = "https://www.google.com/maps?q="+encodeURIComponent(DATA.address)+"&output=embed";
-  document.getElementById('directionsBtn').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(DATA.address)}`;
-  const socialHTML = DATA.social.map(s=>`<a href="${s.url}" target="_blank" title="${s.label}">${icon(s.iconKey,18)}</a>`).join('');
+  document.getElementById('transportList').innerHTML = (DATA.transport || []).map(t=>`<li>${icon(t.iconKey,22)}<span>${t.text}</span></li>`).join('');
+  
+  document.getElementById('mapFrame').src = "https://maps.google.com/maps?q=" + encodeURIComponent(DATA.address || '') + "&t=&z=15&ie=UTF8&iwloc=&output=embed";
+  document.getElementById('directionsBtn').href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(DATA.address || '');
+  
+  const socialHTML = (DATA.social || []).map(s=>`<a href="${s.url}" target="_blank" title="${s.label}">${icon(s.iconKey,18)}</a>`).join('');
   document.getElementById('socialRow').innerHTML = socialHTML;
   document.getElementById('footSocial').innerHTML = socialHTML;
+  
   applyTranslations();
 }
 
@@ -568,9 +586,9 @@ function cardHTML(c, callLabel, enquireLabel){
     <div class="card-body">
       <h3>${c.title}</h3>
       <p>${c.desc}</p>
-      <div class="tags">${c.tags.map(tg=>`<span>${tg}</span>`).join('')}</div>
+      <div class="tags">${(c.tags || []).map(tg=>`<span>${tg}</span>`).join('')}</div>
       <div class="card-actions">
-        <a href="tel:${DATA.phone1.replace(/\s/g,'')}" class="btn btn-call">${icon('phone',14)} ${callLabel||tr('btn_call_book')}</a>
+        <a href="tel:${(DATA.phone1 || '').replace(/\s/g,'')}" class="btn btn-call">${icon('phone',14)} ${callLabel||tr('btn_call_book')}</a>
         <a href="#contact" class="btn btn-outline">${enquireLabel||tr('btn_enquire')}</a>
       </div>
       <div class="partners">
@@ -607,6 +625,7 @@ window.addEventListener('scroll',()=>{
   }
   lastScroll = y;
 });
+
 const burger = document.getElementById('burger');
 burger.innerHTML = ICONS.menu;
 burger.onclick = ()=>{
@@ -617,7 +636,9 @@ burger.onclick = ()=>{
 document.querySelectorAll('#navList a').forEach(a=>a.onclick=()=>{
   document.getElementById('navList').classList.remove('open');
   burger.innerHTML = ICONS.menu;
-});async function submitContact(e){
+});
+
+async function submitContact(e){
   e.preventDefault();
   const form = e.target;
   const btn = form.querySelector('button[type=submit]');
@@ -638,7 +659,7 @@ document.querySelectorAll('#navList a').forEach(a=>a.onclick=()=>{
     setTimeout(()=>{ btn.textContent='Send Message'; btn.style.background=''; btn.disabled=false; }, 3500);
   } catch(err) {
     btn.textContent = 'Send Message'; btn.disabled = false;
-    alert('Could not send — please call us directly at ' + DATA.phone1);
+    alert('Could not send — please call us directly at ' + (DATA.phone1 || ''));
   }
 }
 </script>
