@@ -30,7 +30,7 @@ async function loadFromSupabase(){
   return null;
 }
 async function saveToSupabase(content){
-  const { error } = await sb.from('site_content').upsert({ id:'main', data:content, updated_at:new Date().toISOString() });
+  const { error } = await sb.from('site_content').upsert({ id:'main', data:content });
   if(error) throw error;
   localStorage.setItem(STORE_KEY, JSON.stringify(content));
 }
@@ -53,7 +53,12 @@ async function loadAllMedia(){
   return data || [];
 }
 async function addMediaRecord(item){
-  const { data, error } = await sb.from('media_library').insert(item).select().single();
+  const { data, error } = await sb.from('media_library').insert({
+    name: item.name,
+    url: item.url,
+    size: item.size,
+    type: item.type
+  }).select().single();
   if(error) throw error;
   return data;
 }
@@ -104,7 +109,7 @@ async function loadTranslations(lang){
   return defaults;
 }
 async function saveTranslations(lang, translations){
-  const { error } = await sb.from('translations').upsert({ lang, data:translations, updated_at:new Date().toISOString() });
+  const { error } = await sb.from('translations').upsert({ lang, data:translations });
   if(error) throw error;
 }
 
@@ -377,7 +382,12 @@ const DEFAULTS = {
   phone2:"+91 96321 38985",
   website:"goldeninnbangalore.com",
   email:"info@goldeninnbangalore.com",
-  social:[
+  bookingPartners:[
+    {label:"MakeMyTrip", url:"https://www.makemytrip.com"},
+    {label:"Goibibo",    url:"https://www.goibibo.com"},
+    {label:"Booking.com",url:"https://www.booking.com"},
+    {label:"OYO",        url:"https://www.oyorooms.com"}
+  ],
     {iconKey:"instagram",label:"Instagram",url:"https://instagram.com/goldeninnbangalore"},
     {iconKey:"facebook",label:"Facebook",url:"https://facebook.com/goldeninnbangalore"},
     {iconKey:"whatsapp",label:"WhatsApp",url:"https://wa.me/918746834131"},
