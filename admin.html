@@ -261,6 +261,7 @@ button,input,textarea,select{font-family:inherit;}
         </div>
       </div>
       <div class="block"><div class="block-title">Social Media</div><div id="socialList"></div><div class="add-row" onclick="addSocial()">+ Add Handle</div></div>
+      <div class="block"><div class="block-title">Booking Partners (shown on room cards)</div><div id="partnerList"></div><div class="add-row" onclick="addPartner()">+ Add Partner</div></div>
     </div>
 
     <div class="panel" id="panel-media">
@@ -449,6 +450,7 @@ function renderAll(){
   renderPlaces();
   renderTransport();
   renderSocial();
+  renderPartners();
   renderMaintBanner();
 }
 
@@ -684,6 +686,22 @@ function renderSocial(){
   }).join('') || '<p class="note" style="padding:8px 0;">No social handles yet.</p>';
 }
 function addSocial(){ if(!DATA.social) DATA.social=[]; DATA.social.push({iconKey:'instagram',label:'',url:'https://'}); renderSocial(); }
+
+function renderPartners(){
+  var el=document.getElementById('partnerList');
+  if(!el) return;
+  var items=DATA.bookingPartners||[];
+  el.innerHTML = items.map(function(p,i){
+    return '<div class="simple-row">'
+      +'<input value="'+esc(p.label)+'" placeholder="Label e.g. Goibibo" style="width:130px;flex:none;" oninput="DATA.bookingPartners['+i+'].label=this.value">'
+      +'<input value="'+esc(p.url)+'" placeholder="https://..." oninput="DATA.bookingPartners['+i+'].url=this.value">'
+      +'<button class="rbtn"'+(i===0?' disabled':'')+' onclick="moveArr(\'bookingPartners\','+i+',-1,renderPartners)">&#8593;</button>'
+      +'<button class="rbtn"'+(i===items.length-1?' disabled':'')+' onclick="moveArr(\'bookingPartners\','+i+',1,renderPartners)">&#8595;</button>'
+      +'<button class="btn btn-red btn-sm" onclick="DATA.bookingPartners.splice('+i+',1);renderPartners()">x</button>'
+      +'</div>';
+  }).join('') || '<p class="note" style="padding:8px 0;">No booking partners yet.</p>';
+}
+function addPartner(){ if(!DATA.bookingPartners) DATA.bookingPartners=[]; DATA.bookingPartners.push({label:'',url:'https://'}); renderPartners(); }
 
 /* ── MAINTENANCE ── */
 function renderMaintBanner(){
