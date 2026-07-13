@@ -5,82 +5,76 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Inn — Luxury Rooms · Samarambha Party Hall · Pub | Electronic City, Bangalore</title>
 <link rel="icon" type="image/png" href="assets/logo.png">
-<link rel="apple-touch-icon" href="assets/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="site-data.js"></script>
 <style>
-:root{
-  --black:#070605;
-  --black2:#120e0a;
-  --black3:#1a140e;
-  --gold:#cda44c;
-  --gold-light:#f1d98a;
-  --gold-deep:#a9802f;
-  --maroon:#5c0e1f;
-  --red:#8c1029;
-  --red2:#b81c39;
-  --cream:#f4ecd8;
-  --muted:#a99b80;
-  --line:rgba(205,164,76,.16);
-  --radius:14px;
-  --container:1360px;
-}
+:root{--black:#070605;--black2:#120e0a;--black3:#1a140e;--gold:#cda44c;--gl:#f1d98a;--gd:#a9802f;--red:#8c1029;--r2:#b81c39;--cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.15);--radius:14px;--container:1360px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:'Inter',sans-serif;background:var(--black);color:var(--cream);line-height:1.7;overflow-x:hidden;font-size:16px;-webkit-font-smoothing:antialiased;}
 ::selection{background:var(--gold);color:#1a1305;}
-h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:600;letter-spacing:.2px;}
+h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600;}
 a{text-decoration:none;color:inherit;}
 img{max-width:100%;display:block;}
-.gold-text{background:linear-gradient(100deg,var(--gold-light) 0%,var(--gold) 45%,var(--gold-deep) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.gold-text{background:linear-gradient(100deg,var(--gl) 0%,var(--gold) 45%,var(--gd) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ic-wrap svg{width:100%;height:100%;display:block;}
-.section{padding:clamp(60px,9vw,120px) 6vw;position:relative;max-width:var(--container);margin:0 auto;}
+.section{padding:clamp(60px,9vw,120px) 6vw;max-width:var(--container);margin:0 auto;}
 .kicker{display:flex;align-items:center;gap:12px;color:var(--gold);text-transform:uppercase;letter-spacing:4px;font-size:.74rem;font-weight:600;margin-bottom:16px;}
 .kicker::before{content:'';width:30px;height:1px;background:var(--gold);}
-.section-title{font-size:clamp(1.9rem,3.6vw,3.1rem);margin-bottom:18px;font-weight:700;}
-.section-desc{color:var(--muted);max-width:620px;margin-bottom:48px;font-size:1.02rem;font-weight:300;}
-
-.btn{display:inline-flex;align-items:center;gap:9px;padding:14px 30px;border-radius:3px;font-weight:600;cursor:pointer;border:1px solid var(--gold);transition:.3s cubic-bezier(.2,.8,.2,1);font-size:.86rem;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;}
-.btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold) 55%,var(--gold-deep));color:#1a1305;border:none;box-shadow:0 8px 24px -8px rgba(205,164,76,.5);}
-.btn-gold:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 14px 30px -8px rgba(205,164,76,.6);}
-.btn-outline{background:transparent;color:var(--gold-light);}
-.btn-outline:hover{background:rgba(205,164,76,.08);border-color:var(--gold-light);}
-.btn-call{background:linear-gradient(135deg,var(--red2),var(--maroon));color:#fff;border:none;box-shadow:0 8px 22px -8px rgba(184,28,57,.55);}
+.section-title{font-size:clamp(1.9rem,3.6vw,3.1rem);margin-bottom:18px;}
+.section-desc{color:var(--muted);max-width:620px;margin-bottom:48px;font-size:1rem;font-weight:300;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 30px;border-radius:3px;font-weight:600;cursor:pointer;border:1px solid var(--gold);transition:.3s;font-size:.86rem;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;}
+.btn-gold{background:linear-gradient(135deg,var(--gl),var(--gold) 55%,var(--gd));color:#1a1305;border:none;box-shadow:0 8px 24px -8px rgba(205,164,76,.5);}
+.btn-gold:hover{filter:brightness(1.08);transform:translateY(-2px);}
+.btn-outline{background:transparent;color:var(--gl);}
+.btn-outline:hover{background:rgba(205,164,76,.08);}
+.btn-call{background:linear-gradient(135deg,var(--r2),var(--red));color:#fff;border:none;}
 .btn-call:hover{filter:brightness(1.12);transform:translateY(-2px);}
 .btn svg{width:16px;height:16px;}
-
+/* NAV */
 header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:linear-gradient(180deg,rgba(7,6,5,.95),rgba(7,6,5,.65));backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:.4s cubic-bezier(.2,.8,.2,1);}
 header.nav-hidden{transform:translateY(-110%);}
 .nav-inner{max-width:var(--container);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:16px 6vw;}
 .brand{display:flex;align-items:center;gap:13px;}
-.brand img{height:44px;width:44px;border-radius:50%;box-shadow:0 0 0 1px var(--line);}
+.brand img{height:44px;width:44px;border-radius:50%;}
 .brand .names{display:flex;flex-direction:column;line-height:1.1;}
-.brand .names b{font-family:'Playfair Display',serif;font-size:1.28rem;color:var(--gold-light);letter-spacing:.5px;}
-.brand .names small{font-size:.6rem;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+.brand .names b{font-family:'Playfair Display',serif;font-size:1.28rem;color:var(--gl);}
+.brand .names small{font-size:.6rem;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;}
 nav ul{display:flex;gap:34px;list-style:none;}
 nav a{font-size:.84rem;letter-spacing:.4px;text-transform:uppercase;font-weight:500;color:var(--cream);position:relative;padding-bottom:5px;}
-nav a:hover{color:var(--gold-light);}
+nav a:hover{color:var(--gl);}
 nav a::after{content:'';position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--gold);transition:.3s;}
 nav a:hover::after{width:100%;}
-.nav-right{display:flex;align-items:center;gap:16px;}
-.burger{display:none;cursor:pointer;color:var(--gold-light);width:26px;height:26px;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.burger{display:none;cursor:pointer;color:var(--gl);width:26px;height:26px;}
+/* LANG SWITCHER */
+.lang-switcher{position:relative;}
+.lang-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:4px;background:transparent;border:1px solid var(--line);color:var(--cream);cursor:pointer;font-size:.78rem;font-weight:500;transition:.2s;}
+.lang-btn:hover{border-color:var(--gold);color:var(--gl);}
+.lang-btn svg{width:15px;height:15px;}
+.lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--black2);border:1px solid var(--line);border-radius:8px;min-width:160px;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-6px);transition:.22s;z-index:200;}
+.lang-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.lang-menu a{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.84rem;color:var(--muted);cursor:pointer;transition:.15s;}
+.lang-menu a:hover,.lang-menu a.active{background:rgba(205,164,76,.08);color:var(--gl);}
 @media(max-width:980px){
-  nav{position:fixed;top:0;right:-100%;height:100vh;width:min(78vw,320px);background:linear-gradient(165deg,var(--black3),var(--black));border-left:1px solid var(--line);transition:.35s;padding:90px 30px;z-index:999;}
+  nav{position:fixed;top:0;right:-100%;height:100vh;width:min(78vw,320px);background:var(--black2);border-left:1px solid var(--line);transition:.35s;padding:90px 30px;z-index:999;}
   nav.open{right:0;}
   nav ul{flex-direction:column;gap:26px;}
   .burger{display:flex;}
   .nav-call-text{display:none;}
 }
-
-.hero{position:relative;height:100svh;min-height:560px;max-height:980px;overflow:hidden;background:radial-gradient(ellipse at 30% 60%, rgba(140,16,41,.35), transparent 55%), radial-gradient(ellipse at 70% 20%, rgba(205,164,76,.12), transparent 50%), linear-gradient(160deg,#0f0c08,#070605);}
+/* HERO */
+.hero{position:relative;height:100svh;min-height:560px;max-height:980px;overflow:hidden;background:radial-gradient(ellipse at 30% 60%,rgba(140,16,41,.4),transparent 55%),radial-gradient(ellipse at 70% 20%,rgba(205,164,76,.12),transparent 50%),linear-gradient(160deg,#0f0c08,#070605);}
 .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;}
 .slide.active{opacity:1;}
-.slide img{width:100%;height:100%;object-fit:cover;}
-.slide::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 100%,rgba(184,28,57,.32),transparent 55%),linear-gradient(180deg,rgba(7,6,5,.72) 0%,rgba(7,6,5,.5) 38%,rgba(7,6,5,.98) 100%);}
-.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:5;padding:0 20px;text-shadow:0 4px 24px rgba(0,0,0,.65);}
-.hero-content .eyebrow{display:flex;align-items:center;gap:14px;color:var(--gold-light);letter-spacing:5px;text-transform:uppercase;font-size:.78rem;margin-bottom:22px;font-weight:500;}
-.hero-content .eyebrow::before,.hero-content .eyebrow::after{content:'';width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
-.hero-content .eyebrow::after{background:linear-gradient(90deg,var(--gold),transparent);}
+.slide img{width:100%;height:100%;object-fit:cover;display:block;}
+.slide::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 100%,rgba(184,28,57,.3),transparent 55%),linear-gradient(180deg,rgba(7,6,5,.6) 0%,rgba(7,6,5,.3) 40%,rgba(7,6,5,.97) 100%);}
+.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:5;padding:0 20px;}
+.eyebrow{display:flex;align-items:center;gap:14px;color:var(--gl);letter-spacing:5px;text-transform:uppercase;font-size:.78rem;margin-bottom:22px;font-weight:500;}
+.eyebrow::before,.eyebrow::after{content:'';width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
+.eyebrow::after{background:linear-gradient(90deg,var(--gold),transparent);}
 .hero-content h1{font-size:clamp(2.8rem,8vw,6.2rem);line-height:1.02;font-weight:800;}
 .hero-content p{max-width:580px;margin:22px 0 36px;color:var(--muted);font-size:clamp(.92rem,2.5vw,1.12rem);font-weight:300;}
 .hero-btns{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;}
@@ -88,54 +82,47 @@ nav a:hover::after{width:100%;}
 .dots span{width:8px;height:8px;border-radius:50%;background:rgba(244,236,216,.3);cursor:pointer;transition:.3s;}
 .dots span.active{background:var(--gold);width:28px;border-radius:5px;}
 .scroll-cue{position:absolute;bottom:34px;right:6vw;color:var(--muted);font-size:.68rem;letter-spacing:2px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:6;}
-.scroll-cue .line{width:1px;height:38px;background:linear-gradient(180deg,var(--gold),transparent);animation:cue 2s infinite;}
+.scroll-line{width:1px;height:38px;background:linear-gradient(180deg,var(--gold),transparent);animation:cue 2s infinite;}
 @keyframes cue{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
-
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold) 50%,transparent);opacity:.35;max-width:var(--container);margin:0 auto;}
-
+/* CARDS */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:30px;}
-.card{background:linear-gradient(165deg,var(--black3),var(--black2) 75%);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative;transition:.4s cubic-bezier(.2,.8,.2,1);}
+.card{background:linear-gradient(165deg,var(--black3),var(--black2) 75%);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:.4s cubic-bezier(.2,.8,.2,1);}
 .card:hover{transform:translateY(-7px);border-color:rgba(205,164,76,.45);box-shadow:0 26px 48px -16px rgba(0,0,0,.6);}
-.card-img{height:225px;overflow:hidden;position:relative;}
-.card-img img{width:100%;height:100%;object-fit:cover;transition:.7s cubic-bezier(.2,.8,.2,1);}
+.card-img{height:225px;overflow:hidden;position:relative;background:var(--black3);}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:.7s;}
 .card:hover .card-img img{transform:scale(1.07);}
 .card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(7,6,5,.7));}
-.price-tag{position:absolute;top:16px;right:16px;z-index:2;background:rgba(7,6,5,.75);backdrop-filter:blur(6px);border:1px solid var(--gold);color:var(--gold-light);padding:8px 16px;border-radius:3px;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;}
-.price-tag small{font-family:'Inter',sans-serif;font-weight:400;font-size:.66rem;color:var(--muted);display:block;letter-spacing:.5px;}
-.card-icon{position:absolute;top:16px;left:16px;z-index:2;width:38px;height:38px;background:rgba(7,6,5,.75);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold-light);}
+.price-tag{position:absolute;top:16px;right:16px;z-index:2;background:rgba(7,6,5,.75);backdrop-filter:blur(6px);border:1px solid var(--gold);color:var(--gl);padding:8px 16px;border-radius:3px;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;}
+.price-tag small{font-family:'Inter',sans-serif;font-weight:400;font-size:.66rem;color:var(--muted);display:block;}
+.card-icon{position:absolute;top:16px;left:16px;z-index:2;width:38px;height:38px;background:rgba(7,6,5,.75);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gl);}
 .card-icon svg{width:18px;height:18px;}
 .card-body{padding:26px 24px 24px;}
-.card-body h3{color:var(--gold-light);font-size:1.32rem;margin-bottom:10px;}
+.card-body h3{color:var(--gl);font-size:1.28rem;margin-bottom:10px;}
 .card-body p{color:var(--muted);font-size:.92rem;margin-bottom:18px;font-weight:300;}
 .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
-.tags span{font-size:.7rem;border:1px solid var(--line);color:var(--gold-light);padding:5px 12px;border-radius:20px;letter-spacing:.3px;}
+.tags span{font-size:.7rem;border:1px solid var(--line);color:var(--gl);padding:5px 12px;border-radius:20px;}
 .card-actions{display:flex;gap:10px;flex-wrap:wrap;}
-.card-actions a{flex:1;justify-content:center;font-size:.74rem;padding:11px 10px;}
+.card-actions a{flex:1;font-size:.74rem;padding:11px 10px;}
 .partners{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
-.partners a{font-size:.72rem;color:var(--muted);border:1px solid var(--line);padding:7px 13px;border-radius:4px;letter-spacing:.3px;transition:.25s;}
-.partners a:hover{color:var(--gold-light);border-color:var(--gold);}
-
+.partners a{font-size:.72rem;color:var(--muted);border:1px solid var(--line);padding:7px 13px;border-radius:4px;transition:.25s;}
+.partners a:hover{color:var(--gl);border-color:var(--gold);}
+/* AMENITIES */
 .amen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:20px;}
-.amen{background:linear-gradient(165deg,var(--black3),var(--black2));border:1px solid var(--line);border-radius:var(--radius);padding:30px 22px;text-align:center;transition:.3s;}
+.amen{background:linear-gradient(165deg,var(--black3),var(--black2));border:1px solid var(--line);border-radius:var(--radius);padding:28px 20px;text-align:center;transition:.3s;}
 .amen:hover{border-color:rgba(205,164,76,.4);transform:translateY(-4px);}
 .amen .ic-wrap{width:30px;height:30px;color:var(--gold);margin:0 auto 14px;}
 .amen h4{font-family:'Inter',sans-serif;color:var(--cream);font-size:.92rem;font-weight:500;}
-
-.place-card .card-img{height:185px;}
-.dist{display:inline-flex;align-items:center;gap:6px;color:var(--gold-light);font-size:.76rem;font-weight:600;letter-spacing:.3px;margin-bottom:4px;}
-.dist svg{width:13px;height:13px;}
-
+/* LOCATION */
 .loc-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:start;}
 .addr-box{background:linear-gradient(165deg,var(--black3),var(--black2));border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin-bottom:26px;}
-.addr-box h4{color:var(--gold-light);margin-bottom:10px;font-size:1.05rem;display:flex;align-items:center;gap:10px;}
-.addr-box h4 .ic-wrap{width:18px;height:18px;color:var(--gold);}
 .transport-list{list-style:none;}
 .transport-list li{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
 .transport-list li .ic-wrap{width:22px;height:22px;color:var(--gold);flex-shrink:0;margin-top:2px;}
-.transport-list li span:last-child{color:var(--muted);font-size:.92rem;font-weight:300;}
+.transport-list li span{color:var(--muted);font-size:.92rem;font-weight:300;}
 .map-frame{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);}
-iframe{border:0;width:100%;height:430px;filter:grayscale(.3) invert(.92) contrast(.92);display:block;}
-
+iframe{border:0;width:100%;height:430px;display:block;}
+/* CONTACT */
 .contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;}
 .form input,.form textarea{width:100%;padding:15px 16px;margin-bottom:16px;background:var(--black3);border:1px solid var(--line);border-radius:4px;color:var(--cream);font-family:inherit;font-size:.92rem;}
 .form input:focus,.form textarea:focus{outline:none;border-color:var(--gold);}
@@ -144,107 +131,60 @@ iframe{border:0;width:100%;height:430px;filter:grayscale(.3) invert(.92) contras
 .contact-card .row{display:flex;gap:16px;padding:17px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
 .contact-card .row:last-child{border-bottom:none;}
 .contact-card .row .ic-wrap{width:22px;height:22px;color:var(--gold);flex-shrink:0;margin-top:3px;}
-.contact-card .row strong{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--gold-light);margin-bottom:4px;font-weight:600;}
+.contact-card .row strong{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--gl);margin-bottom:4px;}
 .contact-card .row a,.contact-card .row span{color:var(--muted);font-size:.94rem;}
-.contact-card .row a:hover{color:var(--gold-light);}
+.contact-card .row a:hover{color:var(--gl);}
 .social-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;}
-.social-row a{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gold-light);transition:.3s;}
+.social-row a{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--gl);transition:.3s;}
 .social-row a svg{width:18px;height:18px;}
 .social-row a:hover{border-color:var(--gold);background:rgba(205,164,76,.1);transform:translateY(-3px);}
-
+/* FOOTER */
 footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var(--black));border-top:1px solid var(--line);}
 .foot-inner{max-width:var(--container);margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:30px;padding-bottom:30px;border-bottom:1px solid var(--line);}
 .foot-brand{display:flex;align-items:center;gap:12px;}
 .foot-brand img{height:38px;width:38px;border-radius:50%;}
-.foot-brand b{font-family:'Playfair Display',serif;color:var(--gold-light);font-size:1.2rem;}
+.foot-brand b{font-family:'Playfair Display',serif;color:var(--gl);font-size:1.2rem;}
 .foot-social{display:flex;gap:12px;}
 .foot-social a{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);transition:.3s;}
 .foot-social a svg{width:16px;height:16px;}
-.foot-social a:hover{color:var(--gold-light);border-color:var(--gold);}
+.foot-social a:hover{color:var(--gl);border-color:var(--gold);}
 .foot-bottom{max-width:var(--container);margin:24px auto 0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:.78rem;}
-
-@media(max-width:880px){
-  .loc-wrap,.contact-wrap{grid-template-columns:1fr;}
-  .contact-card{padding:22px;}
-  iframe{height:320px;}
-}
-@media(max-width:680px){
-  /* NAV */
-  .nav-right .btn span.nav-call-text{display:none;}
-  /* HERO */
-  .hero-content p{font-size:.95rem;margin:14px 0 26px;}
-  .hero-content .eyebrow{letter-spacing:3px;font-size:.7rem;gap:10px;}
-  .hero-content .eyebrow::before,.hero-content .eyebrow::after{width:22px;}
-  .hero-btns{gap:12px;}
-  .hero-btns .btn{padding:11px 18px;font-size:.78rem;}
-  .scroll-cue{display:none;}
-  /* SECTIONS */
-  .section{padding:48px 5vw;}
-  .section-title{font-size:1.65rem;}
-  .section-desc{margin-bottom:28px;font-size:.95rem;}
-  /* GRID — single column on phones */
-  .grid{grid-template-columns:1fr;gap:20px;}
-  /* AMENITIES — 2 col on phone */
-  .amen-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
-  .amen{padding:20px 14px;}
-  /* CARDS */
-  .card-actions{flex-direction:column;}
-  .card-actions a{width:100%;justify-content:center;}
-  .card-body{padding:18px 16px 16px;}
-  .card-body h3{font-size:1.12rem;}
-  .partners{gap:6px;}
-  .partners a{font-size:.7rem;padding:6px 10px;}
-  /* LOCATION */
-  .loc-wrap{gap:24px;}
-  .addr-box{padding:18px;}
-  iframe{height:280px;}
-  /* CONTACT */
-  .contact-card{padding:18px;}
-  .form input,.form textarea{padding:12px 13px;}
-  /* FOOTER */
-  .foot-inner{flex-direction:column;align-items:flex-start;gap:20px;}
-  .foot-bottom{flex-direction:column;gap:6px;font-size:.74rem;}
-}
-@media(max-width:400px){
-  .hero-content h1{font-size:2.3rem;}
-  .amen-grid{grid-template-columns:repeat(2,1fr);}
-  .section{padding:40px 4vw;}
-  .nav-inner{padding:13px 4vw;}
-}
-@media(min-width:1600px){:root{--container:1560px;}body{font-size:17.5px;}}
-@media(min-width:2200px){:root{--container:1820px;}body{font-size:19px;}}
-
+/* PLACE CARD */
+.place-card .card-img{height:185px;}
+.dist{display:inline-flex;align-items:center;gap:6px;color:var(--gl);font-size:.76rem;font-weight:600;margin-bottom:4px;}
+/* MAINTENANCE */
 #maintenanceScreen{position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,#1a120a,#070605 70%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px;}
 #maintenanceScreen img{height:80px;width:80px;border-radius:50%;margin-bottom:26px;}
-#maintenanceScreen h1{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:16px;}
-#maintenanceScreen p{max-width:480px;color:var(--muted);margin-bottom:26px;font-weight:300;}
-/* LANGUAGE SWITCHER */
-.lang-switcher{position:relative;}
-.lang-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:4px;background:transparent;border:1px solid var(--line);color:var(--cream);cursor:pointer;font-size:.78rem;font-weight:500;letter-spacing:.3px;transition:.2s;white-space:nowrap;}
-.lang-btn:hover{border-color:var(--gold);color:var(--gold-light);}
-.lang-btn svg{width:15px;height:15px;}
-.lang-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--black2);border:1px solid var(--line);border-radius:8px;min-width:170px;overflow:hidden;opacity:0;pointer-events:none;transform:translateY(-6px);transition:.22s;z-index:200;}
-.lang-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
-.lang-menu a{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.84rem;color:var(--muted);cursor:pointer;transition:.15s;text-decoration:none;}
-.lang-menu a:hover{background:rgba(205,164,76,.08);color:var(--gold-light);}
-.lang-menu a.active{color:var(--gold-light);font-weight:600;}
-.lang-flag{font-size:1.1rem;line-height:1;}
+/* RESPONSIVE */
+@media(max-width:880px){.loc-wrap,.contact-wrap{grid-template-columns:1fr;}iframe{height:320px;}}
+@media(max-width:680px){
+  .section{padding:48px 5vw;}
+  .section-title{font-size:1.65rem;}
+  .section-desc{margin-bottom:28px;}
+  .grid{grid-template-columns:1fr;gap:20px;}
+  .amen-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .card-actions{flex-direction:column;}
+  .card-actions a{width:100%;}
+  .scroll-cue{display:none;}
+}
+@media(max-width:400px){.hero-content h1{font-size:2.3rem;}.section{padding:40px 4vw;}}
+@media(min-width:1600px){:root{--container:1560px;}body{font-size:17.5px;}}
 </style>
+</head>
 <body>
 
 <div id="maintenanceScreen" style="display:none;">
   <img src="assets/logo.png" alt="Golden Inn">
-  <h1 class="gold-text">We'll be right back</h1>
-  <p id="maintText"></p>
-  <a href="tel:+918746834131" class="btn btn-call">Call Us</a>
+  <h1 class="gold-text">We will be right back</h1>
+  <p id="maintText" style="max-width:480px;color:var(--muted);margin-bottom:26px;font-weight:300;"></p>
+  <a id="maintCall" href="tel:+918746834131" class="btn btn-call">Call Us</a>
 </div>
 
 <div id="siteRoot">
-
 <header id="siteHeader">
   <div class="nav-inner">
     <a class="brand" href="#home">
-      <img src="assets/logo.png" alt="Golden Inn logo">
+      <img src="assets/logo.png" alt="Golden Inn">
       <span class="names"><b>Golden Inn</b><small>Rooms · Hall · Pub</small></span>
     </a>
     <nav id="navList">
@@ -260,20 +200,23 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
     </nav>
     <div class="nav-right">
       <div class="lang-switcher" id="langSwitcher">
-        <button class="lang-btn" id="langBtn" onclick="toggleLangMenu(event)">
+        <button class="lang-btn" onclick="toggleLangMenu(event)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18A14 14 0 0 1 12 3z"/></svg>
           <span id="langLabel">EN</span>
         </button>
         <div class="lang-menu" id="langMenu">
-          <a onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</a>
-          <a onclick="setLang('kn')"><span class="lang-flag">🇮🇳</span> ಕನ್ನಡ</a>
-          <a onclick="setLang('ta')"><span class="lang-flag">🇮🇳</span> தமிழ்</a>
-          <a onclick="setLang('te')"><span class="lang-flag">🇮🇳</span> తెలుగు</a>
-          <a onclick="setLang('hi')"><span class="lang-flag">🇮🇳</span> हिंदी</a>
-          <a onclick="setLang('ml')"><span class="lang-flag">🇮🇳</span> മലയാളം</a>
+          <a onclick="setLang('en')">EN — English</a>
+          <a onclick="setLang('kn')">KN — Kannada</a>
+          <a onclick="setLang('ta')">TA — Tamil</a>
+          <a onclick="setLang('te')">TE — Telugu</a>
+          <a onclick="setLang('hi')">HI — Hindi</a>
+          <a onclick="setLang('ml')">ML — Malayalam</a>
         </div>
       </div>
-      <a id="navCallBtn" href="tel:+918746834131" class="btn btn-call"><span class="ic-wrap"></span><span class="nav-call-text" id="navCallText">Call Now</span></a>
+      <a id="navCallBtn" href="tel:+918746834131" class="btn btn-call">
+        <span class="ic-wrap" style="width:16px;height:16px;" id="navCallIcon"></span>
+        <span class="nav-call-text" id="navCallText">Call Now</span>
+      </a>
       <div class="burger" id="burger"></div>
     </div>
   </div>
@@ -286,12 +229,12 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
     <h1 class="gold-text" id="heroTitle">Golden Inn</h1>
     <p id="heroSub"></p>
     <div class="hero-btns">
-      <a href="#rooms" class="btn btn-gold" data-i18n="hero_btn_rooms">Explore Rooms</a>
-      <a id="heroCallBtn" href="tel:+918746834131" class="btn btn-outline"></a>
+      <a href="#rooms" class="btn btn-gold" id="heroBtnRooms">Explore Rooms</a>
+      <a href="tel:+918746834131" class="btn btn-outline" id="heroBtnCall">Call to Book</a>
     </div>
   </div>
   <div class="dots" id="dots"></div>
-  <div class="scroll-cue"><span data-i18n="scroll_label">Scroll</span><span class="line"></span></div>
+  <div class="scroll-cue"><span id="scrollLabel">Scroll</span><span class="scroll-line"></span></div>
 </section>
 
 <div class="divider"></div>
@@ -299,7 +242,7 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 <section class="section" id="rooms">
   <div class="kicker" data-i18n="rooms_kicker">Stay With Us</div>
   <h2 class="section-title"><span data-i18n="rooms_title_a">Our</span> <span class="gold-text" data-i18n="rooms_title_b">Rooms</span></h2>
-  <p class="section-desc" data-i18n="rooms_desc">Considered interiors, restful beds and a complimentary morning breakfast with every stay — choose the room that suits your trip.</p>
+  <p class="section-desc" data-i18n="rooms_desc"></p>
   <div class="grid" id="roomsGrid"></div>
 </section>
 
@@ -308,7 +251,7 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 <section class="section" id="partyhall">
   <div class="kicker" data-i18n="hall_kicker">Celebrate With Us</div>
   <h2 class="section-title"><span data-i18n="hall_title_a">Samarambha</span> <span class="gold-text" data-i18n="hall_title_b">Party Hall</span></h2>
-  <p class="section-desc" data-i18n="hall_desc">A grand banquet space for weddings, milestone birthdays and corporate events — fully equipped, centrally located.</p>
+  <p class="section-desc" data-i18n="hall_desc"></p>
   <div class="grid" id="hallGrid"></div>
 </section>
 
@@ -325,7 +268,7 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
 <section class="section" id="explore">
   <div class="kicker" data-i18n="explore_kicker">Around Golden Inn</div>
   <h2 class="section-title"><span data-i18n="explore_title_a">Explore</span> <span class="gold-text" data-i18n="explore_title_b">Bangalore</span></h2>
-  <p class="section-desc" data-i18n="explore_desc">Staying with us puts you close to some of Bangalore's most loved destinations — ideal for a day trip during your visit.</p>
+  <p class="section-desc" data-i18n="explore_desc"></p>
   <div class="grid" id="placesGrid"></div>
 </section>
 
@@ -335,18 +278,16 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
   <div class="kicker" data-i18n="loc_kicker">Find Us</div>
   <h2 class="section-title"><span data-i18n="loc_title_a">Location &</span> <span class="gold-text" data-i18n="loc_title_b">How To Reach</span></h2>
   <div class="loc-wrap">
-    <div class="loc-info">
+    <div>
       <div class="addr-box">
-        <h4></h4>
+        <h4 style="color:var(--gl);margin-bottom:10px;display:flex;align-items:center;gap:8px;"><span class="ic-wrap" style="width:18px;height:18px;color:var(--gold);" id="addrIcon"></span> Address</h4>
         <p id="hotelAddress" style="color:var(--muted);font-weight:300;margin-bottom:18px;"></p>
         <a id="directionsBtn" href="#" target="_blank" class="btn btn-gold" data-i18n="btn_directions">Get Directions</a>
       </div>
-      <h4 style="color:var(--gold-light);margin-bottom:6px;" id="gettingHereLabel" data-i18n="loc_getting">Getting Here</h4>
+      <h4 style="color:var(--gl);margin-bottom:6px;" data-i18n="loc_getting">Getting Here</h4>
       <ul class="transport-list" id="transportList"></ul>
     </div>
-    <div class="map-frame">
-      <iframe loading="lazy" id="mapFrame"></iframe>
-    </div>
+    <div class="map-frame"><iframe loading="lazy" id="mapFrame"></iframe></div>
   </div>
 </section>
 
@@ -361,13 +302,13 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
       <input type="tel" id="fi_phone" placeholder="Phone Number" required data-i18n-ph="form_phone">
       <input type="email" id="fi_email" placeholder="Email Address" data-i18n-ph="form_email">
       <textarea id="fi_msg" placeholder="Your Message / Booking Query" data-i18n-ph="form_msg"></textarea>
-      <button class="btn btn-gold" type="submit" id="fi_send" style="width:100%;border:none;cursor:pointer;justify-content:center;" data-i18n="form_send">Send Message</button>
+      <button class="btn btn-gold" type="submit" id="fi_send" style="width:100%;border:none;cursor:pointer;" data-i18n="form_send">Send Message</button>
     </form>
     <div class="contact-card">
-      <div class="row"><span class="ic-wrap"></span><div><strong>Call Us</strong><a id="cPhone1" href="#"></a><br><a id="cPhone2" href="#"></a></div></div>
-      <div class="row"><span class="ic-wrap"></span><div><strong>Email</strong><a id="cEmail" href="#"></a></div></div>
-      <div class="row"><span class="ic-wrap"></span><div><strong>Website</strong><a id="cWebsite" href="#" target="_blank"></a></div></div>
-      <div class="row"><span class="ic-wrap"></span><div><strong>Address</strong><span id="cAddress" style="color:var(--muted);"></span></div></div>
+      <div class="row"><span class="ic-wrap" id="r1" style="width:22px;height:22px;"></span><div><strong>Call Us</strong><a id="cPhone1" href="#"></a><br><a id="cPhone2" href="#"></a></div></div>
+      <div class="row"><span class="ic-wrap" id="r2" style="width:22px;height:22px;"></span><div><strong>Email</strong><a id="cEmail" href="#"></a></div></div>
+      <div class="row"><span class="ic-wrap" id="r3" style="width:22px;height:22px;"></span><div><strong>Website</strong><a id="cWebsite" href="#" target="_blank"></a></div></div>
+      <div class="row" style="border-bottom:none;"><span class="ic-wrap" id="r4" style="width:22px;height:22px;"></span><div><strong>Address</strong><span id="cAddress" style="color:var(--muted);"></span></div></div>
       <div class="social-row" id="socialRow"></div>
     </div>
   </div>
@@ -379,266 +320,191 @@ footer{padding:60px 6vw 28px;background:linear-gradient(180deg,var(--black2),var
     <div class="foot-social" id="footSocial"></div>
   </div>
   <div class="foot-bottom">
-    <span>© 2026 Golden Inn — Rooms · Samarambha Party Hall · Pub, Electronic City, Bangalore.</span>
+    <span>© 2025 Golden Inn — Rooms · Samarambha Party Hall · Pub, Electronic City, Bangalore.</span>
     <span>All rights reserved.</span>
   </div>
 </footer>
-
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="site-data.js"></script>
 <script>
-let DATA = loadData();
-const BYPASS = new URLSearchParams(location.search).has('preview');
+var DATA = loadData();
+var BYPASS = new URLSearchParams(location.search).has('preview');
 
-/* ── LANGUAGE SYSTEM ─────────────────────────────────── */
-let LANG = localStorage.getItem('golden_inn_lang') || 'en';
-let T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[LANG]||DEFAULT_TRANSLATIONS.en));
-function tr(key){ return T[key] || (DEFAULT_TRANSLATIONS.en[key]) || key; }
+/* ── Language ─── */
+var LANG = localStorage.getItem('gi_lang') || 'en';
+var T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[LANG] || DEFAULT_TRANSLATIONS.en));
+
+function tr(k){ return T[k] || DEFAULT_TRANSLATIONS.en[k] || k; }
 
 function applyTranslations(){
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var k = el.getAttribute('data-i18n');
-    var val = T[k];
-    if(!val) return;
-    // Only set textContent if element has no child elements (no SVG icons etc.)
-    if(el.children.length === 0){ el.textContent = val; }
+    if(T[k] && el.children.length === 0) el.textContent = T[k];
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
     var k = el.getAttribute('data-i18n-ph');
     if(T[k]) el.placeholder = T[k];
   });
-  // Update hero content (always from DATA for English, from T for other languages)
-  var eyebrow = document.getElementById('heroEyebrow');
-  var sub = document.getElementById('heroSub');
-  if(LANG === 'en'){
-    if(eyebrow) eyebrow.textContent = DATA.heroEyebrow || T['hero_eyebrow'] || '';
-    if(sub) sub.textContent = DATA.heroSub || T['hero_subtitle'] || '';
-  } else {
-    if(eyebrow) eyebrow.textContent = T['hero_eyebrow'] || DATA.heroEyebrow || '';
-    if(sub) sub.textContent = T['hero_subtitle'] || DATA.heroSub || '';
-  }
-  // Update nav call button text (has icon, can't use textContent on parent)
-  var navCallText = document.getElementById('navCallText');
-  if(navCallText && T['nav_call']) navCallText.textContent = T['nav_call'];
-  // Update heroCallBtn preserving the icon
-  var callBtn = document.getElementById('heroCallBtn');
-  if(callBtn) callBtn.innerHTML = icon('phone',16) + ' ' + (T['hero_btn_call'] || 'Call to Book');
-  // Update lang label and active state
-  var labels={en:'EN',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिं',ml:'മലʼ};
   var lbl = document.getElementById('langLabel');
-  if(lbl) lbl.textContent = labels[LANG] || LANG.toUpperCase();
+  if(lbl) lbl.textContent = LANG.toUpperCase();
   document.querySelectorAll('#langMenu a').forEach(function(a,i){
-    a.classList.toggle('active', ['en','kn','ta','te','hi','ml'][i]===LANG);
+    a.classList.toggle('active', ['en','kn','ta','te','hi','ml'][i] === LANG);
   });
+  // Update text fields that can't use data-i18n (have SVG children)
+  var navCallText = document.getElementById('navCallText');
+  if(navCallText && T.nav_call) navCallText.textContent = T.nav_call;
+  var scrollLbl = document.getElementById('scrollLabel');
+  if(scrollLbl && T.scroll_label) scrollLbl.textContent = T.scroll_label;
+  var heroEyebrow = document.getElementById('heroEyebrow');
+  if(heroEyebrow) heroEyebrow.textContent = LANG === 'en' ? (DATA.heroEyebrow || T.hero_eyebrow) : (T.hero_eyebrow || DATA.heroEyebrow);
+  var heroSub = document.getElementById('heroSub');
+  if(heroSub) heroSub.textContent = LANG === 'en' ? (DATA.heroSub || T.hero_subtitle) : (T.hero_subtitle || DATA.heroSub);
+  var heroBtnRooms = document.getElementById('heroBtnRooms');
+  if(heroBtnRooms && T.hero_btn_rooms) heroBtnRooms.textContent = T.hero_btn_rooms;
+  var heroBtnCall = document.getElementById('heroBtnCall');
+  if(heroBtnCall) heroBtnCall.innerHTML = icon('phone',16) + ' ' + tr('hero_btn_call');
+  var directionsBtn = document.getElementById('directionsBtn');
+  if(directionsBtn && T.btn_directions) directionsBtn.innerHTML = icon('direction',14) + ' ' + T.btn_directions;
 }
 
-window.toggleLangMenu = function(e){
-  if(e) e.stopPropagation();
-  var m = document.getElementById('langMenu');
-  if(m) m.classList.toggle('open');
-};
-window.closeLangMenu = function(){
-  var m = document.getElementById('langMenu');
-  if(m) m.classList.remove('open');
-};
-document.addEventListener('click', function(e){
-  if(!e.target.closest('#langSwitcher')) closeLangMenu();
-});
-window.setLang = async function(lang){
+function toggleLangMenu(e){ if(e) e.stopPropagation(); document.getElementById('langMenu').classList.toggle('open'); }
+function closeLangMenu(){ var m = document.getElementById('langMenu'); if(m) m.classList.remove('open'); }
+document.addEventListener('click', function(e){ if(!e.target.closest('#langSwitcher')) closeLangMenu(); });
+
+function setLang(lang){
   LANG = lang;
-  localStorage.setItem('golden_inn_lang', lang);
+  localStorage.setItem('gi_lang', lang);
   closeLangMenu();
-  if(typeof loadTranslations === 'function'){
-    try{ T = await loadTranslations(lang); }
-    catch(e){ T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en)); }
-  } else {
-    T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en));
-  }
-  render();
-};
-
-// Clear stale cache that may have old broken asset paths
-(function clearStaleCache(){
-  var raw = localStorage.getItem(STORE_KEY);
-  if(raw && raw.indexOf('assets/room') !== -1){
-    localStorage.removeItem(STORE_KEY);
-    DATA = loadData(); // reload clean defaults
-  }
-})();
-
-if(DATA.maintenance && !BYPASS){
-  document.getElementById('siteRoot').style.display = 'none';
-  const ms = document.getElementById('maintenanceScreen');
-  ms.style.display = 'flex';
-  document.getElementById('maintText').textContent = DATA.maintenanceMsg;
-  ms.querySelector('.btn-call').innerHTML = icon('phone',16) + ' Call ' + DATA.phone1;
-  ms.querySelector('.btn-call').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
-} else {
-  render();
-  curSlide = 0; startSlider();
-  // Load fresh data from Firestore — always takes priority over cache
-  loadFromFirestore().then(function(fresh){
-    if(fresh){
-      DATA = fresh;
-      if(fresh.maintenance && !BYPASS){ location.reload(); }
-      else { render(); curSlide = 0; startSlider(); }
-    }
-  }).catch(function(e){ console.warn('Firestore load error:', e); });
-  // Load saved language translations
-  if(LANG !== 'en' && typeof loadTranslations === 'function'){
-    loadTranslations(LANG).then(function(trans){
-      T = trans; render();
-    }).catch(function(){});
-  }
+  loadTranslations(lang).then(function(t){ T = t; render(); }).catch(function(){
+    T = JSON.parse(JSON.stringify(DEFAULT_TRANSLATIONS[lang] || DEFAULT_TRANSLATIONS.en));
+    render();
+  });
 }
 
+/* ── Render ─── */
 function render(){
+  // Hero
   document.getElementById('heroTitle').textContent = DATA.heroTitle || 'Golden Inn';
-  // Hero eyebrow and subtitle — from DATA for English, translations for others
-  var eyEl = document.getElementById('heroEyebrow');
-  var subEl = document.getElementById('heroSub');
-  if(eyEl) eyEl.textContent = (LANG==='en' ? DATA.heroEyebrow : T['hero_eyebrow']) || DATA.heroEyebrow || 'Electronic City · Bangalore';
-  if(subEl) subEl.textContent = (LANG==='en' ? DATA.heroSub : T['hero_subtitle']) || DATA.heroSub || '';
-
-  document.getElementById('hotelAddress').textContent = DATA.address;
-  document.getElementById('cAddress').textContent = DATA.address;
-  document.querySelector('.addr-box h4').innerHTML = icon('pin',18) + ' Address';
-
-  document.getElementById('navCallBtn').querySelector('.ic-wrap').innerHTML = ICONS.phone;
-  document.getElementById('navCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
-  // heroCallBtn — set innerHTML here, applyTranslations will NOT overwrite (no data-i18n on it)
-  document.getElementById('heroCallBtn').innerHTML = icon('phone',16) + ' ' + tr('hero_btn_call');
-  document.getElementById('heroCallBtn').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
-
-  document.getElementById('cPhone1').textContent = DATA.phone1;
-  document.getElementById('cPhone1').href = 'tel:'+DATA.phone1.replace(/\s/g,'');
-  document.getElementById('cPhone2').textContent = DATA.phone2;
-  document.getElementById('cPhone2').href = 'tel:'+DATA.phone2.replace(/\s/g,'');
-  document.getElementById('cEmail').textContent = DATA.email;
-  document.getElementById('cEmail').href = 'mailto:'+DATA.email;
-  document.getElementById('cWebsite').textContent = DATA.website;
-  document.getElementById('cWebsite').href = 'https://'+DATA.website.replace(/^https?:\/\//,'');
-  const rows = document.querySelectorAll('.contact-card .row .ic-wrap');
-  rows[0].innerHTML=ICONS.phone; rows[1].innerHTML=ICONS.mail; rows[2].innerHTML=ICONS.globe; rows[3].innerHTML=ICONS.pin;
-
-  const sw = document.getElementById('sliderWrap'); const dots = document.getElementById('dots');
-  sw.innerHTML=''; dots.innerHTML=''; curSlide=0;
-  DATA.slides.forEach((src,i)=>{
-    const d=document.createElement('div'); d.className='slide'+(i===0?' active':'');
-    const img = document.createElement('img');
-    img.src = src; img.alt = 'Golden Inn';
-    img.onerror = function(){ this.closest('.slide').style.display='none'; };
+  document.getElementById('heroEyebrow').textContent = LANG === 'en' ? (DATA.heroEyebrow || '') : (T.hero_eyebrow || DATA.heroEyebrow || '');
+  document.getElementById('heroSub').textContent = LANG === 'en' ? (DATA.heroSub || '') : (T.hero_subtitle || DATA.heroSub || '');
+  var heroBtnCall = document.getElementById('heroBtnCall');
+  heroBtnCall.innerHTML = icon('phone',16) + ' ' + tr('hero_btn_call');
+  heroBtnCall.href = 'tel:' + DATA.phone1.replace(/\s/g,'');
+  document.getElementById('navCallIcon').innerHTML = ICONS.phone;
+  document.getElementById('navCallBtn').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
+  // Slider
+  var sw = document.getElementById('sliderWrap');
+  var dotsEl = document.getElementById('dots');
+  sw.innerHTML = ''; dotsEl.innerHTML = ''; curSlide = 0;
+  (DATA.slides || []).forEach(function(src, i){
+    var d = document.createElement('div'); d.className = 'slide' + (i === 0 ? ' active' : '');
+    var img = new Image(); img.src = src; img.alt = 'Golden Inn';
+    img.onerror = function(){ d.style.display = 'none'; };
     d.appendChild(img); sw.appendChild(d);
-    const dot=document.createElement('span'); dot.className=i===0?'active':''; dot.onclick=()=>showSlide(i); dots.appendChild(dot);
+    var dot = document.createElement('span'); dot.className = i === 0 ? 'active' : '';
+    dot.onclick = function(){ showSlide(i); }; dotsEl.appendChild(dot);
   });
-
-  document.getElementById('roomsGrid').innerHTML = DATA.rooms.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
-  document.getElementById('hallGrid').innerHTML = DATA.hall.map(c=>cardHTML(c, tr('btn_call_book'), tr('btn_enquire'))).join('');
-  document.getElementById('amenGrid').innerHTML = DATA.amenities.map(a=>`<div class="amen">${icon(a.iconKey,30)}<h4>${a.title}</h4></div>`).join('');
-  document.getElementById('placesGrid').innerHTML = DATA.places.map(p=>`
-    <div class="card place-card">
-      <div class="card-img"><img src="${p.img}" alt="${p.title}" onerror="this.style.display='none'"></div>
-      <div class="card-body">
-        <h3>${p.title}</h3>
-        <div class="dist">${icon('pin',13)} ${p.dist}</div>
-        <p style="margin-top:8px;">${p.desc}</p>
-        <a href="${directionsUrl(p.lat,p.lng,p.title)}" target="_blank" class="btn btn-outline" style="margin-top:18px;width:100%;justify-content:center;">${icon('direction',14)} ${tr('btn_directions')}</a>
-      </div>
-    </div>`).join('');
-  document.getElementById('transportList').innerHTML = DATA.transport.map(t=>`<li>${icon(t.iconKey,22)}<span>${t.text}</span></li>`).join('');
-  document.getElementById('mapFrame').src = "https://www.google.com/maps?q="+encodeURIComponent(DATA.address)+"&output=embed";
-  document.getElementById('directionsBtn').href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(DATA.address)}`;
-  const socialHTML = DATA.social.map(s=>`<a href="${s.url}" target="_blank" title="${s.label}">${icon(s.iconKey,18)}</a>`).join('');
+  // Sections
+  document.getElementById('roomsGrid').innerHTML = (DATA.rooms||[]).map(function(c){ return cardHTML(c); }).join('');
+  document.getElementById('hallGrid').innerHTML = (DATA.hall||[]).map(function(c){ return cardHTML(c); }).join('');
+  document.getElementById('amenGrid').innerHTML = (DATA.amenities||[]).map(function(a){ return '<div class="amen"><span class="ic-wrap" style="width:30px;height:30px;">'+(ICONS[a.iconKey]||ICONS.star)+'</span><h4>'+a.title+'</h4></div>'; }).join('');
+  document.getElementById('placesGrid').innerHTML = (DATA.places||[]).map(function(p){
+    return '<div class="card place-card"><div class="card-img">'+(p.img?'<img src="'+p.img+'" alt="'+p.title+'" onerror="this.style.display=\'none\'">':'')+'</div><div class="card-body"><h3>'+p.title+'</h3><div class="dist">'+icon('pin',13)+' '+p.dist+'</div><p style="margin-top:8px;">'+p.desc+'</p><a href="'+directionsUrl(p.lat,p.lng,p.title)+'" target="_blank" class="btn btn-outline" style="margin-top:16px;width:100%;">'+icon('direction',14)+' '+tr('btn_directions')+'</a></div></div>';
+  }).join('');
+  document.getElementById('transportList').innerHTML = (DATA.transport||[]).map(function(t){ return '<li><span class="ic-wrap" style="width:22px;height:22px;">'+(ICONS[t.iconKey]||'')+'</span><span>'+t.text+'</span></li>'; }).join('');
+  // Location
+  document.getElementById('hotelAddress').textContent = DATA.address || '';
+  document.getElementById('cAddress').textContent = DATA.address || '';
+  document.getElementById('addrIcon').innerHTML = ICONS.pin;
+  document.getElementById('directionsBtn').href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(DATA.address);
+  document.getElementById('directionsBtn').innerHTML = icon('direction',14) + ' ' + tr('btn_directions');
+  document.getElementById('mapFrame').src = 'https://www.google.com/maps?q=' + encodeURIComponent(DATA.address) + '&output=embed';
+  // Contact
+  document.getElementById('cPhone1').textContent = DATA.phone1; document.getElementById('cPhone1').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
+  document.getElementById('cPhone2').textContent = DATA.phone2; document.getElementById('cPhone2').href = 'tel:' + DATA.phone2.replace(/\s/g,'');
+  document.getElementById('cEmail').textContent = DATA.email; document.getElementById('cEmail').href = 'mailto:' + DATA.email;
+  document.getElementById('cWebsite').textContent = DATA.website; document.getElementById('cWebsite').href = 'https://' + DATA.website.replace(/^https?:\/\//,'');
+  document.getElementById('r1').innerHTML = ICONS.phone; document.getElementById('r2').innerHTML = ICONS.mail;
+  document.getElementById('r3').innerHTML = ICONS.globe; document.getElementById('r4').innerHTML = ICONS.pin;
+  var socialHTML = (DATA.social||[]).map(function(s){ return '<a href="'+s.url+'" target="_blank" title="'+s.label+'"><span style="width:18px;height:18px;display:block;">'+(ICONS[s.iconKey]||'')+'</span></a>'; }).join('');
   document.getElementById('socialRow').innerHTML = socialHTML;
   document.getElementById('footSocial').innerHTML = socialHTML;
   applyTranslations();
 }
 
-function cardHTML(c, callLabel, enquireLabel){
-  return `
-  <div class="card">
-    <div class="card-img">
-      <img src="${c.img}" alt="${c.title}" onerror="this.style.opacity='0'">
-      <div class="card-icon">${ICONS[c.icon]||ICONS.star}</div>
-      <div class="price-tag">${c.price}<small>${c.unit}</small></div>
-    </div>
-    <div class="card-body">
-      <h3>${c.title}</h3>
-      <p>${c.desc}</p>
-      <div class="tags">${c.tags.map(tg=>`<span>${tg}</span>`).join('')}</div>
-      <div class="card-actions">
-        <a href="tel:${DATA.phone1.replace(/\s/g,'')}" class="btn btn-call">${icon('phone',14)} ${callLabel||tr('btn_call_book')}</a>
-        <a href="#contact" class="btn btn-outline">${enquireLabel||tr('btn_enquire')}</a>
-      </div>
-      <div class="partners">
-        <a href="https://www.makemytrip.com" target="_blank">MakeMyTrip</a>
-        <a href="https://www.goibibo.com" target="_blank">Goibibo</a>
-        <a href="https://www.booking.com" target="_blank">Booking.com</a>
-        <a href="https://www.oyorooms.com" target="_blank">OYO</a>
-      </div>
-    </div>
-  </div>`;
+function cardHTML(c){
+  var partners = (DATA.bookingPartners||[{label:'MakeMyTrip',url:'https://www.makemytrip.com'},{label:'Goibibo',url:'https://www.goibibo.com'},{label:'Booking.com',url:'https://www.booking.com'},{label:'OYO',url:'https://www.oyorooms.com'}]);
+  return '<div class="card"><div class="card-img">'+(c.img?'<img src="'+c.img+'" alt="'+c.title+'" onerror="this.style.display=\'none\'">':'')+'<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="18" height="18">'+(ICONS[c.icon]?ICONS[c.icon]:'')+'</svg></div><div class="price-tag">'+c.price+'<small>'+c.unit+'</small></div></div><div class="card-body"><h3>'+c.title+'</h3><p>'+c.desc+'</p><div class="tags">'+c.tags.map(function(t){return '<span>'+t+'</span>';}).join('')+'</div><div class="card-actions"><a href="tel:'+DATA.phone1.replace(/\s/g,'')+'" class="btn btn-call">'+icon('phone',14)+' '+tr('btn_call_book')+'</a><a href="#contact" class="btn btn-outline">'+tr('btn_enquire')+'</a></div><div class="partners">'+partners.map(function(p){return '<a href="'+p.url+'" target="_blank">'+p.label+'</a>';}).join('')+'</div></div></div>';
 }
 
-let curSlide=0, slideTimer;
+/* ── Slider ─── */
+var curSlide = 0, slideTimer;
 function showSlide(i){
-  const slides=document.querySelectorAll('.slide'); const dots=document.querySelectorAll('.dots span');
+  var slides = document.querySelectorAll('.slide'), dots = document.querySelectorAll('.dots span');
   if(!slides.length) return;
-  slides[curSlide].classList.remove('active'); dots[curSlide].classList.remove('active');
-  curSlide=(i+slides.length)%slides.length;
-  slides[curSlide].classList.add('active'); dots[curSlide].classList.add('active');
+  slides[curSlide].classList.remove('active'); dots[curSlide] && dots[curSlide].classList.remove('active');
+  curSlide = (i + slides.length) % slides.length;
+  slides[curSlide].classList.add('active'); dots[curSlide] && dots[curSlide].classList.add('active');
 }
-function startSlider(){ clearInterval(slideTimer); slideTimer=setInterval(()=>showSlide(curSlide+1),5000); }
+function startSlider(){ clearInterval(slideTimer); if(document.querySelectorAll('.slide').length > 1) slideTimer = setInterval(function(){ showSlide(curSlide+1); }, 5000); }
 
-let lastScroll = 0;
-const headerEl = document.getElementById('siteHeader');
-window.addEventListener('scroll',()=>{
-  const y = window.scrollY;
-  headerEl.style.background = y>40
-    ? 'linear-gradient(180deg,rgba(7,6,5,.98),rgba(7,6,5,.9))'
-    : 'linear-gradient(180deg,rgba(7,6,5,.95),rgba(7,6,5,.65))';
-  if(y > lastScroll && y > 140 && !document.getElementById('navList').classList.contains('open')){
-    headerEl.classList.add('nav-hidden');
-  } else {
-    headerEl.classList.remove('nav-hidden');
+/* ── Contact form ─── */
+async function submitContact(e){
+  e.preventDefault();
+  var btn = document.getElementById('fi_send');
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  try{
+    await saveMessage({
+      name: document.getElementById('fi_name').value.trim(),
+      phone: document.getElementById('fi_phone').value.trim(),
+      email: document.getElementById('fi_email').value.trim(),
+      message: document.getElementById('fi_msg').value.trim(),
+      read: false,
+      sent_at: new Date().toISOString()
+    });
+    btn.textContent = 'Sent!'; btn.style.background = 'linear-gradient(135deg,#3a9e60,#256640)';
+    document.getElementById('contactForm').reset();
+    setTimeout(function(){ btn.textContent = tr('form_send'); btn.style.background = ''; btn.disabled = false; }, 3500);
+  }catch(err){
+    btn.textContent = tr('form_send'); btn.disabled = false;
+    alert('Could not send. Please call us at ' + DATA.phone1);
   }
+}
+
+/* ── Nav ─── */
+var lastScroll = 0;
+var headerEl = document.getElementById('siteHeader');
+window.addEventListener('scroll', function(){
+  var y = window.scrollY;
+  headerEl.style.background = y > 40 ? 'linear-gradient(180deg,rgba(7,6,5,.98),rgba(7,6,5,.9))' : 'linear-gradient(180deg,rgba(7,6,5,.95),rgba(7,6,5,.65))';
+  if(y > lastScroll && y > 140 && !document.getElementById('navList').classList.contains('open')){ headerEl.classList.add('nav-hidden'); }
+  else { headerEl.classList.remove('nav-hidden'); }
   lastScroll = y;
 });
-const burger = document.getElementById('burger');
+var burger = document.getElementById('burger');
 burger.innerHTML = ICONS.menu;
-burger.onclick = ()=>{
-  const nav = document.getElementById('navList');
+burger.onclick = function(){
+  var nav = document.getElementById('navList');
   nav.classList.toggle('open');
   burger.innerHTML = nav.classList.contains('open') ? ICONS.close : ICONS.menu;
 };
-document.querySelectorAll('#navList a').forEach(a=>a.onclick=()=>{
-  document.getElementById('navList').classList.remove('open');
-  burger.innerHTML = ICONS.menu;
-});async function submitContact(e){
-  e.preventDefault();
-  const form = e.target;
-  const btn = form.querySelector('button[type=submit]');
-  btn.textContent = 'Sending…'; btn.disabled = true;
-  const msg = {
-    name:    form.querySelector('input[type=text]').value.trim(),
-    phone:   form.querySelector('input[type=tel]').value.trim(),
-    email:   form.querySelector('input[type=email]').value.trim(),
-    message: form.querySelector('textarea').value.trim(),
-    read:    false,
-    sentAt:  new Date().toISOString()
-  };
-  try {
-    await db.collection('messages').add(msg);
-    btn.textContent = 'Message Sent!';
-    btn.style.background = 'linear-gradient(135deg,#3a9e60,#256640)';
-    form.reset();
-    setTimeout(()=>{ btn.textContent='Send Message'; btn.style.background=''; btn.disabled=false; }, 3500);
-  } catch(err) {
-    btn.textContent = 'Send Message'; btn.disabled = false;
-    alert('Could not send — please call us directly at ' + DATA.phone1);
+document.querySelectorAll('#navList a').forEach(function(a){
+  a.onclick = function(){ document.getElementById('navList').classList.remove('open'); burger.innerHTML = ICONS.menu; };
+});
+
+/* ── Init ─── */
+if(DATA.maintenance && !BYPASS){
+  document.getElementById('siteRoot').style.display = 'none';
+  var ms = document.getElementById('maintenanceScreen'); ms.style.display = 'flex';
+  document.getElementById('maintText').textContent = DATA.maintenanceMsg;
+  document.getElementById('maintCall').href = 'tel:' + DATA.phone1.replace(/\s/g,'');
+} else {
+  render(); startSlider();
+  loadFromSupabase().then(function(fresh){
+    if(fresh){ DATA = fresh; if(fresh.maintenance && !BYPASS){ location.reload(); } else { render(); curSlide = 0; startSlider(); } }
+  }).catch(function(e){ console.warn('Load error:', e); });
+  if(LANG !== 'en'){
+    loadTranslations(LANG).then(function(t){ T = t; render(); }).catch(function(){});
   }
 }
 </script>
