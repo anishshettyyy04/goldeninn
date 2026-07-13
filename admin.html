@@ -2,27 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Inn — Admin</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/png" href="assets/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="site-data.js"></script>
 <style>
-:root{--bg:#080706;--sf:#111009;--sf2:#1a1610;--sf3:#221e14;--gold:#cda44c;--gl:#f1d98a;--gd:#a9802f;--red:#8c1029;--r2:#b81c39;--cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.15);--ok:#3a9e60;--err:#a8132d;}
+:root{
+  --bg:#080706;--sf:#111009;--sf2:#1a1610;--sf3:#221e14;
+  --gold:#cda44c;--gl:#f1d98a;--gd:#a9802f;
+  --red:#8c1029;--r2:#b81c39;
+  --cream:#f4ecd8;--muted:#a99b80;--line:rgba(205,164,76,.15);
+  --ok:#3a9e60;--err:#a8132d;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--cream);font-size:14px;-webkit-font-smoothing:antialiased;}
-::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--sf);}::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--sf);}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
 h1,h2,h3{font-family:'Playfair Display',serif;}
 button,input,textarea,select{font-family:inherit;}
+
+/* LOGIN */
 #loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at 40% 30%,#1a120a,var(--bg) 65%);z-index:100;}
-.login-box{width:100%;max-width:360px;background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:40px 34px;}
+.login-box{width:100%;max-width:350px;background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:40px 34px;}
 .login-logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gl);margin-bottom:4px;}
 .login-sub{font-size:.8rem;color:var(--muted);margin-bottom:26px;}
 .fi{width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:6px;padding:11px 13px;color:var(--cream);font-size:.9rem;margin-bottom:12px;}
 .fi:focus{outline:none;border-color:var(--gold);}
+.err-msg{font-size:.75rem;color:#e05252;margin-top:8px;display:none;}
+
+/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border-radius:5px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:.2s;white-space:nowrap;}
 .btn-gold{background:linear-gradient(135deg,var(--gl),var(--gold) 60%,var(--gd));color:#1a1305;}
 .btn-gold:hover{filter:brightness(1.08);}
@@ -31,7 +44,8 @@ button,input,textarea,select{font-family:inherit;}
 .btn-red{background:linear-gradient(135deg,var(--r2),var(--red));color:#fff;}
 .btn-green{background:linear-gradient(135deg,#3a9e60,#256640);color:#fff;}
 .btn-sm{padding:7px 13px;font-size:.74rem;}
-.err-msg{font-size:.75rem;color:#e05252;margin-top:8px;display:none;}
+
+/* APP SHELL */
 #app{display:none;height:100vh;overflow:hidden;}
 .sidebar{width:210px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:20px 10px;height:100vh;}
 .s-logo{display:flex;align-items:center;gap:10px;padding:0 8px 22px;}
@@ -44,31 +58,41 @@ button,input,textarea,select{font-family:inherit;}
 .nav-item.active .ndot{background:var(--gold);}
 .s-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);}
 #syncBadge{font-size:.66rem;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted);display:block;margin:0 6px 10px;text-align:center;}
-.main{flex:1;overflow-y:auto;padding:28px 36px 100px;}
+
+.main{flex:1;overflow-y:auto;padding:30px 38px 100px;}
 .panel{display:none;max-width:860px;}
 .panel.active{display:block;}
 .ph{margin-bottom:26px;}
 .ph h1{font-size:1.7rem;margin-bottom:4px;}
 .ph p{color:var(--muted);font-size:.84rem;}
-#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-size:.8rem;opacity:0;transform:translateY(8px);transition:.22s;pointer-events:none;max-width:340px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--sf);border:1px solid var(--line);border-radius:10px;padding:12px 18px;font-size:.8rem;opacity:0;transform:translateY(8px);transition:.22s;pointer-events:none;max-width:320px;}
 #toast.on{opacity:1;transform:none;}
 #toast.ok{border-color:var(--ok);}
 #toast.er{border-color:var(--err);}
+
+/* BLOCK */
 .block{background:var(--sf);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;}
 .block-title{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:14px;font-weight:600;}
+
+/* FIELDS */
 .field{margin-bottom:12px;}
 .field label,.fl{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.field input,.field textarea,.field select{width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:5px;padding:9px 11px;color:var(--cream);font-size:.87rem;}
+.field input,.field textarea,.field select,
+input.fi2,textarea.fi2,select.fi2{width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:5px;padding:9px 11px;color:var(--cream);font-size:.87rem;}
 .field textarea{resize:vertical;min-height:70px;}
 .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--gold);}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* CARD ROW */
 .card-row{background:var(--sf2);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;}
 .card-top{display:flex;align-items:center;gap:12px;padding:12px 15px;cursor:pointer;}
 .card-top:hover{background:var(--sf3);border-radius:10px 10px 0 0;}
 .card-thumb{width:50px;height:38px;border-radius:5px;object-fit:cover;flex-shrink:0;background:var(--sf3);}
-.card-thumb-placeholder{width:50px;height:38px;border-radius:5px;flex-shrink:0;background:var(--sf3);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.6rem;}
 .card-info{flex:1;min-width:0;}
-.card-title{font-size:.88rem;font-weight:600;}
+.card-title{font-size:.88rem;font-weight:600;color:var(--cream);}
 .card-meta{font-size:.72rem;color:var(--muted);margin-top:2px;}
 .card-acts{display:flex;gap:6px;flex-shrink:0;}
 .card-body{display:none;padding:16px;border-top:1px solid var(--line);}
@@ -76,32 +100,40 @@ button,input,textarea,select{font-family:inherit;}
 .rbtn{width:28px;height:28px;border-radius:5px;background:var(--sf3);border:1px solid var(--line);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.84rem;transition:.15s;}
 .rbtn:hover:not(:disabled){border-color:var(--gold);color:var(--gl);}
 .rbtn:disabled{opacity:.3;cursor:default;}
-.img-zone{border:1px dashed var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--sf3);transition:.2s;position:relative;}
+
+/* IMAGE UPLOAD ZONE */
+.img-zone{position:relative;border:1px dashed var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:var(--sf3);transition:.2s;}
 .img-zone:hover{border-color:var(--gold);}
 .img-zone img{width:100%;height:150px;object-fit:cover;display:block;}
 .img-placeholder{height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:.78rem;}
+.img-placeholder svg{width:26px;height:26px;opacity:.5;}
 .img-overlay{position:absolute;inset:0;background:rgba(7,6,5,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;}
 .img-zone:hover .img-overlay{opacity:1;}
 .img-overlay span{color:var(--gl);font-size:.76rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
 .up-bar-bg{height:3px;background:var(--sf3);}
 .up-bar{height:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
+
+/* SIMPLE ROW (amenities, transport, social) */
 .simple-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--sf2);border:1px solid var(--line);border-radius:8px;margin-bottom:7px;}
-.simple-row select,.simple-row input{background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 9px;color:var(--cream);font-size:.82rem;}
-.simple-row select{width:105px;}
-.simple-row input{flex:1;}
+.simple-row select{width:105px;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 8px;color:var(--cream);font-size:.82rem;}
+.simple-row input{flex:1;background:var(--sf3);border:1px solid var(--line);border-radius:4px;padding:7px 9px;color:var(--cream);font-size:.82rem;}
 .simple-row input:focus,.simple-row select:focus{outline:none;border-color:var(--gold);}
+
+/* ADD ROW */
 .add-row{border:1px dashed var(--line);border-radius:8px;padding:11px;text-align:center;color:var(--muted);font-size:.8rem;cursor:pointer;transition:.18s;margin-bottom:8px;}
 .add-row:hover{border-color:var(--gold);color:var(--gl);}
-.slide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px;}
+
+/* SLIDER GRID */
+.slide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:12px;}
 .slide-item{position:relative;border-radius:8px;overflow:hidden;background:var(--sf3);}
 .slide-item img{width:100%;height:110px;object-fit:cover;display:block;}
-.slide-empty{height:110px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.75rem;}
 .slide-num{position:absolute;top:6px;left:6px;background:rgba(7,6,5,.8);color:var(--gl);font-size:.65rem;padding:2px 7px;border-radius:4px;}
-.slide-del{position:absolute;top:6px;right:6px;background:rgba(7,6,5,.8);border:none;color:#fff;width:21px;height:21px;border-radius:50%;cursor:pointer;font-size:.85rem;}
+.slide-del{position:absolute;top:6px;right:6px;background:rgba(7,6,5,.8);border:none;color:#fff;width:21px;height:21px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;}
 .slide-del:hover{background:var(--red);}
-.slide-btns{display:flex;}
-.slide-btn{flex:1;text-align:center;font-size:.65rem;padding:4px;background:var(--sf3);border-top:1px solid var(--line);cursor:pointer;color:var(--muted);transition:.15s;}
-.slide-btn:hover{color:var(--gl);}
+.slide-up-zone{position:relative;border:1px dashed var(--line);border-radius:8px;height:110px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.78rem;background:var(--sf3);}
+.slide-up-zone:hover{border-color:var(--gold);color:var(--gl);}
+
+/* MEDIA GRID */
 .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin:14px 0;}
 .media-card{border-radius:8px;overflow:hidden;background:var(--sf2);border:1px solid var(--line);}
 .media-card img,.media-card video{width:100%;height:90px;object-fit:cover;display:block;}
@@ -111,92 +143,68 @@ button,input,textarea,select{font-family:inherit;}
 .used-badge.no{color:#e07b39;}
 .media-btns{display:flex;gap:5px;}
 .media-btns button{flex:1;padding:5px;font-size:.65rem;}
-.prog-wrap{display:none;margin-top:10px;}
+
+/* PROGRESS */
+.prog-wrap{display:none;margin-top:12px;}
 .prog-wrap.on{display:block;}
 .prog-top{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-bottom:4px;}
 .prog-bg{background:var(--sf3);border-radius:3px;height:5px;}
 .prog-bar{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--gl),var(--gold));width:0;transition:.12s;}
-.drop-zone{border:2px dashed var(--line);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:.18s;}
+
+/* DROPZONE */
+.drop-zone{border:2px dashed var(--line);border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:.18s;}
 .drop-zone:hover,.drop-zone.dg{border-color:var(--gold);background:rgba(205,164,76,.04);}
-.drop-zone svg{width:28px;height:28px;color:var(--gold);margin:0 auto 10px;display:block;opacity:.7;}
+.drop-zone svg{width:30px;height:30px;color:var(--gold);margin:0 auto 10px;display:block;opacity:.7;}
 .drop-zone p{color:var(--muted);font-size:.84rem;}
 .drop-zone small{font-size:.7rem;color:var(--muted);opacity:.7;}
+
+/* MAINT */
 .maint-bar{border-radius:10px;padding:16px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
 .maint-off{background:linear-gradient(90deg,#0e2a16,#06180a);border:1px solid var(--ok);}
 .maint-on{background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid var(--err);}
-.msg-card{background:var(--sf2);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:12px;}
-.msg-card.unread{border-color:var(--gold);}
-.save-bar{position:fixed;bottom:0;left:210px;right:0;background:rgba(8,7,6,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:13px 36px;display:flex;justify-content:flex-end;gap:10px;z-index:50;}
+
+/* SAVE BAR */
+.save-bar{position:fixed;bottom:0;left:210px;right:0;background:rgba(8,7,6,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:13px 38px;display:flex;justify-content:flex-end;gap:10px;z-index:50;}
 .note{font-size:.72rem;color:var(--muted);}
-/* PICKER MODAL */
-.picker-overlay{position:fixed;inset:0;background:rgba(8,7,6,.88);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
-.picker-overlay.open{display:flex;}
-.picker-modal{background:var(--sf);border:1px solid var(--line);border-radius:14px;width:100%;max-width:820px;max-height:86vh;display:flex;flex-direction:column;overflow:hidden;}
-.picker-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);flex-shrink:0;}
-.picker-header h3{color:var(--gl);font-size:1rem;}
-.picker-body{overflow-y:auto;padding:16px 20px;flex:1;}
-.picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
-.picker-item{border-radius:8px;overflow:hidden;background:var(--sf2);border:2px solid var(--line);cursor:pointer;transition:.2s;}
-.picker-item:hover{border-color:var(--gold);transform:scale(1.03);}
-.picker-item img{width:100%;height:88px;object-fit:cover;display:block;}
-.picker-item-name{padding:6px 8px;font-size:.66rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.picker-empty{text-align:center;padding:36px;color:var(--muted);font-size:.85rem;}
+
 @media(max-width:700px){
   .sidebar{width:58px;padding:14px 6px;}
   .s-logo b,.nav-item span:not(.ndot),#syncBadge,.s-footer .btn{display:none;}
   .nav-item{justify-content:center;}
   .main{padding:18px 14px 90px;}
   .save-bar{left:58px;}
-  .g2{grid-template-columns:1fr;}
+  .g2,.g3{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<!-- PICKER MODAL -->
-<div class="picker-overlay" id="pickerOverlay">
-  <div class="picker-modal">
-    <div class="picker-header">
-      <h3>Choose from Media Library</h3>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-outline btn-sm" id="pickerUploadBtn">+ Upload New</button>
-        <input type="file" id="pickerFileInput" accept="image/*,video/*" multiple style="display:none">
-        <button class="btn btn-red btn-sm" onclick="closePicker()">Close</button>
-      </div>
-    </div>
-    <div class="picker-body">
-      <div id="pickerUploadProg" class="prog-wrap" style="margin-bottom:12px;">
-        <div class="prog-top"><span id="pickerProgLabel">Uploading...</span><span id="pickerProgPct">0%</span></div>
-        <div class="prog-bg"><div class="prog-bar" id="pickerProgBar"></div></div>
-      </div>
-      <div id="pickerGrid" class="picker-grid"></div>
-    </div>
-  </div>
-</div>
-
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">Golden Inn</div>
-    <div class="login-sub">Admin Panel — sign in to manage content</div>
+    <div class="login-sub">Admin Panel — sign in to manage site content</div>
     <label class="fl">Admin ID</label>
-    <input class="fi" type="text" id="adminId" placeholder="Admin ID" autocomplete="username">
+    <input class="fi" type="text" id="adminId" placeholder="Enter admin ID" autocomplete="username">
     <label class="fl">Password</label>
     <div style="position:relative;margin-bottom:12px;">
-      <input class="fi" type="password" id="adminPass" placeholder="Password" style="margin-bottom:0;padding-right:44px;">
-      <button type="button" onclick="togglePass()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;" id="eyeBtn">
+      <input class="fi" type="password" id="adminPass" placeholder="Enter password" autocomplete="current-password" style="margin-bottom:0;padding-right:44px;">
+      <button id="eyeBtn" type="button" onclick="togglePassVis()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:0;display:flex;align-items:center;">
         <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
       </button>
     </div>
-    <button class="btn btn-gold" style="width:100%;" onclick="doLogin()">Sign In</button>
-    <div class="err-msg" id="loginErr">Incorrect ID or password.</div>
+    <button class="btn btn-gold" style="width:100%;margin-top:2px;" id="loginBtn" onclick="doLogin()">Sign In</button>
+    <div class="err-msg" id="loginErr" style="display:none;margin-top:10px;font-size:.78rem;color:#e05252;"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app" style="display:flex;">
   <div class="sidebar">
-    <div class="s-logo"><img src="assets/logo.png" alt=""><b>Golden Inn</b></div>
+    <div class="s-logo">
+      <img src="assets/logo.png" alt="">
+      <b>Golden Inn</b>
+    </div>
     <div class="nav-item active" data-panel="hero"><span class="ndot"></span><span>Hero & Slider</span></div>
     <div class="nav-item" data-panel="rooms"><span class="ndot"></span><span>Rooms</span></div>
     <div class="nav-item" data-panel="hall"><span class="ndot"></span><span>Party Hall</span></div>
@@ -206,53 +214,92 @@ button,input,textarea,select{font-family:inherit;}
     <div class="nav-item" data-panel="contact"><span class="ndot"></span><span>Contact</span></div>
     <div class="nav-item" data-panel="media"><span class="ndot"></span><span>Media Library</span></div>
     <div class="nav-item" data-panel="languages"><span class="ndot"></span><span>Languages</span></div>
-    <div class="nav-item" data-panel="messages"><span class="ndot"></span><span>Messages <span id="msgBadge" style="display:none;background:var(--r2);color:#fff;border-radius:10px;padding:1px 6px;font-size:.62rem;margin-left:4px;"></span></span></div>
     <div class="nav-item" data-panel="settings"><span class="ndot"></span><span>Settings</span></div>
+    <div class="nav-item" data-panel="messages"><span class="ndot"></span><span>Messages <span id="msgCount" style="background:var(--r2);color:#fff;border-radius:20px;padding:1px 7px;font-size:.65rem;margin-left:4px;display:none;"></span></span></div>
     <div class="s-footer">
-      <span id="syncBadge">Connecting...</span>
-      <button class="btn btn-outline btn-sm" style="width:100%;" onclick="doLogout()">Sign Out</button>
+      <span id="syncBadge">Not connected</span>
+      <button class="btn btn-outline btn-sm" style="width:100%;" id="logoutBtn">Sign Out</button>
     </div>
   </div>
 
   <div class="main">
 
+    <!-- Firestore permission help banner -->
+    <div id="firestoreHelp" style="display:none;background:linear-gradient(90deg,#2a0e14,#180608);border:1px solid #b81c39;border-radius:10px;padding:18px 22px;margin-bottom:22px;">
+      <div style="font-weight:600;color:#ff8a8a;margin-bottom:8px;">⚠ Firebase Permission Denied</div>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;">Your Firestore security rules are blocking access. Fix it in 30 seconds:</p>
+      <ol style="color:var(--muted);font-size:.83rem;padding-left:18px;line-height:2;">
+        <li>Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--gl);">console.firebase.google.com</a> → your <b>golden-inn</b> project</li>
+        <li>Click <b>Firestore Database</b> → <b>Rules</b> tab</li>
+        <li>Replace everything with the code below and click <b>Publish</b></li>
+      </ol>
+      <pre style="background:var(--sf3);border:1px solid var(--line);border-radius:6px;padding:12px;font-size:.78rem;color:var(--gl);margin-top:10px;overflow-x:auto;">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}</pre>
+      <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="location.reload()">Retry Connection</button>
+    </div>
+
     <div class="panel active" id="panel-hero">
-      <div class="ph"><h1>Hero & Slider</h1><p>The full-screen section visitors see first. Upload real hotel photos via Media Library, then pick them here.</p></div>
+      <div class="ph"><h1>Hero & Slider</h1><p>The full-screen opening section visitors see first.</p></div>
       <div class="block">
         <div class="block-title">Text Content</div>
-        <div class="field"><label>Eyebrow (small text above title)</label><input id="h_eyebrow"></div>
+        <div class="field"><label>Eyebrow Text</label><input id="h_eyebrow"></div>
         <div class="field"><label>Main Title</label><input id="h_title"></div>
         <div class="field"><label>Subtitle</label><textarea id="h_sub"></textarea></div>
       </div>
       <div class="block">
-        <div class="block-title">Slider Images — click x to remove, Upload or Library to change</div>
+        <div class="block-title">Slider Images <span class="note">— click any image to swap it, click × to remove</span></div>
         <div class="slide-grid" id="slideGrid"></div>
-        <div class="add-row" onclick="addSlide()">+ Add Slide</div>
+        <div class="add-row" id="addSlideBtn">+ Add Slide</div>
       </div>
     </div>
 
-    <div class="panel" id="panel-rooms"><div class="ph"><h1>Rooms</h1><p>Click a card to expand and edit. Upload images via Media Library then use the Library button.</p></div><div id="roomsList"></div><div class="add-row" onclick="addCard('rooms')">+ Add Room</div></div>
-    <div class="panel" id="panel-hall"><div class="ph"><h1>Party Hall</h1><p>Samarambha Party Hall packages.</p></div><div id="hallList"></div><div class="add-row" onclick="addCard('hall')">+ Add Package</div></div>
+    <div class="panel" id="panel-rooms">
+      <div class="ph"><h1>Rooms</h1><p>Click a card to expand and edit. Upload images directly on each card.</p></div>
+      <div id="roomsList"></div>
+      <div class="add-row" id="addRoomBtn">+ Add Room</div>
+    </div>
+
+    <div class="panel" id="panel-hall">
+      <div class="ph"><h1>Party Hall</h1><p>Samarambha Party Hall packages.</p></div>
+      <div id="hallList"></div>
+      <div class="add-row" id="addHallBtn">+ Add Hall Package</div>
+    </div>
 
     <div class="panel" id="panel-amenities">
       <div class="ph"><h1>Amenities</h1><p>Icons and labels shown in the facilities grid.</p></div>
-      <div id="amenList"></div><div class="add-row" onclick="addAmen()">+ Add Amenity</div>
+      <div id="amenList"></div>
+      <div class="add-row" id="addAmenBtn">+ Add Amenity</div>
     </div>
 
     <div class="panel" id="panel-explore">
-      <div class="ph"><h1>Explore Bangalore</h1><p>Type a place name — distance auto-fetches. Upload photos via Media Library.</p></div>
-      <div id="placesList"></div><div class="add-row" onclick="addPlace()">+ Add Place</div>
+      <div class="ph"><h1>Explore Bangalore</h1><p>Places near Golden Inn — distance auto-fetches when you type the name.</p></div>
+      <div id="placesList"></div>
+      <div class="add-row" id="addPlaceBtn">+ Add Place</div>
     </div>
 
     <div class="panel" id="panel-location">
       <div class="ph"><h1>Location & Transport</h1></div>
-      <div class="block"><div class="block-title">Address</div><div class="field"><label>Hotel Address</label><textarea id="l_address" rows="3"></textarea></div></div>
-      <div class="block"><div class="block-title">Transport Options</div><div id="transportList"></div><div class="add-row" onclick="addTransport()">+ Add Option</div></div>
+      <div class="block">
+        <div class="block-title">Address</div>
+        <div class="field"><label>Hotel Address</label><textarea id="l_address" rows="3"></textarea></div>
+      </div>
+      <div class="block">
+        <div class="block-title">How To Reach — Transport Options</div>
+        <div id="transportList"></div>
+        <div class="add-row" id="addTransportBtn">+ Add Transport Option</div>
+      </div>
     </div>
 
     <div class="panel" id="panel-contact">
       <div class="ph"><h1>Contact & Social</h1></div>
-      <div class="block"><div class="block-title">Contact Details</div>
+      <div class="block">
+        <div class="block-title">Contact Details</div>
         <div class="g2">
           <div class="field"><label>Primary Phone</label><input id="c_phone1"></div>
           <div class="field"><label>Secondary Phone</label><input id="c_phone2"></div>
@@ -260,61 +307,55 @@ button,input,textarea,select{font-family:inherit;}
           <div class="field"><label>Website</label><input id="c_website"></div>
         </div>
       </div>
-      <div class="block"><div class="block-title">Social Media</div><div id="socialList"></div><div class="add-row" onclick="addSocial()">+ Add Handle</div></div>
-      <div class="block"><div class="block-title">Booking Partners (shown on room cards)</div><div id="partnerList"></div><div class="add-row" onclick="addPartner()">+ Add Partner</div></div>
+      <div class="block">
+        <div class="block-title">Social Media</div>
+        <div id="socialList"></div>
+        <div class="add-row" id="addSocialBtn">+ Add Social Handle</div>
+      </div>
     </div>
 
     <div class="panel" id="panel-media">
-      <div class="ph"><h1>Media Library</h1><p>Upload images and videos to Cloudinary. Copy the URL and paste into any image field, or use the Library button on cards.</p></div>
+      <div class="ph"><h1>Media Library</h1><p>Files stored on Cloudinary (free · 25 GB). Copy any URL and paste into an image field.</p></div>
       <div class="block">
         <div class="drop-zone" id="mediaDropZone">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <p>Drag and drop images or videos, or click to browse</p>
-          <small>JPG · PNG · WebP · MP4 · MOV — stored on Cloudinary (free 25 GB)</small>
+          <p>Drag & drop images or videos here, or click to browse</p>
+          <small>JPG · PNG · WebP · MP4 · MOV — uploaded directly to Cloudinary</small>
           <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display:none">
         </div>
         <div class="prog-wrap" id="mediaProgress">
-          <div class="prog-top"><span id="mediaProgLabel">Uploading...</span><span id="mediaProgPct">0%</span></div>
+          <div class="prog-top"><span id="mediaProgLabel">Uploading…</span><span id="mediaProgPct">0%</span></div>
           <div class="prog-bg"><div class="prog-bar" id="mediaProgBar"></div></div>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-        <span class="note" id="mediaStats">Loading...</span>
-        <button class="btn btn-red btn-sm" onclick="doCleanUnused()">Delete Unused</button>
+        <span class="note" id="mediaStats">Loading…</span>
+        <button class="btn btn-red btn-sm" id="cleanUnusedBtn">Delete Unused Media</button>
       </div>
       <div class="media-grid" id="mediaGrid"></div>
-      <p class="note" style="margin-top:8px;">To permanently free Cloudinary storage, also delete files in your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gl);">Cloudinary dashboard</a>.</p>
+      <p class="note">To free Cloudinary storage: after removing unused records here, also delete the files in your <a href="https://cloudinary.com/console/media_library" target="_blank" style="color:var(--gl);">Cloudinary Media Library</a>.</p>
     </div>
 
     <div class="panel" id="panel-languages">
-      <div class="ph"><h1>Languages</h1><p>Edit translations for each language. Saved to Supabase instantly.</p></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" id="langTabs">
-        <button class="btn btn-gold btn-sm" data-ltab="en" onclick="switchLangTab('en')">English</button>
-        <button class="btn btn-outline btn-sm" data-ltab="kn" onclick="switchLangTab('kn')">Kannada</button>
-        <button class="btn btn-outline btn-sm" data-ltab="ta" onclick="switchLangTab('ta')">Tamil</button>
-        <button class="btn btn-outline btn-sm" data-ltab="te" onclick="switchLangTab('te')">Telugu</button>
-        <button class="btn btn-outline btn-sm" data-ltab="hi" onclick="switchLangTab('hi')">Hindi</button>
-        <button class="btn btn-outline btn-sm" data-ltab="ml" onclick="switchLangTab('ml')">Malayalam</button>
+      <div class="ph"><h1>Languages</h1><p>Edit translations for each language. Changes save to Firebase and go live instantly on the public site.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;" id="langTabs">
+        <button class="btn btn-gold btn-sm" data-ltab="en" onclick="switchLangTab('en')">🇬🇧 English</button>
+        <button class="btn btn-outline btn-sm" data-ltab="kn" onclick="switchLangTab('kn')">🇮🇳 ಕನ್ನಡ</button>
+        <button class="btn btn-outline btn-sm" data-ltab="ta" onclick="switchLangTab('ta')">🇮🇳 தமிழ்</button>
+        <button class="btn btn-outline btn-sm" data-ltab="te" onclick="switchLangTab('te')">🇮🇳 తెలుగు</button>
+        <button class="btn btn-outline btn-sm" data-ltab="hi" onclick="switchLangTab('hi')">🇮🇳 हिंदी</button>
+        <button class="btn btn-outline btn-sm" data-ltab="ml" onclick="switchLangTab('ml')">🇮🇳 മലയാളം</button>
       </div>
       <div class="block">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-          <div class="block-title" style="margin:0;" id="langTabTitle">English</div>
+          <div class="block-title" style="margin:0;" id="langTabTitle">English Translations</div>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-outline btn-sm" onclick="resetLangDefault()">Reset to Default</button>
+            <button class="btn btn-outline btn-sm" onclick="resetLangToDefault()">Reset to Default</button>
             <button class="btn btn-gold btn-sm" onclick="saveLang()">Save Language</button>
           </div>
         </div>
         <div id="langFields"></div>
       </div>
-    </div>
-
-    <div class="panel" id="panel-messages">
-      <div class="ph"><h1>Messages</h1><p>Contact form submissions from the main site.</p></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
-        <span class="note" id="msgStats"></span>
-        <button class="btn btn-outline btn-sm" onclick="loadMsgs()">Refresh</button>
-      </div>
-      <div id="messagesList"></div>
     </div>
 
     <div class="panel" id="panel-settings">
@@ -324,414 +365,741 @@ button,input,textarea,select{font-family:inherit;}
           <div style="font-weight:600;margin-bottom:3px;" id="maintTitle">Maintenance Mode: OFF</div>
           <div class="note" id="maintSub">The live site is visible to all visitors.</div>
         </div>
-        <button class="btn btn-red btn-sm" id="maintBtn" onclick="toggleMaint()">Turn On</button>
+        <button class="btn btn-red btn-sm" id="maintBtn">Turn On</button>
       </div>
-      <div class="block"><div class="block-title">Maintenance Message</div>
-        <div class="field"><label>Shown to visitors when maintenance mode is ON</label><textarea id="s_maintMsg"></textarea></div>
+      <div class="block">
+        <div class="block-title">Maintenance Message</div>
+        <div class="field"><label>Shown to visitors while maintenance mode is ON</label><textarea id="s_maintMsg"></textarea></div>
       </div>
     </div>
 
+    <div class="panel" id="panel-messages">
+      <div class="ph"><h1>Messages</h1><p>Enquiries sent from the contact form on the main site.</p></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <span class="note" id="msgStats"></span>
+        <button class="btn btn-outline btn-sm" onclick="loadMessages()">Refresh</button>
+      </div>
+      <div id="messagesList"><p class="note" style="padding:10px 0;">Loading…</p></div>
+    </div>
+
   </div>
+
   <div class="save-bar">
-    <button class="btn btn-outline btn-sm" onclick="discardChanges()">Discard</button>
-    <button class="btn btn-gold" onclick="saveAll()">Save All Changes</button>
+    <button class="btn btn-outline btn-sm" id="discardBtn">Discard Changes</button>
+    <button class="btn btn-gold" id="saveBtn">Save All Changes</button>
   </div>
 </div>
+
 <div id="toast"></div>
 
 <script>
-var ADMIN_ID  = 'goldeninn';
-var ADMIN_PASS = 'golden123';
-var DATA = {};
-var allMedia = [];
-var pickerCallback = null;
-var currentLangTab = 'en';
-var langData = {};
-var toastTimer;
+/* ─── CONFIG ─────────────────────────────────────────── */
+const ADMIN_PASSWORD = "golden123";
+const ADMIN_ID       = "goldeninn";
+// CLOUDINARY_CLOUD and CLOUDINARY_PRESET already defined in site-data.js
 
-/* ── AUTH ── */
-function togglePass(){
+/* ─── STATE ──────────────────────────────────────────── */
+let DATA = {};
+let mediaItems = [];
+const ICON_KEYS = typeof ICONS !== 'undefined' ? Object.keys(ICONS) : ['bed','party','wifi','breakfast','parking','pin','phone','star'];
+
+/* ─── INIT — runs immediately, no DOMContentLoaded needed ─ */
+(function init() {
+  // If DOM is already ready, run now; otherwise wait
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+  function run() {
+    try { showLogin(); } catch(e) { console.warn('showLogin error:', e); }
+    try { setupNav(); }   catch(e) { console.warn('setupNav error:', e); }
+    try { setupEvents(); } catch(e) { console.warn('setupEvents error:', e); }
+  }
+})();
+
+window.togglePassVis = function togglePassVis() {
   var inp = document.getElementById('adminPass');
-  var ic  = document.getElementById('eyeIcon');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-  ic.innerHTML = inp.type === 'password'
-    ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
-    : '<path d="M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18 18 0 0 1 5.06-5.94M9.9 4.24A9 9 0 0 1 12 4c7 0 11 8 11 8a18 18 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  var icon = document.getElementById('eyeIcon');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    inp.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
 }
 
-function doLogin(){
-  var id   = (document.getElementById('adminId').value || '').trim();
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('adminId').value = '';
+  document.getElementById('adminPass').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  badge('loading');
+  // Test Firebase connection
+  db.collection('site').doc('content').get()
+    .then(function(snap){
+      badge('live');
+      DATA = snap.exists && snap.data() && Object.keys(snap.data()).length > 0
+        ? Object.assign(JSON.parse(JSON.stringify(typeof DEFAULTS!=='undefined'?DEFAULTS:{})), snap.data())
+        : loadData();
+      renderAll();
+      loadMediaLibrary();
+      loadMessages();
+    })
+    .catch(function(err){
+      if(err.code === 'permission-denied'){
+        badge('error');
+        showFirestoreHelp();
+      } else {
+        badge('offline');
+        DATA = loadData();
+        renderAll();
+        loadMediaLibrary();
+      }
+    });
+}
+
+function showFirestoreHelp(){
+  var el = document.getElementById('firestoreHelp');
+  if(el) el.style.display = 'block';
+}
+
+window.doLogin = function doLogin() {
+  var id   = (document.getElementById('adminId').value   || '').trim();
   var pass = (document.getElementById('adminPass').value || '').trim();
   var err  = document.getElementById('loginErr');
   err.style.display = 'none';
-  if(!id){ err.textContent = 'Enter your Admin ID.'; err.style.display='block'; return; }
-  if(!pass){ err.textContent = 'Enter your password.'; err.style.display='block'; return; }
-  if(id === ADMIN_ID && pass === ADMIN_PASS){
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    initApp();
+  if (!id) { err.textContent = 'Please enter your Admin ID.'; err.style.display = 'block'; return; }
+  if (!pass) { err.textContent = 'Please enter your password.'; err.style.display = 'block'; return; }
+  if (id === ADMIN_ID && pass === ADMIN_PASSWORD) {
+    showApp();
   } else {
-    err.textContent = 'Incorrect ID or password.';
+    err.textContent = 'Incorrect Admin ID or password. Try again.';
     err.style.display = 'block';
     document.getElementById('adminPass').value = '';
+    document.getElementById('adminPass').focus();
   }
 }
 
-document.getElementById('adminId').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('adminPass').focus(); });
-document.getElementById('adminPass').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+/* ─── LOGIN ──────────────────────────────────────────── */
+function setupEvents() {
+  document.getElementById('loginBtn').addEventListener('click', doLogin);
+  document.getElementById('adminId').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('adminPass').focus(); });
+  document.getElementById('adminPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('logoutBtn').addEventListener('click', function() { showLogin(); });
+  document.getElementById('saveBtn').addEventListener('click', saveAll);
+  document.getElementById('discardBtn').addEventListener('click', function() {
+    loadFromFirestore().then(function(fresh) {
+      if (fresh) DATA = fresh;
+      else DATA = loadData();
+      renderAll();
+      toast('Changes discarded', '');
+    });
+  });
+  document.getElementById('addSlideBtn').addEventListener('click', function() {
+    if (!DATA.slides) DATA.slides = [];
+    DATA.slides.push('assets/room1.png');
+    renderSlides();
+  });
+  document.getElementById('addRoomBtn').addEventListener('click', function() {
+    if (!DATA.rooms) DATA.rooms = [];
+    DATA.rooms.push({img:'assets/room1.png',icon:'bed',title:'New Room',price:'₹0',unit:'/ night',desc:'',tags:[]});
+    renderCards('rooms', 'roomsList');
+  });
+  document.getElementById('addHallBtn').addEventListener('click', function() {
+    if (!DATA.hall) DATA.hall = [];
+    DATA.hall.push({img:'assets/room12.png',icon:'party',title:'New Package',price:'₹0',unit:'/ event',desc:'',tags:[]});
+    renderCards('hall', 'hallList');
+  });
+  document.getElementById('addAmenBtn').addEventListener('click', function() {
+    if (!DATA.amenities) DATA.amenities = [];
+    DATA.amenities.push({iconKey:'star',title:'New Amenity'});
+    renderAmenities();
+  });
+  document.getElementById('addPlaceBtn').addEventListener('click', function() {
+    if (!DATA.places) DATA.places = [];
+    DATA.places.push({img:'assets/room9.png',title:'New Place',dist:'',desc:'',lat:null,lng:null});
+    renderPlaces();
+  });
+  document.getElementById('addTransportBtn').addEventListener('click', function() {
+    if (!DATA.transport) DATA.transport = [];
+    DATA.transport.push({iconKey:'taxi',text:'New transport option.'});
+    renderTransport();
+  });
+  document.getElementById('addSocialBtn').addEventListener('click', function() {
+    if (!DATA.social) DATA.social = [];
+    DATA.social.push({iconKey:'instagram',label:'',url:'https://'});
+    renderSocial();
+  });
+  document.getElementById('maintBtn').addEventListener('click', toggleMaintenance);
+  document.getElementById('cleanUnusedBtn').addEventListener('click', cleanUnused);
 
-function doLogout(){
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('adminId').value = '';
-  document.getElementById('adminPass').value = '';
+  // Media upload
+  var dz = document.getElementById('mediaDropZone');
+  var fi = document.getElementById('mediaFileInput');
+  dz.addEventListener('click', function(e) { if (e.target !== fi) fi.click(); });
+  dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('dg'); });
+  dz.addEventListener('dragleave', function() { dz.classList.remove('dg'); });
+  dz.addEventListener('drop', function(e) { e.preventDefault(); dz.classList.remove('dg'); uploadMediaFiles(e.dataTransfer.files); });
+  fi.addEventListener('change', function() { uploadMediaFiles(fi.files); });
 }
 
-/* ── INIT ── */
-function initApp(){
-  badge('loading');
-  loadFromSupabase().then(function(fresh){
-    if(fresh){ DATA = fresh; badge('live'); }
-    else { DATA = loadData(); badge('offline'); }
-    renderAll();
-    loadMediaLib();
-    loadMsgs();
-  }).catch(function(e){
-    console.error(e);
-    DATA = loadData();
-    badge('error');
-    renderAll();
+/* ─── NAV ────────────────────────────────────────────── */
+function setupNav() {
+  document.querySelectorAll('.nav-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+      item.classList.add('active');
+      var panel = document.getElementById('panel-' + item.dataset.panel);
+      if (panel) panel.classList.add('active');
+    });
   });
 }
 
-/* ── NAV ── */
-document.querySelectorAll('.nav-item').forEach(function(item){
-  item.addEventListener('click', function(){
-    document.querySelectorAll('.nav-item').forEach(function(i){ i.classList.remove('active'); });
-    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-    item.classList.add('active');
-    var panel = document.getElementById('panel-' + item.dataset.panel);
-    if(panel) panel.classList.add('active');
-    if(item.dataset.panel === 'languages') switchLangTab(currentLangTab);
-  });
-});
-
-/* ── TOAST & BADGE ── */
-function toast(msg, type){
+/* ─── TOAST ──────────────────────────────────────────── */
+var toastTimer;
+function toast(msg, type) {
   var el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'on' + (type ? ' '+type : '');
+  el.textContent = msg;
+  el.className = 'on' + (type ? ' ' + type : '');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ el.classList.remove('on'); }, 3500);
-}
-function badge(state){
-  var el = document.getElementById('syncBadge');
-  var map = { loading:{t:'Connecting...',c:'var(--muted)'}, live:{t:'Supabase Live',c:'#4caf7d'},
-    saving:{t:'Saving...',c:'var(--gold)'}, saved:{t:'Saved',c:'#4caf7d'},
-    offline:{t:'Offline (cache)',c:'#e07b39'}, error:{t:'Connection Error',c:'#e05252'} };
-  var s = map[state] || map.offline;
-  el.textContent = s.t; el.style.color = s.c; el.style.borderColor = s.c;
+  toastTimer = setTimeout(function() { el.classList.remove('on'); }, 3200);
 }
 
-/* ── RENDER ALL ── */
-function renderAll(){
-  document.getElementById('h_eyebrow').value = DATA.heroEyebrow || '';
-  document.getElementById('h_title').value   = DATA.heroTitle   || '';
-  document.getElementById('h_sub').value     = DATA.heroSub     || '';
-  document.getElementById('l_address').value = DATA.address     || '';
-  document.getElementById('c_phone1').value  = DATA.phone1      || '';
-  document.getElementById('c_phone2').value  = DATA.phone2      || '';
-  document.getElementById('c_email').value   = DATA.email       || '';
-  document.getElementById('c_website').value = DATA.website     || '';
-  document.getElementById('s_maintMsg').value= DATA.maintenanceMsg || '';
-  renderSlides();
-  renderCards('rooms','roomsList');
-  renderCards('hall','hallList');
-  renderAmen();
+/* ─── SYNC BADGE ─────────────────────────────────────── */
+function badge(state) {
+  var el = document.getElementById('syncBadge');
+  var map = {
+    loading: {t:'Connecting…',     c:'var(--muted)'},
+    live:    {t:'Firebase Live',    c:'#4caf7d'},
+    saving:  {t:'Saving…',         c:'var(--gold)'},
+    saved:   {t:'Saved — Live',     c:'#4caf7d'},
+    offline: {t:'Offline (cache)', c:'#e07b39'},
+    error:   {t:'Save Failed',      c:'#e05252'},
+  };
+  var s = map[state] || map.offline;
+  el.textContent = s.t;
+  el.style.color = s.c;
+  el.style.borderColor = s.c;
+}
+
+/* ─── RENDER ALL ─────────────────────────────────────── */
+function renderAll() {
+  renderHero();
+  renderCards('rooms', 'roomsList');
+  renderCards('hall', 'hallList');
+  renderAmenities();
   renderPlaces();
   renderTransport();
+  renderContact();
   renderSocial();
-  renderPartners();
   renderMaintBanner();
 }
 
-/* ── SLIDES ── */
-function renderSlides(){
+/* ─── HERO ───────────────────────────────────────────── */
+function renderHero() {
+  document.getElementById('h_eyebrow').value = DATA.heroEyebrow || '';
+  document.getElementById('h_title').value   = DATA.heroTitle   || '';
+  document.getElementById('h_sub').value     = DATA.heroSub     || '';
+  renderSlides();
+}
+function renderSlides() {
   var grid = document.getElementById('slideGrid');
   var slides = DATA.slides || [];
   if(!slides.length){
-    grid.innerHTML = '<div style="grid-column:1/-1;background:var(--sf2);border:1px dashed var(--line);border-radius:8px;padding:20px;text-align:center;color:var(--muted);font-size:.83rem;">No slides yet. Click &quot;+ Add Slide&quot; then use &quot;Upload&quot; or &quot;Library&quot; to add hotel photos.</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;background:var(--sf2);border:1px dashed var(--line);border-radius:8px;padding:24px;text-align:center;color:var(--muted);font-size:.84rem;">No slides yet. Click "+ Add Slide" to add, or upload photos via Media Library then pick them here.</div>';
     return;
   }
-  grid.innerHTML = slides.map(function(src,i){
-    return '<div class="slide-item">'
-      + (src ? '<img src="'+esc(src)+'" onerror="this.style.display=\'none\'">' : '<div class="slide-empty">No image</div>')
-      + '<span class="slide-num">'+(i+1)+'</span>'
-      + '<button class="slide-del" data-i="'+i+'">x</button>'
-      + '<div class="slide-btns">'
-      + '<label class="slide-btn">Upload<input type="file" accept="image/*,video/*" style="display:none" class="slide-up" data-i="'+i+'"></label>'
-      + '<div class="slide-btn" style="color:var(--gold);" data-pick="'+i+'">Library</div>'
-      + '</div></div>';
+  var html = slides.map(function(src, i) {
+    return '<div class="slide-item">' +
+      (src ? '<img src="' + esc(src) + '" onerror="this.style.display=\'none\'" style="width:100%;height:110px;object-fit:cover;">' : '<div style="height:110px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.75rem;">No image</div>') +
+      '<span class="slide-num">' + (i+1) + '</span>' +
+      '<button class="slide-del" data-del="' + i + '">×</button>' +
+      '<div style="display:flex;gap:0;">' +
+        '<label style="flex:1;cursor:pointer;text-align:center;font-size:.65rem;color:var(--muted);padding:4px;background:var(--sf3);border-top:1px solid var(--line);">' +
+          '<input type="file" accept="image/*,video/*" data-slide="' + i + '" style="display:none" class="slide-file-input">Upload' +
+        '</label>' +
+        '<div style="flex:1;text-align:center;font-size:.65rem;color:var(--gold);padding:4px;background:var(--sf3);border-top:1px solid var(--line);cursor:pointer;" data-pick-slide="' + i + '">Library</div>' +
+      '</div>' +
+    '</div>';
   }).join('');
-  grid.querySelectorAll('.slide-del').forEach(function(btn){
-    btn.addEventListener('click', function(){ DATA.slides.splice(parseInt(btn.dataset.i),1); renderSlides(); });
-  });
-  grid.querySelectorAll('.slide-up').forEach(function(inp){
-    inp.addEventListener('change', function(){
-      var i = parseInt(inp.dataset.i); var file = inp.files[0]; if(!file) return;
-      doUpload(file, null).then(function(url){ if(url){ DATA.slides[i]=url; renderSlides(); toast('Slide updated','ok'); } });
+  grid.innerHTML = html;
+  grid.querySelectorAll('[data-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      DATA.slides.splice(parseInt(btn.dataset.del), 1);
+      renderSlides();
     });
   });
-  grid.querySelectorAll('[data-pick]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var i = parseInt(btn.dataset.pick);
-      openPicker(function(url){ DATA.slides[i]=url; renderSlides(); toast('Slide updated','ok'); });
+  grid.querySelectorAll('.slide-file-input').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var idx = parseInt(inp.dataset.slide);
+      var file = inp.files[0];
+      if (!file) return;
+      cloudinaryUpload(file, null).then(function(url) {
+        if (url) { DATA.slides[idx] = url; renderSlides(); toast('Slide updated', 'ok'); }
+      });
+    });
+  });
+  grid.querySelectorAll('[data-pick-slide]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = parseInt(btn.dataset.pickSlide);
+      openPicker(function(url){ DATA.slides[idx] = url; renderSlides(); toast('Slide updated','ok'); });
     });
   });
 }
-function addSlide(){ if(!DATA.slides) DATA.slides=[]; DATA.slides.push(''); renderSlides(); }
 
-/* ── CARDS ── */
-var ICON_KEYS = Object.keys(ICONS);
-function iconSel(sec,i,cur){
-  return '<select onchange="DATA.'+sec+'['+i+'].icon=this.value" style="width:100%;background:var(--sf2);border:1px solid var(--line);border-radius:5px;padding:8px 10px;color:var(--cream);">'
-    + ICON_KEYS.map(function(k){ return '<option value="'+k+'"'+(k===cur?' selected':'')+'>'+k+'</option>'; }).join('')
-    + '</select>';
+/* ─── CARDS (Rooms / Hall) ───────────────────────────── */
+function iconOptions(current) {
+  return ICON_KEYS.map(function(k) {
+    return '<option value="' + k + '"' + (k === current ? ' selected' : '') + '>' + k + '</option>';
+  }).join('');
 }
-function renderCards(sec, listId){
+
+function renderCards(section, listId) {
   var el = document.getElementById(listId);
-  var cards = DATA[sec] || [];
-  if(!cards.length){ el.innerHTML='<p class="note" style="padding:10px 0;">No items yet.</p>'; return; }
-  el.innerHTML = cards.map(function(c,i){
-    var uid = sec+'_'+i;
-    return '<div class="card-row" id="cr_'+uid+'">'
-      +'<div class="card-top" onclick="toggleCard(\'body_'+uid+'\')">'
-      +(c.img?'<img class="card-thumb" src="'+esc(c.img)+'" onerror="this.style.display=\'none\'">'
-             :'<div class="card-thumb-placeholder">No img</div>')
-      +'<div class="card-info"><div class="card-title">'+esc(c.title||'Untitled')+'</div><div class="card-meta">'+esc(c.price||'')+(c.unit?' '+esc(c.unit):'')+'</div></div>'
-      +'<div class="card-acts">'
-      +'<button class="rbtn"'+(i===0?' disabled':'')+' onclick="event.stopPropagation();moveCard(\''+sec+'\','+i+',-1)">&#8593;</button>'
-      +'<button class="rbtn"'+(i===cards.length-1?' disabled':'')+' onclick="event.stopPropagation();moveCard(\''+sec+'\','+i+',1)">&#8595;</button>'
-      +'<button class="btn btn-red btn-sm" onclick="event.stopPropagation();removeCard(\''+sec+'\','+i+')">Remove</button>'
-      +'</div></div>'
-      +'<div class="card-body" id="body_'+uid+'">'
-      +'<div class="g2" style="margin-bottom:12px;">'
-      +'<div>'
-      +'<label class="fl" style="margin-bottom:6px;">Image</label>'
-      +'<div class="img-zone" id="zone_'+uid+'">'
-      +(c.img?'<img src="'+esc(c.img)+'" id="img_'+uid+'" onerror="this.style.display=\'none\'">'
-             :'<div class="img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" width="24" height="24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>No image</span></div>')
-      +'<div class="img-overlay"><span>Click to upload</span></div>'
-      +'<div class="up-bar-bg"><div class="up-bar" id="bar_'+uid+'"></div></div>'
-      +'<input type="file" accept="image/*,video/*" id="file_'+uid+'" style="display:none" class="card-img-inp" data-uid="'+uid+'" data-sec="'+sec+'" data-idx="'+i+'">'
-      +'</div>'
-      +'<button class="btn btn-outline btn-sm" style="width:100%;margin-top:6px;" onclick="event.stopPropagation();openPicker(function(url){ setImg(\''+uid+'\',\''+sec+'\','+i+',url); })">&#128193; Library</button>'
-      +'</div>'
-      +'<div>'
-      +'<div class="field"><label>Icon</label>'+iconSel(sec,i,c.icon)+'</div>'
-      +'<div class="field"><label>Title</label><input value="'+esc(c.title)+'" onchange="DATA.'+sec+'['+i+'].title=this.value" oninput="DATA.'+sec+'['+i+'].title=this.value"></div>'
-      +'<div class="g2">'
-      +'<div class="field"><label>Price</label><input value="'+esc(c.price)+'" onchange="DATA.'+sec+'['+i+'].price=this.value"></div>'
-      +'<div class="field"><label>Unit</label><input value="'+esc(c.unit)+'" onchange="DATA.'+sec+'['+i+'].unit=this.value" placeholder="/ night"></div>'
-      +'</div>'
-      +'</div></div>'
-      +'<div class="field"><label>Description</label><textarea onchange="DATA.'+sec+'['+i+'].desc=this.value">'+esc(c.desc)+'</textarea></div>'
-      +'<div class="field"><label>Tags (comma separated)</label><input value="'+esc((c.tags||[]).join(', '))+'" onchange="DATA.'+sec+'['+i+'].tags=this.value.split(\',\').map(function(s){return s.trim();}).filter(Boolean)"></div>'
-      +'</div></div>';
+  var cards = DATA[section] || [];
+  if (!cards.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No items yet — add one below.</p>'; return; }
+  el.innerHTML = cards.map(function(c, i) {
+    return '<div class="card-row" id="cr_' + section + '_' + i + '">' +
+      '<div class="card-top" data-toggle="cr_' + section + '_' + i + '">' +
+        '<img class="card-thumb" src="' + esc(c.img || 'assets/room1.png') + '" onerror="this.src=\'assets/room1.png\'" id="thumb_' + section + '_' + i + '">' +
+        '<div class="card-info">' +
+          '<div class="card-title">' + esc(c.title || 'Untitled') + '</div>' +
+          '<div class="card-meta">' + esc((c.price || '') + (c.unit ? ' ' + c.unit : '')) + '</div>' +
+        '</div>' +
+        '<div class="card-acts">' +
+          '<button class="rbtn" data-move="' + section + '" data-idx="' + i + '" data-dir="-1"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="rbtn" data-move="' + section + '" data-idx="' + i + '" data-dir="1"' + (i === cards.length - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="btn btn-red btn-sm" data-remove="' + section + '" data-idx="' + i + '">Remove</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card-body" id="body_' + section + '_' + i + '">' +
+        '<div class="g2" style="margin-bottom:12px;">' +
+          '<div>' +
+            '<label class="fl" style="margin-bottom:6px;">Image</label>' +
+            '<div class="img-zone" id="imgzone_' + section + '_' + i + '" onclick="document.getElementById(\'file_' + section + '_' + i + '\').click()">' +
+              (c.img ? '<img src="' + esc(c.img) + '" id="img_' + section + '_' + i + '">' : '<div class="img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" width="26" height="26"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>No image yet</span></div>') +
+              '<div class="img-overlay"><span>Upload Image</span></div>' +
+              '<div class="up-bar-bg"><div class="up-bar" id="bar_' + section + '_' + i + '"></div></div>' +
+              '<input type="file" accept="image/*,video/*" id="file_' + section + '_' + i + '" style="display:none" class="card-img-input" data-sec="' + section + '" data-idx="' + i + '">' +
+            '</div>' +
+            '<button class="btn btn-outline btn-sm" style="width:100%;margin-top:6px;" onclick="event.stopPropagation();openPicker(function(url){ setCardImg(\'' + section + '\',' + i + ',url); })">📁 Pick from Library</button>' +
+          '</div>' +
+          '<div>' +
+            '<div class="field"><label>Icon</label><select data-field="' + section + '.' + i + '.icon">' + iconOptions(c.icon) + '</select></div>' +
+            '<div class="field"><label>Title</label><input value="' + esc(c.title) + '" data-field="' + section + '.' + i + '.title"></div>' +
+            '<div class="g2">' +
+              '<div class="field"><label>Price</label><input value="' + esc(c.price) + '" data-field="' + section + '.' + i + '.price"></div>' +
+              '<div class="field"><label>Unit</label><input value="' + esc(c.unit) + '" data-field="' + section + '.' + i + '.unit" placeholder="/ night"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="field"><label>Description</label><textarea data-field="' + section + '.' + i + '.desc">' + esc(c.desc) + '</textarea></div>' +
+        '<div class="field"><label>Tags (comma separated)</label><input value="' + esc((c.tags || []).join(', ')) + '" data-tags="' + section + '.' + i + '"></div>' +
+      '</div>' +
+    '</div>';
   }).join('');
-  el.querySelectorAll('.card-img-inp').forEach(function(inp){
-    inp.addEventListener('change', function(){
-      var file=inp.files[0]; if(!file) return;
-      var uid=inp.dataset.uid, sec2=inp.dataset.sec, idx=parseInt(inp.dataset.idx);
-      var bar=document.getElementById('bar_'+uid);
-      doUpload(file,function(p){ if(bar) bar.style.width=p+'%'; }).then(function(url){
-        if(url){ setImg(uid,sec2,idx,url); if(bar) setTimeout(function(){bar.style.width='0';},500); }
+
+  // Toggle expand
+  el.querySelectorAll('.card-top').forEach(function(top) {
+    top.addEventListener('click', function(e) {
+      if (e.target.closest('.card-acts')) return;
+      var id = top.dataset.toggle;
+      var body = document.getElementById('body_' + id.replace('cr_',''));
+      if (body) body.classList.toggle('open');
+    });
+  });
+
+  // Move
+  el.querySelectorAll('[data-move]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var sec = btn.dataset.move, i = parseInt(btn.dataset.idx), dir = parseInt(btn.dataset.dir);
+      var arr = DATA[sec], j = i + dir;
+      if (j < 0 || j >= arr.length) return;
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+      renderCards(sec, sec === 'rooms' ? 'roomsList' : 'hallList');
+    });
+  });
+
+  // Remove
+  el.querySelectorAll('[data-remove]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!confirm('Remove this card?')) return;
+      var sec = btn.dataset.remove, i = parseInt(btn.dataset.idx);
+      DATA[sec].splice(i, 1);
+      renderCards(sec, sec === 'rooms' ? 'roomsList' : 'hallList');
+    });
+  });
+
+  // Inline image upload
+  el.querySelectorAll('.card-img-input').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var sec = inp.dataset.sec, i = parseInt(inp.dataset.idx), file = inp.files[0];
+      if (!file) return;
+      var bar = document.getElementById('bar_' + sec + '_' + i);
+      cloudinaryUpload(file, function(pct) { if (bar) bar.style.width = pct + '%'; }).then(function(url) {
+        if (url) { setCardImg(sec, i, url); if (bar) setTimeout(function() { bar.style.width = '0'; }, 500); }
       });
     });
   });
-  el.querySelectorAll('.img-zone').forEach(function(zone){
-    var uid2 = zone.id.replace('zone_','');
-    zone.addEventListener('click', function(){ var fi=document.getElementById('file_'+uid2); if(fi) fi.click(); });
+
+  // Live field binding
+  el.querySelectorAll('[data-field]').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var parts = inp.dataset.field.split('.');
+      DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
+    });
+    inp.addEventListener('input', function() {
+      var parts = inp.dataset.field.split('.');
+      DATA[parts[0]][parseInt(parts[1])][parts[2]] = inp.value;
+    });
+  });
+  el.querySelectorAll('[data-tags]').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var parts = inp.dataset.tags.split('.');
+      DATA[parts[0]][parseInt(parts[1])].tags = inp.value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    });
   });
 }
-function setImg(uid,sec,i,url){
-  if(!DATA[sec]||!DATA[sec][i]) return;
-  DATA[sec][i].img = url;
-  var imgEl=document.getElementById('img_'+uid);
-  var zone=document.getElementById('zone_'+uid);
-  var thumb=document.querySelector('#cr_'+uid+' .card-thumb');
-  if(imgEl){ imgEl.src=url; }
-  else if(zone){ zone.innerHTML='<img src="'+esc(url)+'" id="img_'+uid+'">'+'<div class="img-overlay"><span>Click to upload</span></div><div class="up-bar-bg"><div class="up-bar" id="bar_'+uid+'"></div></div><input type="file" accept="image/*,video/*" id="file_'+uid+'" style="display:none" class="card-img-inp" data-uid="'+uid+'" data-sec="'+sec+'" data-idx="'+i+'">'; }
-  if(thumb){ thumb.src=url; thumb.style.display='block'; }
-  toast('Image updated','ok');
-}
-function toggleCard(id){ var b=document.getElementById(id); if(b) b.classList.toggle('open'); }
-function moveCard(sec,i,dir){ var a=DATA[sec],j=i+dir; if(j<0||j>=a.length) return; var t=a[i];a[i]=a[j];a[j]=t; renderCards(sec,sec==='rooms'?'roomsList':'hallList'); }
-function removeCard(sec,i){ if(!confirm('Remove?')) return; DATA[sec].splice(i,1); renderCards(sec,sec==='rooms'?'roomsList':'hallList'); }
-function addCard(sec){
-  var d = {img:'',icon:'bed',title:'New Item',price:'Rs.0',unit:'/ night',desc:'',tags:[]};
-  if(sec==='hall') d.icon='party';
-  if(!DATA[sec]) DATA[sec]=[];
-  DATA[sec].push(d);
-  renderCards(sec,sec==='rooms'?'roomsList':'hallList');
+
+/* ─── AMENITIES ──────────────────────────────────────── */
+function renderAmenities() {
+  var el = document.getElementById('amenList');
+  var items = DATA.amenities || [];
+  el.innerHTML = items.map(function(a, i) {
+    return '<div class="simple-row">' +
+      '<select data-amen-icon="' + i + '">' + iconOptions(a.iconKey) + '</select>' +
+      '<input value="' + esc(a.title) + '" data-amen-title="' + i + '">' +
+      '<button class="rbtn" data-amen-up="' + i + '"' + (i===0?' disabled':'') + '>↑</button>' +
+      '<button class="rbtn" data-amen-dn="' + i + '"' + (i===items.length-1?' disabled':'') + '>↓</button>' +
+      '<button class="btn btn-red btn-sm" data-amen-del="' + i + '">×</button>' +
+    '</div>';
+  }).join('') || '<p class="note" style="padding:10px 0;">No amenities yet.</p>';
+
+  el.querySelectorAll('[data-amen-icon]').forEach(function(sel) {
+    sel.addEventListener('change', function() { DATA.amenities[parseInt(sel.dataset.amenIcon)].iconKey = sel.value; });
+  });
+  el.querySelectorAll('[data-amen-title]').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.amenities[parseInt(inp.dataset.amenTitle)].title = inp.value; });
+  });
+  el.querySelectorAll('[data-amen-up]').forEach(function(btn) {
+    btn.addEventListener('click', function() { var i=parseInt(btn.dataset.amenUp); if(i>0){var a=DATA.amenities;var t=a[i];a[i]=a[i-1];a[i-1]=t;renderAmenities();} });
+  });
+  el.querySelectorAll('[data-amen-dn]').forEach(function(btn) {
+    btn.addEventListener('click', function() { var i=parseInt(btn.dataset.amenDn),a=DATA.amenities; if(i<a.length-1){var t=a[i];a[i]=a[i+1];a[i+1]=t;renderAmenities();} });
+  });
+  el.querySelectorAll('[data-amen-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() { DATA.amenities.splice(parseInt(btn.dataset.amenDel),1); renderAmenities(); });
+  });
 }
 
-/* ── AMENITIES ── */
-function renderAmen(){
-  var el=document.getElementById('amenList');
-  var items=DATA.amenities||[];
-  el.innerHTML = items.map(function(a,i){
-    return '<div class="simple-row">'
-      +'<select onchange="DATA.amenities['+i+'].iconKey=this.value">'+ICON_KEYS.map(function(k){ return '<option value="'+k+'"'+(k===a.iconKey?' selected':'')+'>'+k+'</option>'; }).join('')+'</select>'
-      +'<input value="'+esc(a.title)+'" oninput="DATA.amenities['+i+'].title=this.value">'
-      +'<button class="rbtn"'+(i===0?' disabled':'')+' onclick="moveArr(\'amenities\','+i+',-1,renderAmen)">&#8593;</button>'
-      +'<button class="rbtn"'+(i===items.length-1?' disabled':'')+' onclick="moveArr(\'amenities\','+i+',1,renderAmen)">&#8595;</button>'
-      +'<button class="btn btn-red btn-sm" onclick="DATA.amenities.splice('+i+',1);renderAmen()">x</button>'
-      +'</div>';
-  }).join('') || '<p class="note" style="padding:8px 0;">No amenities yet.</p>';
-}
-function addAmen(){ if(!DATA.amenities) DATA.amenities=[]; DATA.amenities.push({iconKey:'star',title:'New Amenity'}); renderAmen(); }
-
-/* ── PLACES ── */
-function renderPlaces(){
-  var el=document.getElementById('placesList');
-  var places=DATA.places||[];
-  if(!places.length){ el.innerHTML='<p class="note" style="padding:10px 0;">No places yet.</p>'; return; }
-  el.innerHTML = places.map(function(p,i){
-    var uid='place_'+i;
-    return '<div class="card-row">'
-      +'<div class="card-top" onclick="toggleCard(\'pbody_'+i+'\')">'
-      +(p.img?'<img class="card-thumb" src="'+esc(p.img)+'" onerror="this.style.display=\'none\'">'
-             :'<div class="card-thumb-placeholder">No img</div>')
-      +'<div class="card-info"><div class="card-title">'+esc(p.title||'Untitled')+'</div><div class="card-meta">'+esc(p.dist||'')+'</div></div>'
-      +'<div class="card-acts">'
-      +'<button class="rbtn"'+(i===0?' disabled':'')+' onclick="event.stopPropagation();moveArr(\'places\','+i+',-1,renderPlaces)">&#8593;</button>'
-      +'<button class="rbtn"'+(i===places.length-1?' disabled':'')+' onclick="event.stopPropagation();moveArr(\'places\','+i+',1,renderPlaces)">&#8595;</button>'
-      +'<button class="btn btn-red btn-sm" onclick="event.stopPropagation();DATA.places.splice('+i+',1);renderPlaces()">Remove</button>'
-      +'</div></div>'
-      +'<div class="card-body" id="pbody_'+i+'">'
-      +'<div class="g2" style="margin-bottom:12px;">'
-      +'<div><label class="fl" style="margin-bottom:6px;">Image</label>'
-      +'<div class="img-zone" id="pzone_'+i+'">'
-      +(p.img?'<img src="'+esc(p.img)+'" id="pimg_'+i+'" onerror="this.style.display=\'none\'">':'<div class="img-placeholder"><span>No image</span></div>')
-      +'<div class="img-overlay"><span>Click to upload</span></div>'
-      +'<div class="up-bar-bg"><div class="up-bar" id="pbar_'+i+'"></div></div>'
-      +'<input type="file" accept="image/*,video/*" id="pfile_'+i+'" style="display:none" class="place-img-inp" data-idx="'+i+'">'
-      +'</div>'
-      +'<button class="btn btn-outline btn-sm" style="width:100%;margin-top:6px;" onclick="event.stopPropagation();openPicker(function(url){ setPlaceImg('+i+',url); })">&#128193; Library</button>'
-      +'</div>'
-      +'<div>'
-      +'<div class="field"><label>Name (auto-fetches distance on blur)</label><input id="ptitle_'+i+'" value="'+esc(p.title)+'" oninput="DATA.places['+i+'].title=this.value" onblur="fetchDist('+i+',this.value)"></div>'
-      +'<div class="field"><label>Distance <span class="note" id="pdstatus_'+i+'"></span></label><input id="pdist_'+i+'" value="'+esc(p.dist)+'" oninput="DATA.places['+i+'].dist=this.value"></div>'
-      +'</div></div>'
-      +'<div class="field"><label>Description</label><textarea oninput="DATA.places['+i+'].desc=this.value">'+esc(p.desc)+'</textarea></div>'
-      +'</div></div>';
+/* ─── PLACES ─────────────────────────────────────────── */
+function renderPlaces() {
+  var el = document.getElementById('placesList');
+  var places = DATA.places || [];
+  if (!places.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No places yet.</p>'; return; }
+  el.innerHTML = places.map(function(p, i) {
+    return '<div class="card-row">' +
+      '<div class="card-top" data-ptoggle="place_' + i + '">' +
+        '<img class="card-thumb" src="' + esc(p.img || 'assets/room9.png') + '" onerror="this.src=\'assets/room9.png\'" id="pthumb_' + i + '">' +
+        '<div class="card-info"><div class="card-title">' + esc(p.title || 'Untitled') + '</div><div class="card-meta">' + esc(p.dist || '') + '</div></div>' +
+        '<div class="card-acts">' +
+          '<button class="rbtn" data-pmove="' + i + '" data-pdir="-1"' + (i===0?' disabled':'') + '>↑</button>' +
+          '<button class="rbtn" data-pmove="' + i + '" data-pdir="1"' + (i===places.length-1?' disabled':'') + '>↓</button>' +
+          '<button class="btn btn-red btn-sm" data-pdel="' + i + '">Remove</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card-body" id="place_' + i + '">' +
+        '<div class="g2" style="margin-bottom:12px;">' +
+          '<div>' +
+            '<label class="fl" style="margin-bottom:6px;">Image — click to upload</label>' +
+            '<label style="display:block;cursor:pointer;" class="img-zone">' +
+              '<img src="' + esc(p.img || 'assets/room9.png') + '" id="pimg_' + i + '">' +
+              '<div class="img-overlay"><span>Upload New Image</span></div>' +
+              '<div class="up-bar-bg"><div class="up-bar" id="pbar_' + i + '"></div></div>' +
+              '<input type="file" accept="image/*,video/*" style="display:none" class="place-img-inp" data-idx="' + i + '">' +
+            '</label>' +
+          '</div>' +
+          '<div>' +
+            '<div class="field"><label>Place Name <span class="note" id="pdist_status_' + i + '"></span></label><input value="' + esc(p.title) + '" id="ptitle_' + i + '" data-pidx="' + i + '" class="place-title-inp"></div>' +
+            '<div class="field"><label>Distance</label><input value="' + esc(p.dist) + '" id="pdist_' + i + '" data-pidx="' + i + '" class="place-dist-inp"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="field"><label>Description</label><textarea class="place-desc-inp" data-idx="' + i + '">' + esc(p.desc) + '</textarea></div>' +
+      '</div>' +
+    '</div>';
   }).join('');
-  el.querySelectorAll('.place-img-inp').forEach(function(inp){
-    inp.addEventListener('change', function(){
-      var i=parseInt(inp.dataset.idx); var file=inp.files[0]; if(!file) return;
+
+  el.querySelectorAll('[data-ptoggle]').forEach(function(top) {
+    top.addEventListener('click', function(e) {
+      if (e.target.closest('.card-acts')) return;
+      var body = document.getElementById(top.dataset.ptoggle);
+      if (body) body.classList.toggle('open');
+    });
+  });
+  el.querySelectorAll('[data-pmove]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var i=parseInt(btn.dataset.pmove), dir=parseInt(btn.dataset.pdir), a=DATA.places, j=i+dir;
+      if(j<0||j>=a.length) return;
+      var t=a[i];a[i]=a[j];a[j]=t;renderPlaces();
+    });
+  });
+  el.querySelectorAll('[data-pdel]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if(!confirm('Remove this place?')) return;
+      DATA.places.splice(parseInt(btn.dataset.pdel),1); renderPlaces();
+    });
+  });
+  el.querySelectorAll('.place-img-inp').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var i=parseInt(inp.dataset.idx), file=inp.files[0];
+      if(!file) return;
       var bar=document.getElementById('pbar_'+i);
-      doUpload(file,function(p){ if(bar) bar.style.width=p+'%'; }).then(function(url){
-        if(url){ setPlaceImg(i,url); if(bar) setTimeout(function(){bar.style.width='0';},500); }
+      cloudinaryUpload(file, function(pct){if(bar)bar.style.width=pct+'%';}).then(function(url){
+        if(url){DATA.places[i].img=url;var ig=document.getElementById('pimg_'+i);var th=document.getElementById('pthumb_'+i);if(ig)ig.src=url;if(th)th.src=url;if(bar)setTimeout(function(){bar.style.width='0';},500);toast('Image updated','ok');}
       });
     });
   });
-  el.querySelectorAll('.img-zone[id^="pzone_"]').forEach(function(zone){
-    var idx = parseInt(zone.id.replace('pzone_',''));
-    zone.addEventListener('click', function(){ var fi=document.getElementById('pfile_'+idx); if(fi) fi.click(); });
+  el.querySelectorAll('.place-title-inp').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.pidx)].title = inp.value; });
+    inp.addEventListener('blur', function() { autoFetchDist(parseInt(inp.dataset.pidx), inp.value); });
+  });
+  el.querySelectorAll('.place-dist-inp').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.pidx)].dist = inp.value; });
+  });
+  el.querySelectorAll('.place-desc-inp').forEach(function(inp) {
+    inp.addEventListener('input', function() { DATA.places[parseInt(inp.dataset.idx)].desc = inp.value; });
   });
 }
-function setPlaceImg(i,url){
-  DATA.places[i].img=url;
-  var imgEl=document.getElementById('pimg_'+i);
-  var zone=document.getElementById('pzone_'+i);
-  if(imgEl){ imgEl.src=url; }
-  else if(zone){ zone.innerHTML='<img src="'+esc(url)+'" id="pimg_'+i+'">'+'<div class="img-overlay"><span>Click to upload</span></div><div class="up-bar-bg"><div class="up-bar" id="pbar_'+i+'"></div></div><input type="file" accept="image/*,video/*" id="pfile_'+i+'" style="display:none" class="place-img-inp" data-idx="'+i+'">'; }
-  toast('Image updated','ok');
-}
-async function fetchDist(i,title){
-  if(!title) return;
-  var s=document.getElementById('pdstatus_'+i);
-  if(s) s.textContent='— fetching...';
-  var r = await geocodePlace(title);
-  if(r){ DATA.places[i].lat=r.lat; DATA.places[i].lng=r.lng; DATA.places[i].dist='~'+r.distKm+' km away'; var d=document.getElementById('pdist_'+i); if(d) d.value=DATA.places[i].dist; if(s) s.textContent='— auto-fetched'; }
-  else { if(s) s.textContent='— not found, enter manually'; }
-}
-function addPlace(){ if(!DATA.places) DATA.places=[]; DATA.places.push({img:'',title:'New Place',dist:'',desc:'',lat:null,lng:null}); renderPlaces(); }
 
-/* ── TRANSPORT & SOCIAL ── */
-function renderTransport(){
-  var el=document.getElementById('transportList');
-  var items=DATA.transport||[];
-  el.innerHTML = items.map(function(t,i){
-    return '<div class="simple-row">'
-      +'<select onchange="DATA.transport['+i+'].iconKey=this.value">'+ICON_KEYS.map(function(k){ return '<option value="'+k+'"'+(k===t.iconKey?' selected':'')+'>'+k+'</option>'; }).join('')+'</select>'
-      +'<input value="'+esc(t.text)+'" oninput="DATA.transport['+i+'].text=this.value">'
-      +'<button class="rbtn"'+(i===0?' disabled':'')+' onclick="moveArr(\'transport\','+i+',-1,renderTransport)">&#8593;</button>'
-      +'<button class="rbtn"'+(i===items.length-1?' disabled':'')+' onclick="moveArr(\'transport\','+i+',1,renderTransport)">&#8595;</button>'
-      +'<button class="btn btn-red btn-sm" onclick="DATA.transport.splice('+i+',1);renderTransport()">x</button>'
-      +'</div>';
-  }).join('') || '<p class="note" style="padding:8px 0;">No transport options yet.</p>';
+async function autoFetchDist(i, title) {
+  if (!title || typeof geocodePlace === 'undefined') return;
+  var s = document.getElementById('pdist_status_' + i);
+  if (s) s.textContent = '— fetching…';
+  var result = await geocodePlace(title);
+  if (result) {
+    DATA.places[i].lat = result.lat; DATA.places[i].lng = result.lng;
+    DATA.places[i].dist = '~' + result.distKm + ' km away';
+    var d = document.getElementById('pdist_' + i); if (d) d.value = DATA.places[i].dist;
+    if (s) s.textContent = '— auto-fetched ✓';
+  } else { if (s) s.textContent = '— enter manually'; }
 }
-function addTransport(){ if(!DATA.transport) DATA.transport=[]; DATA.transport.push({iconKey:'taxi',text:'New transport option.'}); renderTransport(); }
-function renderSocial(){
-  var el=document.getElementById('socialList');
-  var items=DATA.social||[];
-  el.innerHTML = items.map(function(s,i){
-    return '<div class="simple-row">'
-      +'<select style="width:110px;" onchange="DATA.social['+i+'].iconKey=this.value">'+ICON_KEYS.map(function(k){ return '<option value="'+k+'"'+(k===s.iconKey?' selected':'')+'>'+k+'</option>'; }).join('')+'</select>'
-      +'<input value="'+esc(s.label)+'" style="width:110px;flex:none;" placeholder="Label" oninput="DATA.social['+i+'].label=this.value">'
-      +'<input value="'+esc(s.url)+'" placeholder="URL" oninput="DATA.social['+i+'].url=this.value">'
-      +'<button class="btn btn-red btn-sm" onclick="DATA.social.splice('+i+',1);renderSocial()">x</button>'
-      +'</div>';
-  }).join('') || '<p class="note" style="padding:8px 0;">No social handles yet.</p>';
-}
-function addSocial(){ if(!DATA.social) DATA.social=[]; DATA.social.push({iconKey:'instagram',label:'',url:'https://'}); renderSocial(); }
 
-function renderPartners(){
-  var el=document.getElementById('partnerList');
-  if(!el) return;
-  var items=DATA.bookingPartners||[];
-  el.innerHTML = items.map(function(p,i){
-    return '<div class="simple-row">'
-      +'<input value="'+esc(p.label)+'" placeholder="Label e.g. Goibibo" style="width:130px;flex:none;" oninput="DATA.bookingPartners['+i+'].label=this.value">'
-      +'<input value="'+esc(p.url)+'" placeholder="https://..." oninput="DATA.bookingPartners['+i+'].url=this.value">'
-      +'<button class="rbtn"'+(i===0?' disabled':'')+' onclick="moveArr(\'bookingPartners\','+i+',-1,renderPartners)">&#8593;</button>'
-      +'<button class="rbtn"'+(i===items.length-1?' disabled':'')+' onclick="moveArr(\'bookingPartners\','+i+',1,renderPartners)">&#8595;</button>'
-      +'<button class="btn btn-red btn-sm" onclick="DATA.bookingPartners.splice('+i+',1);renderPartners()">x</button>'
-      +'</div>';
-  }).join('') || '<p class="note" style="padding:8px 0;">No booking partners yet.</p>';
-}
-function addPartner(){ if(!DATA.bookingPartners) DATA.bookingPartners=[]; DATA.bookingPartners.push({label:'',url:'https://'}); renderPartners(); }
+/* ─── TRANSPORT ──────────────────────────────────────── */
+function renderTransport() {
+  var el = document.getElementById('transportList');
+  var items = DATA.transport || [];
+  el.innerHTML = items.map(function(t, i) {
+    return '<div class="simple-row">' +
+      '<select data-tr-icon="' + i + '">' + iconOptions(t.iconKey) + '</select>' +
+      '<input value="' + esc(t.text) + '" data-tr-text="' + i + '">' +
+      '<button class="rbtn" data-tr-up="' + i + '"' + (i===0?' disabled':'') + '>↑</button>' +
+      '<button class="rbtn" data-tr-dn="' + i + '"' + (i===items.length-1?' disabled':'') + '>↓</button>' +
+      '<button class="btn btn-red btn-sm" data-tr-del="' + i + '">×</button>' +
+    '</div>';
+  }).join('') || '<p class="note" style="padding:10px 0;">No transport options yet.</p>';
 
-/* ── MAINTENANCE ── */
-function renderMaintBanner(){
-  var bar=document.getElementById('maintBar'), btn=document.getElementById('maintBtn');
-  var title=document.getElementById('maintTitle'), sub=document.getElementById('maintSub');
-  document.getElementById('s_maintMsg').value = DATA.maintenanceMsg||'';
-  if(DATA.maintenance){
-    bar.className='maint-bar maint-on'; btn.className='btn btn-green btn-sm'; btn.textContent='Turn Off';
-    title.textContent='Maintenance Mode: ON'; sub.textContent='Visitors see a back-soon screen.';
+  el.querySelectorAll('[data-tr-icon]').forEach(function(sel){sel.addEventListener('change',function(){DATA.transport[parseInt(sel.dataset.trIcon)].iconKey=sel.value;});});
+  el.querySelectorAll('[data-tr-text]').forEach(function(inp){inp.addEventListener('input',function(){DATA.transport[parseInt(inp.dataset.trText)].text=inp.value;});});
+  el.querySelectorAll('[data-tr-up]').forEach(function(btn){btn.addEventListener('click',function(){var i=parseInt(btn.dataset.trUp),a=DATA.transport;if(i>0){var t=a[i];a[i]=a[i-1];a[i-1]=t;renderTransport();}});});
+  el.querySelectorAll('[data-tr-dn]').forEach(function(btn){btn.addEventListener('click',function(){var i=parseInt(btn.dataset.trDn),a=DATA.transport;if(i<a.length-1){var t=a[i];a[i]=a[i+1];a[i+1]=t;renderTransport();}});});
+  el.querySelectorAll('[data-tr-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.transport.splice(parseInt(btn.dataset.trDel),1);renderTransport();});});
+}
+
+/* ─── CONTACT / SOCIAL ───────────────────────────────── */
+function renderContact() {
+  document.getElementById('c_phone1').value  = DATA.phone1  || '';
+  document.getElementById('c_phone2').value  = DATA.phone2  || '';
+  document.getElementById('c_email').value   = DATA.email   || '';
+  document.getElementById('c_website').value = DATA.website || '';
+}
+function renderSocial() {
+  var el = document.getElementById('socialList');
+  var items = DATA.social || [];
+  el.innerHTML = items.map(function(s, i) {
+    return '<div class="simple-row">' +
+      '<select data-soc-icon="' + i + '" style="width:110px;">' + iconOptions(s.iconKey) + '</select>' +
+      '<input value="' + esc(s.label) + '" data-soc-label="' + i + '" style="width:110px;flex:none;" placeholder="Label">' +
+      '<input value="' + esc(s.url) + '" data-soc-url="' + i + '" placeholder="https://...">' +
+      '<button class="btn btn-red btn-sm" data-soc-del="' + i + '">×</button>' +
+    '</div>';
+  }).join('') || '<p class="note" style="padding:10px 0;">No social handles yet.</p>';
+
+  el.querySelectorAll('[data-soc-icon]').forEach(function(sel){sel.addEventListener('change',function(){DATA.social[parseInt(sel.dataset.socIcon)].iconKey=sel.value;});});
+  el.querySelectorAll('[data-soc-label]').forEach(function(inp){inp.addEventListener('input',function(){DATA.social[parseInt(inp.dataset.socLabel)].label=inp.value;});});
+  el.querySelectorAll('[data-soc-url]').forEach(function(inp){inp.addEventListener('input',function(){DATA.social[parseInt(inp.dataset.socUrl)].url=inp.value;});});
+  el.querySelectorAll('[data-soc-del]').forEach(function(btn){btn.addEventListener('click',function(){DATA.social.splice(parseInt(btn.dataset.socDel),1);renderSocial();});});
+}
+
+/* ─── SETTINGS ───────────────────────────────────────── */
+function renderMaintBanner() {
+  var bar   = document.getElementById('maintBar');
+  var btn   = document.getElementById('maintBtn');
+  var title = document.getElementById('maintTitle');
+  var sub   = document.getElementById('maintSub');
+  document.getElementById('s_maintMsg').value = DATA.maintenanceMsg || '';
+  if (DATA.maintenance) {
+    bar.className = 'maint-bar maint-on';
+    btn.className = 'btn btn-green btn-sm'; btn.textContent = 'Turn Off — Go Live';
+    title.textContent = 'Maintenance Mode: ON';
+    sub.textContent = 'Visitors see a "back soon" screen.';
   } else {
-    bar.className='maint-bar maint-off'; btn.className='btn btn-red btn-sm'; btn.textContent='Turn On';
-    title.textContent='Maintenance Mode: OFF'; sub.textContent='The live site is visible to all visitors.';
+    bar.className = 'maint-bar maint-off';
+    btn.className = 'btn btn-red btn-sm'; btn.textContent = 'Turn On';
+    title.textContent = 'Maintenance Mode: OFF';
+    sub.textContent = 'The live site is visible to all visitors.';
   }
 }
-async function toggleMaint(){
+async function toggleMaintenance() {
   DATA.maintenance = !DATA.maintenance;
   DATA.maintenanceMsg = document.getElementById('s_maintMsg').value;
   renderMaintBanner();
   badge('saving');
-  try{ await saveToSupabase(DATA); badge('saved'); setTimeout(function(){badge('live');},2500); toast('Maintenance '+(DATA.maintenance?'ON':'OFF'),'ok'); }
-  catch(e){ badge('error'); toast('Save failed: '+e.message,'er'); }
+  try {
+    await saveToFirestore(DATA);
+    badge('saved'); setTimeout(function(){badge('live');},3000);
+    toast('Maintenance ' + (DATA.maintenance?'ON':'OFF'), 'ok');
+  } catch(e) { badge('error'); toast('Save failed','er'); }
 }
 
-/* ── HELPERS ── */
-function moveArr(key,i,dir,cb){ var a=DATA[key],j=i+dir; if(j<0||j>=a.length) return; var t=a[i];a[i]=a[j];a[j]=t; cb(); }
-function esc(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-async function discardChanges(){ badge('loading'); var f=await loadFromSupabase().catch(function(){return null;}); DATA=f||loadData(); renderAll(); badge('live'); toast('Changes discarded',''); }
+/* ─── CLOUDINARY UPLOAD ──────────────────────────────── */
+function cloudinaryUpload(file, onProgress) {
+  return new Promise(function(resolve) {
+    var resourceType = file.type.startsWith('video') ? 'video' : 'image';
+    var fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('folder', 'goldeninn');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/' + resourceType + '/upload');
+    xhr.upload.onprogress = function(e) {
+      if (e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100));
+    };
+    xhr.onload = function() {
+      try {
+        var res = JSON.parse(xhr.responseText);
+        if (xhr.status === 200) { resolve(res.secure_url); }
+        else {
+          var msg = res.error ? res.error.message : ('status ' + xhr.status);
+          if(xhr.status === 400 && msg.indexOf('preset') !== -1){
+            toast('Cloudinary: preset "goldeninn media" not found or not Unsigned. Check cloudinary.com → Settings → Upload Presets', 'er');
+          } else if(xhr.status === 401){
+            toast('Cloudinary: unauthorised. Make sure preset is set to Unsigned mode.', 'er');
+          } else {
+            toast('Upload failed: ' + msg, 'er');
+          }
+          resolve(null);
+        }
+      } catch(e) { toast('Upload error: ' + e.message, 'er'); resolve(null); }
+    };
+    xhr.onerror = function() { toast('Network error', 'er'); resolve(null); };
+    xhr.send(fd);
+  });
+}
 
-/* ── SAVE ── */
-async function saveAll(){
+/* ─── MEDIA LIBRARY ──────────────────────────────────── */
+async function loadMediaLibrary() {
+  try {
+    var items = await loadAllMedia();
+    mediaItems = items;
+    renderMediaGrid();
+  } catch(e) { document.getElementById('mediaStats').textContent = 'Could not load media.'; }
+}
+function renderMediaGrid() {
+  var used = collectUsedImageUrls(DATA);
+  var grid = document.getElementById('mediaGrid');
+  var total = mediaItems.reduce(function(s,m){return s+(m.size||0);},0);
+  var unusedCt = mediaItems.filter(function(m){return !used.has(m.url);}).length;
+  document.getElementById('mediaStats').textContent = mediaItems.length + ' file(s) · ' + formatBytes(total) + ' · ' + unusedCt + ' unused';
+  if (!mediaItems.length) { grid.innerHTML = '<p class="note">No media uploaded yet.</p>'; return; }
+  grid.innerHTML = mediaItems.map(function(m) {
+    var isUsed = used.has(m.url);
+    var preview = m.type==='video'
+      ? '<video src="' + esc(m.url) + '" style="width:100%;height:90px;object-fit:cover;" muted></video>'
+      : '<img src="' + esc(m.url) + '" style="width:100%;height:90px;object-fit:cover;" loading="lazy">';
+    return '<div class="media-card">' + preview +
+      '<div class="media-card-info">' +
+        '<div class="used-badge ' + (isUsed?'yes':'no') + '">' + (isUsed?'✓ In use':'⚠ Unused') + ' · ' + formatBytes(m.size) + '</div>' +
+        '<div class="media-btns">' +
+          '<button class="btn btn-outline btn-sm" data-copy="' + esc(m.url) + '">Copy URL</button>' +
+          '<button class="btn btn-red btn-sm" data-mdel="' + m.id + '" data-mname="' + esc(m.name) + '">Del</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  grid.querySelectorAll('[data-copy]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      navigator.clipboard.writeText(btn.dataset.copy).then(function(){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy URL';},2000);});
+    });
+  });
+  grid.querySelectorAll('[data-mdel]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (!confirm('Remove "' + btn.dataset.mname + '" from catalogue?')) return;
+      MEDIA_COL.doc(btn.dataset.mdel).delete().then(function(){
+        mediaItems = mediaItems.filter(function(m){return m.id!==btn.dataset.mdel;});
+        renderMediaGrid(); toast('Removed from catalogue','ok');
+      });
+    });
+  });
+}
+async function cleanUnused() {
+  if (!confirm('Remove all unused media records from the catalogue?')) return;
+  var used = collectUsedImageUrls(DATA);
+  var unused = mediaItems.filter(function(m){return !used.has(m.url);});
+  await Promise.all(unused.map(function(m){return MEDIA_COL.doc(m.id).delete();}));
+  mediaItems = mediaItems.filter(function(m){return used.has(m.url);});
+  renderMediaGrid();
+  toast(unused.length ? 'Removed ' + unused.length + ' unused record(s)' : 'No unused media found', 'ok');
+}
+async function uploadMediaFiles(files) {
+  if (!files || !files.length) return;
+  var arr = Array.from(files);
+  var prog  = document.getElementById('mediaProgress');
+  var bar   = document.getElementById('mediaProgBar');
+  var label = document.getElementById('mediaProgLabel');
+  var pct   = document.getElementById('mediaProgPct');
+  prog.classList.add('on');
+  for (var i = 0; i < arr.length; i++) {
+    var file = arr[i];
+    label.textContent = 'Uploading ' + file.name + ' (' + (i+1) + '/' + arr.length + ')…';
+    bar.style.width = '0%'; pct.textContent = '0%';
+    var resourceType = file.type.startsWith('video') ? 'video' : 'image';
+    var fd = new FormData();
+    fd.append('file', file); fd.append('upload_preset', CLOUDINARY_PRESET); fd.append('folder','goldeninn');
+    var result = await new Promise(function(resolve) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/'+resourceType+'/upload');
+      xhr.upload.onprogress = function(e){if(e.lengthComputable){var p=Math.round(e.loaded/e.total*100);bar.style.width=p+'%';pct.textContent=p+'%';}};
+      xhr.onload = function(){try{var r=JSON.parse(xhr.responseText);if(xhr.status===200)resolve(r);else{toast('Upload failed: '+(r.error?r.error.message:'error'),'er');resolve(null);}}catch(e){resolve(null);}};
+      xhr.onerror=function(){toast('Network error','er');resolve(null);};
+      xhr.send(fd);
+    });
+    if (result) {
+      var item = {name:file.name,url:result.secure_url,size:result.bytes||file.size,type:resourceType,added:Date.now()};
+      var ref = await MEDIA_COL.add(item);
+      mediaItems.unshift(Object.assign({id:ref.id},item));
+      toast('Uploaded: ' + file.name, 'ok');
+    }
+  }
+  prog.classList.remove('on');
+  document.getElementById('mediaFileInput').value = '';
+  renderMediaGrid();
+}
+
+/* ─── SAVE ALL ───────────────────────────────────────── */
+async function saveAll() {
   DATA.heroEyebrow    = document.getElementById('h_eyebrow').value;
   DATA.heroTitle      = document.getElementById('h_title').value;
   DATA.heroSub        = document.getElementById('h_sub').value;
@@ -742,240 +1110,242 @@ async function saveAll(){
   DATA.website        = document.getElementById('c_website').value;
   DATA.maintenanceMsg = document.getElementById('s_maintMsg').value;
   badge('saving');
-  try{
-    await saveToSupabase(DATA);
+  try {
+    await saveToFirestore(DATA);
     badge('saved');
-    setTimeout(function(){badge('live');},2500);
-    toast('Saved — live for everyone now','ok');
-  }catch(e){
+    setTimeout(function(){badge('live');}, 3000);
+    toast('Saved — changes are live for everyone', 'ok');
+    renderMediaGrid();
+  } catch(e) {
     badge('error');
     saveData(DATA);
-    toast('Supabase error: '+e.message+' (saved locally as backup)','er');
+    toast('Firebase error — saved locally. ' + e.message, 'er');
   }
 }
 
-/* ── CLOUDINARY UPLOAD ── */
-async function doUpload(file, onProgress){
-  var type = file.type.startsWith('video') ? 'video' : 'image';
-  var fd = new FormData();
-  fd.append('file', file); fd.append('upload_preset', CLOUDINARY_PRESET); fd.append('folder','goldeninn');
-  return new Promise(function(resolve){
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/'+type+'/upload');
-    xhr.upload.onprogress = function(e){ if(e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*100)); };
-    xhr.onload = function(){
-      try{
-        var res = JSON.parse(xhr.responseText);
-        if(xhr.status===200){
-          // Save to media library
-          addMediaRecord({name:file.name,url:res.secure_url,size:file.size,type:type,added_at:new Date().toISOString()}).then(function(rec){
-            allMedia.unshift(Object.assign({id:rec.id},rec));
-          }).catch(function(){});
-          resolve(res.secure_url);
-        } else {
-          var msg = res.error ? res.error.message : 'status '+xhr.status;
-          toast('Upload failed: '+msg,'er'); resolve(null);
-        }
-      }catch(e){ toast('Upload error','er'); resolve(null); }
-    };
-    xhr.onerror = function(){ toast('Network error during upload','er'); resolve(null); };
-    xhr.send(fd);
-  });
-}
-
-/* ── MEDIA LIBRARY ── */
-async function loadMediaLib(){
-  try{
-    allMedia = await loadAllMedia();
-    renderMediaGrid();
-  }catch(e){ document.getElementById('mediaStats').textContent='Could not load media.'; }
-}
-function renderMediaGrid(){
-  var used = collectUsedImageUrls(DATA);
-  var total = allMedia.reduce(function(s,m){return s+(m.size||0);},0);
-  var unusedCt = allMedia.filter(function(m){return !used.has(m.url);}).length;
-  document.getElementById('mediaStats').textContent = allMedia.length+' file(s) · '+formatBytes(total)+' · '+unusedCt+' unused';
-  var grid = document.getElementById('mediaGrid');
-  if(!allMedia.length){ grid.innerHTML='<p class="note">No media uploaded yet. Drag and drop images above.</p>'; return; }
-  grid.innerHTML = allMedia.map(function(m){
-    var isUsed = used.has(m.url);
-    var preview = m.type==='video'
-      ? '<video src="'+esc(m.url)+'" style="width:100%;height:90px;object-fit:cover;" muted></video>'
-      : '<img src="'+esc(m.url)+'" style="width:100%;height:90px;object-fit:cover;" loading="lazy" onerror="this.style.display=\'none\'">';
-    return '<div class="media-card">'
-      +preview
-      +'<div class="media-card-info">'
-      +'<div class="used-badge '+(isUsed?'yes':'no')+'">'+(isUsed?'In use':'Unused')+' · '+formatBytes(m.size||0)+'</div>'
-      +'<div class="media-btns">'
-      +'<button class="btn btn-outline btn-sm" onclick="copyUrl(\''+esc(m.url)+'\',this)">Copy URL</button>'
-      +'<button class="btn btn-red btn-sm" onclick="delMedia(\''+m.id+'\')">Del</button>'
-      +'</div></div></div>';
-  }).join('');
-}
-function copyUrl(url,btn){ navigator.clipboard.writeText(url).then(function(){ btn.textContent='Copied!'; setTimeout(function(){btn.textContent='Copy URL';},2000); }); }
-async function delMedia(id){
-  if(!confirm('Remove from media catalogue?')) return;
-  try{ await deleteMediaRecord(id); allMedia=allMedia.filter(function(m){return m.id!==id;}); renderMediaGrid(); toast('Removed','ok'); }
-  catch(e){ toast('Delete failed: '+e.message,'er'); }
-}
-async function doCleanUnused(){
-  if(!confirm('Remove all unused media records from Supabase?')) return;
-  try{
-    var r = await deleteUnusedMedia(DATA);
-    allMedia = await loadAllMedia();
-    renderMediaGrid();
-    toast(r.removedCount ? 'Removed '+r.removedCount+' unused record(s)' : 'No unused media found','ok');
-  }catch(e){ toast('Cleanup failed: '+e.message,'er'); }
-}
-// Media drag/drop
-(function(){
-  var dz=document.getElementById('mediaDropZone');
-  var fi=document.getElementById('mediaFileInput');
-  var prog=document.getElementById('mediaProgress');
-  var bar=document.getElementById('mediaProgBar');
-  var lbl=document.getElementById('mediaProgLabel');
-  var pct=document.getElementById('mediaProgPct');
-  dz.addEventListener('click', function(e){ if(e.target!==fi) fi.click(); });
-  dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('dg'); });
-  dz.addEventListener('dragleave', function(){ dz.classList.remove('dg'); });
-  dz.addEventListener('drop', function(e){ e.preventDefault(); dz.classList.remove('dg'); handleMediaFiles(e.dataTransfer.files); });
-  fi.addEventListener('change', function(){ handleMediaFiles(fi.files); });
-  async function handleMediaFiles(files){
-    if(!files||!files.length) return;
-    var arr=Array.from(files); prog.classList.add('on');
-    for(var i=0;i<arr.length;i++){
-      var file=arr[i];
-      lbl.textContent='Uploading '+file.name+' ('+(i+1)+'/'+arr.length+')...';
-      bar.style.width='0%'; pct.textContent='0%';
-      await doUpload(file, function(p){ bar.style.width=p+'%'; pct.textContent=p+'%'; });
-    }
-    prog.classList.remove('on'); fi.value='';
-    allMedia = await loadAllMedia().catch(function(){return allMedia;});
-    renderMediaGrid(); toast('Upload complete','ok');
-  }
-})();
-
-/* ── PICKER ── */
-function openPicker(cb){
-  pickerCallback = cb;
-  document.getElementById('pickerOverlay').classList.add('open');
-  renderPickerGrid();
-}
-function closePicker(){ document.getElementById('pickerOverlay').classList.remove('open'); pickerCallback=null; }
-function renderPickerGrid(){
-  var grid=document.getElementById('pickerGrid');
-  if(!allMedia.length){ grid.innerHTML='<div class="picker-empty">No media yet. Click &quot;+ Upload New&quot; to add images.</div>'; return; }
-  grid.innerHTML = allMedia.map(function(m){
-    return '<div class="picker-item" onclick="selectFromPicker(\''+esc(m.url)+'\')">'
-      +'<img src="'+esc(m.url)+'" loading="lazy" onerror="this.style.display=\'none\'">'
-      +'<div class="picker-item-name">'+esc(m.name||'')+'</div>'
-      +'</div>';
-  }).join('');
-}
-function selectFromPicker(url){ if(pickerCallback) pickerCallback(url); closePicker(); }
-(function(){
-  var upBtn=document.getElementById('pickerUploadBtn');
-  var upInp=document.getElementById('pickerFileInput');
-  upBtn.addEventListener('click', function(){ upInp.click(); });
-  upInp.addEventListener('change', async function(){
-    if(!upInp.files.length) return;
-    var prog=document.getElementById('pickerUploadProg');
-    var bar=document.getElementById('pickerProgBar');
-    var lbl=document.getElementById('pickerProgLabel');
-    var pct=document.getElementById('pickerProgPct');
-    prog.classList.add('on');
-    var files=Array.from(upInp.files);
-    for(var i=0;i<files.length;i++){
-      lbl.textContent='Uploading '+files[i].name+'...'; bar.style.width='0%'; pct.textContent='0%';
-      await doUpload(files[i], function(p){ bar.style.width=p+'%'; pct.textContent=p+'%'; });
-    }
-    prog.classList.remove('on'); upInp.value='';
-    allMedia = await loadAllMedia().catch(function(){return allMedia;});
-    renderPickerGrid(); renderMediaGrid();
-  });
-})();
-
-/* ── MESSAGES ── */
-async function loadMsgs(){
-  var el=document.getElementById('messagesList');
-  var badge=document.getElementById('msgBadge');
-  try{
-    var msgs = await fetchMessages();
-    var unread = msgs.filter(function(m){return !m.read;}).length;
-    document.getElementById('msgStats').textContent = msgs.length+' message(s) · '+unread+' unread';
-    if(unread>0){badge.textContent=unread;badge.style.display='inline';}else{badge.style.display='none';}
-    if(!msgs.length){ el.innerHTML='<p class="note" style="padding:10px 0;">No messages yet.</p>'; return; }
-    el.innerHTML = msgs.map(function(m){
-      var d = new Date(m.sent_at);
-      var ds = d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-      return '<div class="msg-card'+(m.read?'':' unread')+'">'
-        +'<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">'
-        +'<div><div style="font-weight:600;">'+(m.read?'':' <span style="background:var(--r2);color:#fff;border-radius:8px;padding:1px 7px;font-size:.65rem;">NEW</span> ')+esc(m.name||'Unknown')+'</div>'
-        +'<div style="font-size:.75rem;color:var(--muted);margin-top:2px;">'+esc(m.phone||'')+' '+esc(m.email||'')+'</div></div>'
-        +'<div style="font-size:.72rem;color:var(--muted);">'+ds+'</div></div>'
-        +'<div style="font-size:.88rem;color:var(--cream);white-space:pre-wrap;margin-bottom:12px;">'+esc(m.message||'')+'</div>'
-        +'<div style="display:flex;gap:8px;flex-wrap:wrap;">'
-        +(m.phone?'<a href="tel:'+esc(m.phone)+'" class="btn btn-green btn-sm">Call Back</a>':'')
-        +(m.email?'<a href="mailto:'+esc(m.email)+'" class="btn btn-outline btn-sm">Reply Email</a>':'')
-        +(!m.read?'<button class="btn btn-outline btn-sm" onclick="doMarkRead(\''+m.id+'\')">Mark Read</button>':'')
-        +'<button class="btn btn-red btn-sm" onclick="doDelMsg(\''+m.id+'\')">Delete</button>'
-        +'</div></div>';
+/* ─── MESSAGES ───────────────────────────────────────── */
+async function loadMessages() {
+  var el = document.getElementById('messagesList');
+  var stats = document.getElementById('msgStats');
+  var badge = document.getElementById('msgCount');
+  if (!el) return;
+  el.innerHTML = '<p class="note" style="padding:10px 0;">Loading…</p>';
+  try {
+    var snap = await db.collection('messages').orderBy('sentAt','desc').get();
+    var msgs = snap.docs.map(function(d) { return Object.assign({id: d.id}, d.data()); });
+    var unread = msgs.filter(function(m) { return !m.read; }).length;
+    stats.textContent = msgs.length + ' message(s) · ' + unread + ' unread';
+    if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline'; }
+    else { badge.style.display = 'none'; }
+    if (!msgs.length) { el.innerHTML = '<p class="note" style="padding:10px 0;">No messages yet. Messages from the contact form will appear here.</p>'; return; }
+    el.innerHTML = msgs.map(function(m) {
+      var d = new Date(m.sentAt);
+      var dateStr = d.toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      return '<div style="background:' + (m.read ? 'var(--sf2)' : 'var(--sf3)') + ';border:1px solid ' + (m.read ? 'var(--line)' : 'var(--gold)') + ';border-radius:10px;padding:18px 20px;margin-bottom:12px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;flex-wrap:wrap;">' +
+          '<div>' +
+            '<div style="font-weight:600;font-size:.95rem;">' + esc(m.name || 'Unknown') + (m.read ? '' : ' <span style="background:var(--r2);color:#fff;border-radius:10px;padding:2px 8px;font-size:.65rem;font-weight:600;margin-left:6px;">NEW</span>') + '</div>' +
+            '<div style="font-size:.76rem;color:var(--muted);margin-top:3px;">' + esc(m.phone || '') + (m.email ? ' · ' + esc(m.email) : '') + '</div>' +
+          '</div>' +
+          '<div style="font-size:.72rem;color:var(--muted);white-space:nowrap;">' + dateStr + '</div>' +
+        '</div>' +
+        '<div style="color:var(--cream);font-size:.88rem;line-height:1.6;margin-bottom:14px;white-space:pre-wrap;">' + esc(m.message || '') + '</div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          (m.phone ? '<a href="tel:' + esc(m.phone) + '" class="btn btn-green btn-sm">Call Back</a>' : '') +
+          (m.email ? '<a href="mailto:' + esc(m.email) + '" class="btn btn-outline btn-sm">Reply by Email</a>' : '') +
+          (!m.read ? '<button class="btn btn-outline btn-sm" onclick="markRead(\'' + m.id + '\')">Mark as Read</button>' : '') +
+          '<button class="btn btn-red btn-sm" onclick="deleteMsg(\'' + m.id + '\')">Delete</button>' +
+        '</div>' +
+      '</div>';
     }).join('');
-  }catch(e){ el.innerHTML='<p class="note" style="color:#e05252;">Could not load messages: '+e.message+'</p>'; }
+  } catch(e) {
+    el.innerHTML = '<p class="note" style="color:#e05252;">Could not load messages. Check Firestore rules.</p>';
+  }
 }
-async function doMarkRead(id){ try{await markMessageRead(id);loadMsgs();}catch(e){toast('Failed','er');} }
-async function doDelMsg(id){ if(!confirm('Delete this message?')) return; try{await deleteMessage(id);loadMsgs();toast('Deleted','ok');}catch(e){toast('Failed','er');} }
+async function markRead(id) {
+  await db.collection('messages').doc(id).update({read: true});
+  loadMessages();
+}
+async function deleteMsg(id) {
+  if (!confirm('Delete this message permanently?')) return;
+  await db.collection('messages').doc(id).delete();
+  loadMessages();
+  toast('Message deleted', 'ok');
+}
 
-/* ── LANGUAGES ── */
+/* ─── UTILS ──────────────────────────────────────────── */
+function setCardImg(sec, i, url){
+  if(!DATA[sec] || !DATA[sec][i]) return;
+  DATA[sec][i].img = url;
+  var imgEl = document.getElementById('img_' + sec + '_' + i);
+  var zone  = document.getElementById('imgzone_' + sec + '_' + i);
+  var thumb = document.getElementById('thumb_' + sec + '_' + i);
+  if(imgEl){ imgEl.src = url; }
+  else if(zone){ zone.innerHTML = '<img src="'+url+'" id="img_'+sec+'_'+i+'" style="width:100%;height:150px;object-fit:cover;">' + '<div class="img-overlay"><span>Upload Image</span></div><div class="up-bar-bg"><div class="up-bar" id="bar_'+sec+'_'+i+'"></div></div><input type="file" accept="image/*,video/*" id="file_'+sec+'_'+i+'" style="display:none" class="card-img-input" data-sec="'+sec+'" data-idx="'+i+'">'; }
+  if(thumb) thumb.src = url;
+  toast('Image set', 'ok');
+}
+
+function esc(s) {
+  return (s||'').toString().replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ─── LANGUAGES ──────────────────────────────────────── */
+var currentLangTab = 'en';
+var langData = {};
+
 async function switchLangTab(lang){
   currentLangTab = lang;
   document.querySelectorAll('[data-ltab]').forEach(function(btn){
     btn.className = btn.dataset.ltab===lang ? 'btn btn-gold btn-sm' : 'btn btn-outline btn-sm';
   });
-  var names={en:'English',kn:'Kannada',ta:'Tamil',te:'Telugu',hi:'Hindi',ml:'Malayalam'};
-  document.getElementById('langTabTitle').textContent = names[lang] || lang;
-  try{ langData = await loadTranslations(lang); }
-  catch(e){ langData = Object.assign({},DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en); }
+  var names = {en:'English',kn:'ಕನ್ನಡ',ta:'தமிழ்',te:'తెలుగు',hi:'हिंदी',ml:'മലയാളം'};
+  document.getElementById('langTabTitle').textContent = (names[lang]||lang) + ' Translations';
+  // Load from Firestore, fallback to defaults
+  try {
+    var snap = await db.collection('translations').doc(lang).get();
+    var defaults = DEFAULT_TRANSLATIONS[lang] || DEFAULT_TRANSLATIONS.en;
+    langData = snap.exists ? Object.assign({}, defaults, snap.data()) : Object.assign({}, defaults);
+  } catch(e) {
+    langData = Object.assign({}, DEFAULT_TRANSLATIONS[lang]||DEFAULT_TRANSLATIONS.en);
+  }
   renderLangFields();
 }
+
 function renderLangFields(){
-  var el=document.getElementById('langFields');
-  var groups=[
-    {title:'Navigation',keys:['nav_home','nav_rooms','nav_hall','nav_amenities','nav_explore','nav_location','nav_contact','nav_call']},
-    {title:'Hero',keys:['hero_eyebrow','hero_subtitle','hero_btn_rooms','hero_btn_call','scroll_label']},
-    {title:'Rooms',keys:['rooms_kicker','rooms_title_a','rooms_title_b','rooms_desc']},
-    {title:'Party Hall',keys:['hall_kicker','hall_title_a','hall_title_b','hall_desc']},
-    {title:'Amenities',keys:['amen_kicker','amen_title_a','amen_title_b']},
-    {title:'Explore',keys:['explore_kicker','explore_title_a','explore_title_b','explore_desc']},
-    {title:'Location',keys:['loc_kicker','loc_title_a','loc_title_b','loc_getting']},
-    {title:'Contact',keys:['contact_kicker','contact_title_a','contact_title_b']},
-    {title:'Form',keys:['form_name','form_phone','form_email','form_msg','form_send']},
-    {title:'Buttons',keys:['btn_directions','btn_call_book','btn_enquire']},
+  var el = document.getElementById('langFields');
+  var groups = [
+    {title:'Navigation', keys:['nav_home','nav_rooms','nav_hall','nav_amenities','nav_explore','nav_location','nav_contact','nav_call']},
+    {title:'Hero Section', keys:['hero_eyebrow','hero_subtitle','hero_btn_rooms','hero_btn_call','scroll_label']},
+    {title:'Rooms Section', keys:['rooms_kicker','rooms_title_a','rooms_title_b','rooms_desc']},
+    {title:'Party Hall Section', keys:['hall_kicker','hall_title_a','hall_title_b','hall_desc']},
+    {title:'Amenities Section', keys:['amen_kicker','amen_title_a','amen_title_b']},
+    {title:'Explore Bangalore', keys:['explore_kicker','explore_title_a','explore_title_b','explore_desc']},
+    {title:'Location Section', keys:['loc_kicker','loc_title_a','loc_title_b','loc_getting']},
+    {title:'Contact Section', keys:['contact_kicker','contact_title_a','contact_title_b']},
+    {title:'Form', keys:['form_name','form_phone','form_email','form_msg','form_send']},
+    {title:'Buttons', keys:['btn_directions','btn_call_book','btn_enquire','btn_book_online']},
   ];
   el.innerHTML = groups.map(function(g){
-    return '<div style="margin-bottom:18px;"><div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:8px;font-weight:600;">'+g.title+'</div>'
-      +'<div class="g2">'
-      +g.keys.map(function(k){
-        var lbl=(TRANS_KEYS[k]||k).split(': ').pop();
-        var val=esc(langData[k]||'');
-        var isLong=k==='hero_subtitle'||k==='rooms_desc'||k==='hall_desc'||k==='explore_desc';
-        return '<div class="field"'+(isLong?' style="grid-column:1/-1;"':'')+'><label>'+lbl+'</label>'
-          +(isLong?'<textarea data-lk="'+k+'" rows="2">'+val+'</textarea>':'<input value="'+val+'" data-lk="'+k+'">')
-          +'</div>';
-      }).join('')
-      +'</div></div>';
+    return '<div style="margin-bottom:20px;">' +
+      '<div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:10px;font-weight:600;">' + g.title + '</div>' +
+      '<div class="g2">' + g.keys.map(function(k){
+        var lbl = TRANS_KEYS[k] || k;
+        var val = esc(langData[k]||'');
+        var isLong = k==='hero_subtitle'||k==='rooms_desc'||k==='hall_desc'||k==='explore_desc';
+        return '<div class="field" ' + (isLong?'style="grid-column:1/-1;"':'') + '>' +
+          '<label>' + lbl.split(': ').pop() + '</label>' +
+          (isLong
+            ? '<textarea data-langkey="' + k + '" rows="2">' + val + '</textarea>'
+            : '<input value="' + val + '" data-langkey="' + k + '">') +
+        '</div>';
+      }).join('') +
+      '</div></div>';
   }).join('');
-  el.querySelectorAll('[data-lk]').forEach(function(inp){ inp.addEventListener('input',function(){ langData[inp.dataset.lk]=inp.value; }); });
+
+  el.querySelectorAll('[data-langkey]').forEach(function(inp){
+    inp.addEventListener('input', function(){ langData[inp.dataset.langkey] = inp.value; });
+  });
 }
+
 async function saveLang(){
-  try{ await saveTranslations(currentLangTab, langData); toast('Language saved','ok'); }
-  catch(e){ toast('Save failed: '+e.message,'er'); }
+  try {
+    await db.collection('translations').doc(currentLangTab).set(langData);
+    toast('Language saved — live on the site', 'ok');
+  } catch(e) {
+    toast('Save failed: ' + e.message, 'er');
+  }
 }
-function resetLangDefault(){
-  if(!confirm('Reset to built-in defaults for this language?')) return;
-  langData = Object.assign({},DEFAULT_TRANSLATIONS[currentLangTab]||DEFAULT_TRANSLATIONS.en);
-  renderLangFields(); toast('Reset — click Save Language to apply','');
+
+function resetLangToDefault(){
+  if(!confirm('Reset all translations for this language to the built-in defaults?')) return;
+  langData = Object.assign({}, DEFAULT_TRANSLATIONS[currentLangTab]||DEFAULT_TRANSLATIONS.en);
+  renderLangFields();
+  toast('Reset to defaults — click Save Language to apply', '');
 }
+
+// Load languages panel when nav item clicked
+document.querySelectorAll('.nav-item[data-panel="languages"]').forEach(function(item){
+  item.addEventListener('click', function(){ switchLangTab('en'); });
+});
+
+/* ─── MEDIA PICKER ───────────────────────────────────── */
+var pickerCallback = null;
+var pickerAllMedia = [];
+
+function openPicker(onSelect){
+  pickerCallback = onSelect;
+  var overlay = document.getElementById('pickerOverlay');
+  if(!overlay) return;
+  overlay.classList.add('open');
+  document.getElementById('pickerSearch').value = '';
+  loadPickerMedia();
+}
+function closePicker(){
+  var overlay = document.getElementById('pickerOverlay');
+  if(overlay) overlay.classList.remove('open');
+  pickerCallback = null;
+}
+async function loadPickerMedia(){
+  pickerAllMedia = [];
+  try{ pickerAllMedia = await loadAllMedia(); }catch(e){}
+  filterPicker('');
+}
+function filterPicker(q){
+  var filtered = q ? pickerAllMedia.filter(function(m){ return m.name && m.name.toLowerCase().indexOf(q.toLowerCase()) !== -1; }) : pickerAllMedia;
+  var grid = document.getElementById('pickerGrid');
+  var cnt = document.getElementById('pickerCount');
+  if(cnt) cnt.textContent = filtered.length + ' file(s)';
+  if(!grid) return;
+  if(!filtered.length){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted);font-size:.85rem;">No media uploaded yet. Click "+ Upload New" to add images from your computer.</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(function(m){
+    var preview = m.type==='video'
+      ? '<video src="'+esc(m.url)+'" style="width:100%;height:90px;object-fit:cover;display:block;" muted></video>'
+      : '<img src="'+esc(m.url)+'" style="width:100%;height:90px;object-fit:cover;display:block;" loading="lazy" onerror="this.style.display=\'none\'">';
+    return '<div class="picker-item" onclick="selectFromPicker(\''+esc(m.url)+'\')" title="'+esc(m.name)+'">' +
+      preview +
+      '<div class="picker-item-info">'+esc(m.name)+'</div>' +
+    '</div>';
+  }).join('');
+}
+function selectFromPicker(url){
+  if(pickerCallback){ pickerCallback(url); }
+  closePicker();
+}
+
+// Wire upload button in picker
+(function(){
+  var upBtn = document.getElementById('pickerUploadBtn');
+  var upInput = document.getElementById('pickerFileInput');
+  if(upBtn && upInput){
+    upBtn.addEventListener('click', function(){ upInput.click(); });
+    upInput.addEventListener('change', async function(){
+      if(!upInput.files.length) return;
+      var prog = document.getElementById('pickerProgress');
+      var bar = document.getElementById('pickerProgBar');
+      var lbl = document.getElementById('pickerProgLabel');
+      if(prog) prog.style.display = 'block';
+      var files = Array.from(upInput.files);
+      for(var i=0;i<files.length;i++){
+        var file = files[i];
+        if(lbl) lbl.textContent = 'Uploading ' + file.name + '...';
+        var pct = 0;
+        try{
+          await uploadMediaFile(file, function(p){ pct=p; if(bar) bar.style.width=p+'%'; });
+          toast('Uploaded: '+file.name,'ok');
+        }catch(e){ toast('Upload failed: '+e.message,'er'); }
+      }
+      if(prog) prog.style.display = 'none';
+      if(bar) bar.style.width = '0%';
+      upInput.value = '';
+      loadPickerMedia();
+      loadMediaLibrary();
+    });
+  }
+})();
 </script>
 </body>
 </html>
